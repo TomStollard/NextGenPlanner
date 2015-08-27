@@ -11,8 +11,8 @@
     "url": "https://dev.lan.tomstollard.me.uk/tom/NextGenPlanner.git"
   },
   "author": "Tom Stollard",
-  "license": "None",
   "dependencies": {
+    "body-parser": "^1.13.3",
     "express": "^4.13.3"
   }
 }
