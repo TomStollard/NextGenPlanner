@@ -7,7 +7,7 @@ module.exports = function(db){
   router.get("/", function(req, res){
     var basicauthdetails = basicAuth(req);
     function unauthorised(res){
-      res.set('WWW-Authenticate', 'Basic realm=API Auth Required');
+      res.set('WWW-Authenticate', 'Basic realm=Login details required');
       res.sendStatus(401);
     }
 
@@ -28,9 +28,15 @@ module.exports = function(db){
               //user passwd correct
               //start new session
               var uuid = require('node-uuid');
+              var sessionid = uuid.v4();
+              db.sessions.insert({
+                _id: sessionid,
+                userid: user._id,
+                expiry: Date.now() + 600000
+              });
               res.json({
                 userid: user._id,
-                sessionid: "hello"
+                sessionid: sessionid
               });
             }
             else {
