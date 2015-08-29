@@ -37,7 +37,7 @@ module.exports = function(db){
               }
               db.sessions.insert({
                 _id: sessionid,
-                userid: user._id,
+                userid: db.ObjectId(user._id).toString(),
                 expiry: expiry,
                 type: "browser",
                 description: req.query.devicename
