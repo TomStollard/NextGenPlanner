@@ -20,17 +20,17 @@ module.exports = function(db){
     {
       req.auth = {
         userid: basicauthdetails.name,
-        token: basicauthdetails.pass
+        sessionid: basicauthdetails.pass
       };
       return next();
     }
   });
 
   router.use(function(req, res, next){
-    //checks token matches username
+    //checks sessionid matches username
     db.sessions.findOne({
       userid: mongojs.ObjectId(req.auth.userid),
-      _id: req.auth.token
+      _id: req.auth.sessionid
     }, function(err, session){
       //check if a session was found and if it is valid
       if(session){
@@ -64,6 +64,35 @@ module.exports = function(db){
       res.json(sessions)
     });
   });
+
+  router.delete("/sessions/:id", function(req, res){
+    db.sessions.remove({
+      _id: req.params.id,
+      userid: mongojs.ObjectId(req.auth.userid)
+    }, function(err, numremoved){
+      if(numremoved.n != 0){
+        res.sendStatus(200);
+      }
+      else{
+        res.sendStatus(404);
+      }
+    });
+  });
+
+  router.delete("/sessions", function(req, res){
+    db.sessions.remove({
+      userid: mongojs.ObjectId(req.auth.userid)
+    }, function(err, numremoved){
+      if(numremoved.ok){
+        res.sendStatus(200);
+      }
+      else{
+        res.sendStatus(500);
+        console.log(err);
+      }
+    });
+  });
+
 
   return router;
 }
