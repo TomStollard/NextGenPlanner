@@ -1,9 +1,12 @@
 var express = require("express"),
-    mongojs = require("mongojs");
+    mongojs = require("mongojs"),
+    dotenv = require("dotenv");
+
+dotenv.load();
 
 var app = express();
 
-var db = mongojs("NextGenPlanner", ["sessions", "users"]);
+var db = mongojs(process.env.DBURL || "NextGenPlanner", ["sessions", "users"]);
 
 var test = "hello";
 
