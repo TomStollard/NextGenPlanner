@@ -29,10 +29,18 @@ module.exports = function(db){
               //start new session
               var uuid = require('node-uuid');
               var sessionid = uuid.v4();
+              if(req.query.devicename){
+                var expiry = 0;
+              }
+              else {
+                var expiry = Date.now() + 600000;
+              }
               db.sessions.insert({
                 _id: sessionid,
-                userid: user._id,
-                expiry: Date.now() + 600000
+                userid: db.ObjectId(user._id).toString(),
+                expiry: expiry,
+                type: "browser",
+                description: req.query.devicename
               });
               res.json({
                 userid: user._id,
