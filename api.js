@@ -163,7 +163,7 @@ module.exports = function(db){
           res.sendStatus(404);
         }
       });
-    }
+    })
 
   return router;
 }

@@ -1,10 +1,13 @@
 var express = require("express"),
     mongojs = require("mongojs"),
-    dotenv = require("dotenv");
+    dotenv = require("dotenv"),
+    bodyParser = require('body-parser');
 
 dotenv.load();
 
 var app = express();
+
+app.use(bodyParser.json());
 
 var db = mongojs(process.env.DBURL, ["sessions", "users", "homework"]);
 
