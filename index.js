@@ -6,7 +6,7 @@ dotenv.load();
 
 var app = express();
 
-var db = mongojs(process.env.DBURL || "NextGenPlanner", ["sessions", "users"]);
+var db = mongojs(process.env.DBURL, ["sessions", "users"]);
 
 var test = "hello";
 
