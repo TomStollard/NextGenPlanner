@@ -63,7 +63,7 @@ module.exports = function(db){
       db.sessions.find({
         userid: req.auth.userid
       }, function(err, sessions){
-        res.json(sessions)
+        res.json(sessions);
       });
     })
     .delete(function(req, res){
@@ -112,6 +112,58 @@ module.exports = function(db){
       });
     });
 
+  router.route("/homework")
+    .get(function(req, res){
+      db.homework.find({
+        userid: req.auth.userid
+      }, function(err, homework){
+        res.json(homework);
+      });
+    });
+  router.route("/homework/:id")
+    .get(function(req, res){
+      db.homework.findOne({
+        _id: req.params.id
+      }, function(err, homework){
+        if(homework){
+          if(homework.userid == req.auth.userid){
+            res.json(homework);
+          }
+          else{
+            unauthorised(res);
+          }
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    })
+    .delete(function(req, res)){
+      db.homework.findOne({
+        _id: req.params.id
+      }, function(err, homework){
+        if(homework){
+          if(homework.userid == req.auth.userid){
+            db.homework.delete({
+              _id: req.params.id
+            }, function(err, result){
+              if(err){
+                res.sendStatus(500);
+              }
+              else {
+                res.sendStatus(200);
+              }
+            });
+          }
+          else{
+            unauthorised(res);
+          }
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    }
 
   return router;
 }
