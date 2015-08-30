@@ -8,8 +8,6 @@ var app = express();
 
 var db = mongojs(process.env.DBURL, ["sessions", "users"]);
 
-var test = "hello";
-
 var apirouter = require("./api.js")(db);
 var loginrouter = require("./login.js")(db);
 require("./oldsessionclear.js")(db);
