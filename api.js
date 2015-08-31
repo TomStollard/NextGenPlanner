@@ -138,7 +138,7 @@ module.exports = function(db){
         }
       });
     })
-    .delete(function(req, res)){
+    .delete(function(req, res){
       db.homework.findOne({
         _id: req.params.id
       }, function(err, homework){
@@ -164,6 +164,33 @@ module.exports = function(db){
         }
       });
     })
+    .post(function(req, res){
+      db.homework.findOne({
+        _id: req.body.id
+      }, function(err, homework){
+        if(homework){
+          res.sendStatus(422);
+        }
+        else {
+          db.homework.insert({
+            _id: req.body.id,
+            set: req.body.set,
+            subject: req.body.subject,
+            homework: req.body.homework,
+            due: req.body.due,
+            userid: req.auth.userid
+          }, function(err, inserted){
+            if(err){
+              res.sendStatus(500);
+            }
+            else {
+              res.sendStatus(200);
+            }
+          });
+        }
+      });
+    })
+
 
   return router;
 }
