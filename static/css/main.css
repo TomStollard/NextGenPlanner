@@ -1,14 +1,31 @@
-.page{
-  min-width: 100%;
-  min-height: 100%;
+body{
+  background-color: #3d3d3d;
 }
 
-#page-login > #login{
+.page{
+  min-width: 100vw;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+}
+
+#page-login .flexcontainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+#page-login #login{
   text-align: center;
   width: 80%;
   max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+  background-color: white;
+  padding: 30px;
+  box-shadow: 0px 0px 30px rgba(255, 255, 255, 1);
 }
 
 #page-login input{
@@ -17,9 +34,10 @@
 }
 
 
-#loginform-username, #loginform-password{
+#page-login form #loginform-username, #page-login form #loginform-password{
   padding-top: 10px;
   padding-bottom: 10px;
+  text-align: center;
 }
 
 #page-login form #loginform-username{
@@ -30,4 +48,11 @@
 #page-login form #loginform-password{
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  border-top: none;
+}
+
+#page-login form #loginform-submit{
+  margin-top: 10px;
+  width: 100%;
+  font-size: 1.5em;
 }

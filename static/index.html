@@ -9,15 +9,23 @@
     <link href="/css/main.css" rel="stylesheet">
   </head>
   <body>
+    <div class="page visible" id="page-loading">
+    </div>
     <div class="page" id="page-login">
-      <div id="login">
-        <h1>NextGenPlanner</h1>
-        <h2>Please sign in:</h2>
-        <form>
-          <input id="loginform-username" class="form-control" type="text" placeholder="Username" autofocus>
-          <input id="loginform-password" class="form-control" type="password" placeholder="Password">
-        </form>
+      <div class="flexcontainer">
+        <div id="login">
+          <h1>NextGen Planner</h1>
+          <h2>Please sign in:</h2>
+          <form id="loginform">
+            <input id="loginform-username" class="form-control" type="text" placeholder="Username" autofocus>
+            <input id="loginform-password" class="form-control" type="password" placeholder="Password">
+            <button id="loginform-submit" class="btn btn-primary" type="submit">Log In</button>
+          </form>
+        </div>
       </div>
+    </div>
+    <div class="page" id="page-main">
+      <h1>Hello World!</h1>
     </div>
 
     <script src="/js/jquery-2.1.4.min.js"></script>

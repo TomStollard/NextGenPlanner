@@ -1,7 +1,9 @@
 var express = require("express"),
     mongojs = require("mongojs"),
     dotenv = require("dotenv"),
-    bodyParser = require('body-parser');
+    bodyParser = require("body-parser"),
+    autoprefixer = require("express-autoprefixer"),
+    minify = require("express-minify");
 
 dotenv.load();
 
@@ -9,6 +11,7 @@ var app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use("/css/main.css", autoprefixer());
 
 var db = mongojs(process.env.DBURL, ["sessions", "users", "homework"]);
 
@@ -21,4 +24,6 @@ app.use("/login", loginrouter);
 
 app.use(express.static("static"));
 
-app.listen(3000);
+var server = app.listen(3000, function(){
+  console.log("Server running on port " + server.address().port);
+});
