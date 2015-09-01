@@ -19,4 +19,6 @@ require("./oldsessionclear.js")(db);
 app.use("/api", apirouter);
 app.use("/login", loginrouter);
 
+app.use(express.static("static"));
+
 app.listen(3000);
