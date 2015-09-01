@@ -33,6 +33,7 @@ function switchpage(newpage){
 
 $("#loginform").submit(function(event){
   event.preventDefault();
+  switchpage("main");
   return false;
 });
 
@@ -47,5 +48,9 @@ $("#page-login").on("visible", function(){
 });
 
 $("#page-loading").on("load", function(){
+  $(this).trigger("loaded");
+})
+
+$("#page-main").on("load", function(){
   $(this).trigger("loaded");
 })
