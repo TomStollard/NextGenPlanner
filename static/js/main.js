@@ -1,5 +1,18 @@
+var credentials;
+
 $(document).ready(function(){
-  switchpage("login");
+  if(Modernizr.localstorage){
+    if(window.localStorage["credentials"]){
+      credentials = JSON.parse(window.localStorage["credentials"]);
+      switchpage("main");
+    }
+    else {
+      switchpage("login");
+    }
+  }
+  else {
+    switchpage("login");
+  }
 });
 
 function switchpage(newpage){
@@ -31,26 +44,108 @@ function switchpage(newpage){
   });
 }
 
-$("#loginform").submit(function(event){
-  event.preventDefault();
-  switchpage("main");
-  return false;
-});
+var defaultstatushandler = {
+  404: function(){
+    bootbox.alert("Not Found")
+  },
+  401: function(){
+    bootbox.alert("Sorry, your session appears to have expired. Please log in again.");
+    switchpage("login");
+  }
+}
 
+//start login page
 $("#page-login").on("load", function(){
   $("#loginform-username").val("");
   $("#loginform-password").val("");
+  $("#loginform-rememberme input").prop('checked', false);
+  $("#loginform-devicename").val("");
   $("#page-login").trigger("loaded");
+});
+
+$("#loginform").submit(function(event){
+  event.preventDefault();
+  if(!($("#loginform-username").val() && $("#loginform-password").val())){
+    $("#loginform-credserror").slideDown();
+    return false;
+  }
+  var devicename = "";
+  if($("#loginform-rememberme input").is(':checked')){
+    devicename = $("#loginform-devicename").val();
+  }
+  $.ajax({
+    type: "GET",
+    url: "/login",
+    cache: false,
+    username: $("#loginform-username").val(),
+    password: $("#loginform-password").val(),
+    data: {"devicename": devicename},
+    success: function(res, status, req){
+      if(devicename){
+        window.localStorage["credentials"] = JSON.stringify(res);
+      }
+      credentials = res;
+      switchpage("main");
+    },
+    statusCode: {
+      401: function(){
+        $("#loginform-credserror").slideDown();
+      }
+    }
+  });
+  return false;
 });
 
 $("#page-login").on("visible", function(){
   $("loginform-username").focus();
 });
 
+$("#page-login #loginform-rememberme input").change(function(){
+  if($("#loginform-rememberme input").is(':checked')){
+    $("#loginform-devicename").slideDown(function(){
+      $("#loginform-devicename").focus();
+    });
+  }
+  else {
+    $("#loginform-devicename").slideUp();
+  }
+});
+
+$("#page-login #loginform-username, #page-login #loginform-password").on("input", function(){
+  $("#loginform-credserror").slideUp();
+});
+
+//end login page
+
 $("#page-loading").on("load", function(){
   $(this).trigger("loaded");
 })
 
+//start main page
 $("#page-main").on("load", function(){
   $(this).trigger("loaded");
 })
+
+$("#page-main .header-mobile #mobilemenubutton").click(function(){
+  $("#page-main .header-mobile .menu").slideToggle();
+});
+//end main page
+
+//global button bindings
+$(".button-global-logout").click(function(){
+  $.ajax({
+    type: "DELETE",
+    url: "/api/sessions/" + credentials.sessionid,
+    username: credentials.userid,
+    password: credentials.sessionid,
+    statusCode: defaultstatushandler,
+    success: function(){
+      credentials = "";
+      if(Modernizr.localstorage){
+        window.localStorage.credentials = ""
+      }
+      switchpage("login");
+    }
+  });
+});
+//end global button bindings

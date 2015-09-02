@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>NextGenPlanner</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
@@ -19,24 +19,76 @@
           <form id="loginform">
             <input id="loginform-username" class="form-control" type="text" placeholder="Username" autofocus>
             <input id="loginform-password" class="form-control" type="password" placeholder="Password">
+            <div class="alert alert-danger" role="alert" id="loginform-credserror">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span class="sr-only">Error:</span>
+              Sorry, those credentials were incorrect. Please try again.
+            </div>
+            <div class="checkbox" id="loginform-rememberme">
+              <input type="checkbox" value="" id="test"><label for="test">Remember Me</label>
+            </div>
+            <input id="loginform-devicename" class="form-control" type="text" placeholder="Device Name">
             <button id="loginform-submit" class="btn btn-primary" type="submit">Log In</button>
           </form>
         </div>
       </div>
     </div>
     <div class="page" id="page-main">
-      <div class="header">
+      <div class="header-desktop">
         <div class="headerinner">
           <h1>Tom's Planner</h1>
+          <div class="icons">
+            <img class="button-main-tometable" src="/imgs/tometable.png" />
+            <img class="button-main-settings" src="/imgs/settings.png" />
+            <img class="button-global-logout" src="/imgs/logout.png" />
+          </div>
+        </div>
+      </div>
+      <div class="header-mobile">
+        <div class="headerinner">
+          <span class="glyphicon glyphicon-menu-hamburger" id="mobilemenubutton"></span>
+          <h1>Tom's Planner</h1>
+          <div class="menu">
+            <a class="button-main-tometable">Tometable</a>
+            <a class="button-main-settings">Settings</a>
+            <a class="button-global-logout">Logout</a>
+          </div>
         </div>
       </div>
       <div class="columns">
-        <div></div>
-        <div></div>
+        <div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Notes</h3>
+            </div>
+            <div class="panel-body">Week Notes Here</div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-body">Week Homework Here</div>
+          </div>
+        </div>
+        <div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Today/Tomorrow</h3>
+            </div>
+            <div class="panel-body">Today/tomorrow homework, events/notes here</div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">To Complete</h3>
+            </div>
+            <div class="panel-body">Uncompleted homework here</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <script src="/js/jquery-2.1.4.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/bootbox.min.js"></script>
+    <script src="/js/modernizr.min.js"></script>
+    <script src="/js/Dexie.js"></script>
     <script src="/js/main.js"></script>
   </body>
 </html>

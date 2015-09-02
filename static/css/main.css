@@ -3,11 +3,6 @@ body{
 }
 
 .page{
-  min-width: 100vw;
-  min-height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
   display: none;
 }
 
@@ -28,13 +23,13 @@ body{
   box-shadow: 0px 0px 30px rgba(255, 255, 255, 1);
 }
 
-#page-login input{
+#page-login form #loginform-username, #page-login form #loginform-password, #page-login form button{
   width: 100%;
   font-size: 1.4em;
 }
 
 
-#page-login form #loginform-username, #page-login form #loginform-password{
+#page-login form #loginform-username, #page-login form #loginform-password, #page-login form #loginform-devicename{
   padding-top: 10px;
   padding-bottom: 10px;
   text-align: center;
@@ -51,44 +46,175 @@ body{
   border-top: none;
 }
 
+#page-login form #loginform-rememberme input{
+  height: 20px;
+  transform: scale(1.5);
+  margin: 0;
+}
+
+#page-login form #loginform-devicename{
+  display: none;
+}
+
+#page-login form .alert{
+  display: none;
+}
+
 #page-login form #loginform-submit{
   margin-top: 10px;
   width: 100%;
   font-size: 1.5em;
 }
 
-#page-main .header{
-  width: 100%;
-  background-color: rgb(100, 100, 100);
-  color: white;
-  box-shadow: 0px 0px 3px grey;
-  margin-bottom: 10px;
+/* top menu media conditions */
+
+@media (max-width: 649px) {
+  /* mobile menu */
+  #page-main .header-desktop{
+    display: none;
+  }
+
+  #page-main .header-mobile{
+    width: 100%;
+    text-align: center;
+    background-color: rgb(100, 100, 100);
+    color: white;
+    margin-bottom: 10px;
+  }
+
+  #page-main .header-mobile h1{
+    margin: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  #page-main .header-mobile #mobilemenubutton{
+    font-size: 36px;
+    padding-left: 10px;
+    padding-top: 6px;
+    padding-bottom: 5px;
+    float: left;
+    cursor: pointer;
+  }
+
+  #page-main .header-mobile .menu{
+    display: none;
+  }
+
+  #page-main .header-mobile .menu>a:first-child{
+    border-top: 1px solid white;
+  }
+
+  #page-main .header-mobile .menu>a{
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid white;
+    font-size: 1.5em;
+    color: white;
+    cursor: pointer;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
 }
 
-#page-main .headerinner, #page-main .columns{
-  width: 80%;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+@media (min-width: 650px) {
+  /* desktop menu */
+  #page-main .header-mobile{
+    display: none;
+  }
+
+  #page-main .header-desktop{
+    width: 100%;
+    background-color: rgb(100, 100, 100);
+    color: white;
+    box-shadow: 0px 0px 3px grey;
+    margin-bottom: 10px;
+  }
+
+  #page-main .header-desktop .headerinner{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1300px;
+  }
+
+  #page-main .header-desktop h1{
+    margin: 0;
+    padding-left: 10px;
+    padding-top: 15px;
+  }
+
+  #page-main .header-desktop .icons{
+    padding-right: 5px;
+  }
+
+  #page-main .header-desktop .icons>img{
+    border-radius: 100%;
+    height: 70px;
+    margin-right: 7px;
+  }
+
+  #page-main .header-desktop .icons>img:hover{
+    box-shadow: 0px 0px 15px white;
+  }
 }
 
-#page-main .header h1{
-  margin: 0;
-  padding-left: 10px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+/* column media conditions */
+
+@media (min-width: 900px) {
+  #page-main .columns{
+    width: 80%;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #page-main .columns>div{
+    width: 50%;
+  }
+
+  #page-main .columns>div:first-child{
+    margin-right: 20px;
+  }
+}
+
+@media (max-width: 899px) {
+  #page-main .columns>div{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #page-main .columns{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  #page-main .columns>div:last-child{
+    order: 0;
+  }
+
+  #page-main .columns>div:first-child{
+    order: 1;
+  }
 }
 
 #page-main .columns{
   display: flex;
 }
 
-#page-main .columns>div{
-  width: 50%;
-  background-color: white;
-  height: 100px;
+#page-main .panel{
+  border: solid 1px #e2e2e2;
+  background-color: #5b5b5b;
+  color: white;
 }
 
-#page-main .columns>div:first-child{
-  margin-right: 20px;
+#page-main .panel-title{
+  text-align: center;
 }

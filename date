@@ -1,0 +1,6 @@
+function getweek(date){
+  //different between current time and first Monday in 1970 (time 345600000), taking account of current time zone, divided by number of milliseconds in a week, rounded down to get current week id
+  return Math.floor(
+    (date.getTime() - 345600000 - (new Date().getTimezoneOffset() * 60000)) / 604800000
+  );
+}
