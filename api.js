@@ -114,9 +114,34 @@ module.exports = function(db){
 
   router.route("/homework")
     .get(function(req, res){
-      db.homework.find({
+      var query = {
         userid: req.auth.userid
-      }, function(err, homework){
+      }
+      if(req.query.setstart){
+        if(!query["set"]){
+          query["set"] = {};
+        }
+        query["set"]["$gte"] = req.query.setstart;
+      }
+      if(req.query.setend){
+        if(!query["set"]){
+          query["set"] = {};
+        }
+        query["set"]["$lte"] = req.query.setend;
+      }
+      if(req.query.duestart){
+        if(!query["due"]){
+          query["due"] = {};
+        }
+        query["due"]["$gte"] = req.query.setstart;
+      }
+      if(req.query.dueend){
+        if(!query["due"]){
+          query["due"] = {};
+        }
+        query["due"]["$lte"] = req.query.dueend;
+      }
+      db.homework.find(query, function(err, homework){
         res.json(homework);
       });
     });
