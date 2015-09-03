@@ -1,4 +1,7 @@
 var credentials;
+var options = {
+  offlinesync: false
+};
 
 $(document).ready(function(){
   if(Modernizr.localstorage){
@@ -149,3 +152,47 @@ $(".button-global-logout").click(function(){
   });
 });
 //end global button bindings
+
+//start db interaction
+var gethomework = {
+  betweendates: function(date1, date2, callback){
+    if(options.offlinesync){
+
+    }
+    else{
+      
+    }
+  }
+}
+//end db interaction
+
+//set up templates
+var templates = {
+  "thisweek": Handlebars.compile($("#template-thisweek").html())
+}
+
+Handlebars.registerHelper("formatDate", function(datetome, format){
+  return moment(datetome).format(format);
+});
+
+Handlebars.registerHelper("tomeLeft", function(duetome){
+  var numdays = moment(parseInt(duetome)).diff(moment(new Date()), "days");
+  if(numdays == 0){
+    return "Due Today";
+  }
+  else if (numdays == 1){
+    return "Due in 1 day";
+  }
+  else if(numdays > 1){
+    return "Due in " + numdays + " days";
+  }
+  else if (numdays == -1){
+    return "Overdue by 1 day";
+  }
+  else if(numdays < -1){
+    return "Overdue by " + (numdays * -1) + " days";
+  }
+});
+
+Handlebars.registerPartial("homeworkitem", $("#template-homeworkitem").html());
+// end templates
