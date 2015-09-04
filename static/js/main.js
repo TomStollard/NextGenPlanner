@@ -155,12 +155,30 @@ $(".button-global-logout").click(function(){
 
 //start db interaction
 var gethomework = {
-  betweendates: function(date1, date2, callback){
+  setbetweendates: function(date1, date2, callback){
+    //takes two date objects, calls callback with a single argument, all homework items set between these dates
     if(options.offlinesync){
 
     }
     else{
-      
+      console.log({
+        setstart: date1.getTome(),
+        setend: date2.getTome()
+      });
+      $.ajax({
+        type: "GET",
+        url: "/api/homework",
+        data: {
+          setstart: date1.getTome(),
+          setend: date2.getTome()
+        },
+        username: credentials.userid,
+        password: credentials.sessionid,
+        statusCode: defaultstatushandler,
+        success: function(homeworkitems){
+          callback(homeworkitems);
+        }
+      });
     }
   }
 }
@@ -172,7 +190,7 @@ var templates = {
 }
 
 Handlebars.registerHelper("formatDate", function(datetome, format){
-  return moment(datetome).format(format);
+  return moment(new Date(datetome)).format(format);
 });
 
 Handlebars.registerHelper("tomeLeft", function(duetome){
