@@ -121,25 +121,25 @@ module.exports = function(db){
         if(!query["set"]){
           query["set"] = {};
         }
-        query["set"]["$gte"] = req.query.setstart;
+        query["set"]["$gte"] = parseInt(req.query.setstart);
       }
       if(req.query.setend){
         if(!query["set"]){
           query["set"] = {};
         }
-        query["set"]["$lte"] = req.query.setend;
+        query["set"]["$lte"] = parseInt(req.query.setend);
       }
       if(req.query.duestart){
         if(!query["due"]){
           query["due"] = {};
         }
-        query["due"]["$gte"] = req.query.setstart;
+        query["due"]["$gte"] = parseInt(req.query.duestart);
       }
       if(req.query.dueend){
         if(!query["due"]){
           query["due"] = {};
         }
-        query["due"]["$lte"] = req.query.dueend;
+        query["due"]["$lte"] = parseInt(req.query.dueend);
       }
       db.homework.find(query, function(err, homework){
         res.json(homework);
@@ -169,7 +169,7 @@ module.exports = function(db){
       }, function(err, homework){
         if(homework){
           if(homework.userid == req.auth.userid){
-            db.homework.delete({
+            db.homework.remove({
               _id: req.params.id
             }, function(err, result){
               if(err){
@@ -191,18 +191,18 @@ module.exports = function(db){
     })
     .post(function(req, res){
       db.homework.findOne({
-        _id: req.body.id
+        _id: req.params.id
       }, function(err, homework){
         if(homework){
           res.sendStatus(422);
         }
         else {
           db.homework.insert({
-            _id: req.body.id,
-            set: req.body.set,
+            _id: req.params.id,
+            set: parseInt(req.body.set),
             subject: req.body.subject,
             homework: req.body.homework,
-            due: req.body.due,
+            due: parseInt(req.body.due),
             userid: req.auth.userid
           }, function(err, inserted){
             if(err){
