@@ -49,6 +49,38 @@
           {{/each}}
         {{/each}}
       </script>
+      <script id="template-todaytomorrow" type="text/x-handlebars-template">
+        {{#each dayitems}}
+            {{#if tome}}
+              <div class="dayitem">
+                <div class="tome">{{tome}}</div>
+                <div class="content">{{content}}</div>
+              </div>
+            {{else}}
+              <div class="dayitem">
+                <div class="content">{{content}}</div>
+              </div>
+            {{/if}}
+        {{/each}}
+
+        <h1>Lessons</h1>
+        {{#if lessons}}
+          {{#each lessons}}
+            <div class="lesson">{{name}} - {{teacher}} - {{room}}</div>
+          {{/each}}
+        {{else}}
+          No Lessons
+        {{/if}}
+
+        <h1>Homework</h1>
+        {{#if homework}}
+          {{#each homework}}
+            {{> homeworkitem}}
+          {{/each}}
+        {{else}}
+          No homework due in.
+        {{/if}}
+      </script>
       <div class="header-desktop">
         <div class="headerinner">
           <h1>Tom's Planner</h1>
@@ -70,6 +102,20 @@
           </div>
         </div>
       </div>
+      <button class="btn btn-default" id="addhomeworkbutton">Add Homework</button>
+      <div class="input-group" id="jumptodate">
+        <span class="input-group-addon">Jump to date:</span>
+  			<input type="text" class="form-control" placeholder="Date">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button">Go</button>
+			  </span>
+      </div>
+      <div class="btn-group" id="weeknav">
+        <a class="btn btn-default" id="lastweekbutton">&lt;&lt;&lt;</a>
+        <a class="btn btn-default" id="currentweekbutton">Current Week</a>
+        <a class="btn btn-default" id="nextweekbutton">&gt;&gt;&gt;</a>
+      </div>
+
       <div class="columns">
         <div>
           <div class="panel panel-default" id="mainpage-panel-weeknotes">
@@ -106,6 +152,7 @@
     <script src="/js/Dexie.js"></script>
     <script src="/js/handlebars.min.js"></script>
     <script src="/js/moment.min.js"></script>
+    <script src="/js/async.js"></script>
     <script src="/js/main.js"></script>
   </body>
 </html>

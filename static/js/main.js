@@ -127,11 +127,47 @@ $("#page-loading").on("load", function(){
 
 //start main page
 $("#page-main").on("load", function(){
-  $(this).trigger("loaded");
+  async.parallel([
+    function(callback){
+      loadweekdetails(callback);
+    }
+  ], function(){
+    $("#page-main").trigger("loaded");
+  });
 })
 
 $("#page-main .header-mobile #mobilemenubutton").click(function(){
   $("#page-main .header-mobile .menu").slideToggle();
+});
+
+$("#currentweekbutton").click(function(){
+  currentweekdate = new Date();
+  $("#mainpage-panel-weeknotes").fadeOut();
+  $("#mainpage-panel-weekhomework").fadeOut(function(){
+    loadweekdetails(function(){
+      $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeIn();
+    });
+  });
+});
+
+$("#lastweekbutton").click(function(){
+  currentweekdate = moment(currentweekdate).subtract(1, "week").toDate();
+  $("#mainpage-panel-weeknotes").fadeOut();
+  $("#mainpage-panel-weekhomework").fadeOut(function(){
+    loadweekdetails(function(){
+      $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeIn();
+    });
+  });
+});
+
+$("#nextweekbutton").click(function(){
+  currentweekdate = moment(currentweekdate).add(1, "week").toDate();
+  $("#mainpage-panel-weeknotes").fadeOut();
+  $("#mainpage-panel-weekhomework").fadeOut(function(){
+    loadweekdetails(function(){
+      $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeIn();
+    });
+  });
 });
 
 function loadweekdetails(callback){
@@ -151,6 +187,7 @@ function loadweekdetails(callback){
       days.push(day);
     }
     $("#mainpage-panel-weekhomework .panel-body").html(templates.thisweek({days: days}));
+    return callback();
   });
 }
 
@@ -159,7 +196,7 @@ function loadtodaydetails(callback){
 }
 
 function loadtododetails(callback){
-  
+
 }
 //end main page
 
@@ -213,7 +250,8 @@ var getdbdata = {
 
 //set up templates
 var templates = {
-  "thisweek": Handlebars.compile($("#template-thisweek").html())
+  "thisweek": Handlebars.compile($("#template-thisweek").html()),
+  "todaytomorrow": Handlebars.compile($("#template-todaytomorrow").html()),
 }
 
 Handlebars.registerHelper("formatDate", function(datetome, format){
