@@ -2,6 +2,7 @@ var credentials;
 var options = {
   offlinesync: false
 };
+var currentweekdate = new Date();
 
 $(document).ready(function(){
   if(Modernizr.localstorage){
@@ -52,7 +53,7 @@ var defaultstatushandler = {
     bootbox.alert("Not Found")
   },
   401: function(){
-    bootbox.alert("Sorry, your session appears to have expired. Please log in again.");
+    bootbox.alert("Sorry, your session appears to have expired or been removed. Please log in again.");
     switchpage("login");
   }
 }
@@ -132,6 +133,34 @@ $("#page-main").on("load", function(){
 $("#page-main .header-mobile #mobilemenubutton").click(function(){
   $("#page-main .header-mobile .menu").slideToggle();
 });
+
+function loadweekdetails(callback){
+  var weekstart = moment(currentweekdate).startOf('isoWeek');
+  var weekend = weekstart.clone().add(7, "days").subtract(1, "second");
+  getdbdata.homework.setbetweendates(weekstart.toDate(), weekend.toDate(), function(allhomework){
+    var days = [];
+    for(var i = 0; i < 7; i++){
+      var day = {};
+      day.date = moment(weekstart).add(i, "days").toDate();
+      day.homeworkitems = [];
+      $.each(allhomework, function(i, homeworkitem){
+        if((day.date.getTome() < homeworkitem.set) && (homeworkitem.set < moment(day.date).add(24, "hours").subtract(1, "second").valueOf())){
+          day.homeworkitems.push(homeworkitem);
+        }
+      });
+      days.push(day);
+    }
+    $("#mainpage-panel-weekhomework .panel-body").html(templates.thisweek({days: days}));
+  });
+}
+
+function loadtodaydetails(callback){
+
+}
+
+function loadtododetails(callback){
+  
+}
 //end main page
 
 //global button bindings
@@ -154,31 +183,29 @@ $(".button-global-logout").click(function(){
 //end global button bindings
 
 //start db interaction
-var gethomework = {
-  setbetweendates: function(date1, date2, callback){
-    //takes two date objects, calls callback with a single argument, all homework items set between these dates
-    if(options.offlinesync){
+var getdbdata = {
+  homework: {
+    setbetweendates: function(date1, date2, callback){
+      //takes two date objects, calls callback with a single argument, all homework items set between these dates
+      if(options.offlinesync){
 
-    }
-    else{
-      console.log({
-        setstart: date1.getTome(),
-        setend: date2.getTome()
-      });
-      $.ajax({
-        type: "GET",
-        url: "/api/homework",
-        data: {
-          setstart: date1.getTome(),
-          setend: date2.getTome()
-        },
-        username: credentials.userid,
-        password: credentials.sessionid,
-        statusCode: defaultstatushandler,
-        success: function(homeworkitems){
-          callback(homeworkitems);
-        }
-      });
+      }
+      else{
+        $.ajax({
+          type: "GET",
+          url: "/api/homework",
+          data: {
+            setstart: date1.getTome(),
+            setend: date2.getTome()
+          },
+          username: credentials.userid,
+          password: credentials.sessionid,
+          statusCode: defaultstatushandler,
+          success: function(homeworkitems){
+            callback(homeworkitems);
+          }
+        });
+      }
     }
   }
 }
