@@ -117,6 +117,9 @@ module.exports = function(db){
       var query = {
         userid: req.auth.userid
       }
+      if(!req.query.includedeleted){
+        query["deleted"] = false;
+      }
       if(req.query.setstart){
         if(!query["set"]){
           query["set"] = {};
@@ -140,6 +143,9 @@ module.exports = function(db){
           query["due"] = {};
         }
         query["due"]["$lte"] = parseInt(req.query.dueend);
+      }
+      if(req.query.complete){
+        query["complete"] = JSON.parse(req.query.complete.toLowerCase());
       }
       db.homework.find(query, function(err, homework){
         res.json(homework);
@@ -169,8 +175,12 @@ module.exports = function(db){
       }, function(err, homework){
         if(homework){
           if(homework.userid == req.auth.userid){
-            db.homework.remove({
+            db.homework.update({
               _id: req.params.id
+            }, {
+              $set: {
+                deleted: true
+              }
             }, function(err, result){
               if(err){
                 res.sendStatus(500);
@@ -203,6 +213,7 @@ module.exports = function(db){
             subject: req.body.subject,
             homework: req.body.homework,
             due: parseInt(req.body.due),
+            complete: JSON.parse(req.body.complete.toLowerCase()),
             userid: req.auth.userid
           }, function(err, inserted){
             if(err){
