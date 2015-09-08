@@ -243,6 +243,48 @@ var getdbdata = {
           }
         });
       }
+    },
+    duebetweendates: function(date1, date2, callback){
+      //takes two date objects, calls callback with a single argument, all homework items set between these dates
+      if(options.offlinesync){
+
+      }
+      else{
+        $.ajax({
+          type: "GET",
+          url: "/api/homework",
+          data: {
+            duestart: date1.getTome(),
+            dueend: date2.getTome()
+          },
+          username: credentials.userid,
+          password: credentials.sessionid,
+          statusCode: defaultstatushandler,
+          success: function(homeworkitems){
+            callback(homeworkitems);
+          }
+        });
+      }
+    },
+    complete: function(complete, callback){
+      if(options.offlinesync){
+
+      }
+      else{
+        $.ajax({
+          type: "GET",
+          url: "/api/homework",
+          data: {
+            complete: complete
+          },
+          username: credentials.userid,
+          password: credentials.sessionid,
+          statusCode: defaultstatushandler,
+          success: function(homeworkitems){
+            callback(homeworkitems);
+          }
+        });
+      }
     }
   }
 }
