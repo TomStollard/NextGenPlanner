@@ -136,6 +136,15 @@
             <div class="panel-body">Today/tomorrow homework, events/notes here</div>
           </div>
           <div class="panel panel-default" id="mainpage-panel-todo">
+            <script id="template-todo" type="text/x-handlebars-template">
+              {{#if homework}}
+                {{#each homework}}
+                  {{> homeworkitem}}
+                {{/each}}
+              {{else}}
+                No homework to complete.
+              {{/if}}
+            </script>
             <div class="panel-heading">
               <h3 class="panel-title">To Complete</h3>
             </div>

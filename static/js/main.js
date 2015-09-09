@@ -130,6 +130,12 @@ $("#page-main").on("load", function(){
   async.parallel([
     function(callback){
       loadweekdetails(callback);
+    },
+    function(callback){
+      loadtododetails(callback);
+    },
+    function(callback){
+      loaddaydetails(callback);
     }
   ], function(){
     $("#page-main").trigger("loaded");
@@ -191,12 +197,15 @@ function loadweekdetails(callback){
   });
 }
 
-function loadtodaydetails(callback){
-
+function loaddaydetails(callback){
+  callback();
 }
 
 function loadtododetails(callback){
-
+  getdbdata.homework.complete("false", function(allhomework){
+    $("#mainpage-panel-todo .panel-body").html(templates.todo({homework: allhomework}));
+    callback();
+  });
 }
 //end main page
 
@@ -294,6 +303,7 @@ var getdbdata = {
 var templates = {
   "thisweek": Handlebars.compile($("#template-thisweek").html()),
   "todaytomorrow": Handlebars.compile($("#template-todaytomorrow").html()),
+  "todo": Handlebars.compile($("#template-todo").html())
 }
 
 Handlebars.registerHelper("formatDate", function(datetome, format){
