@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/css/main.css", autoprefixer());
 
-var db = mongojs(process.env.DBURL, ["sessions", "users", "homework"]);
+var db = mongojs(process.env.DBURL, ["sessions", "users", "homework", "tometable"]);
 
 var apirouter = require("./api.js")(db);
 var loginrouter = require("./login.js")(db);

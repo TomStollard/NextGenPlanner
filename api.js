@@ -225,7 +225,107 @@ module.exports = function(db){
           });
         }
       });
-    })
+    });
+
+    router.route("/tometable")
+      .get(function(req, res){
+        var query = {
+          userid: req.auth.userid
+        }
+        if(!req.query.includedeleted){
+          query["deleted"] = false;
+        }
+        if(req.query.day){
+          query["set"] = parseInt(req.query.day);
+        }
+        if(req.query.week){
+          query["week"] = parseInt(req.query.week);
+        }
+        if(req.query.subject){
+          query["subject"] = req.query.subject;
+        }
+        db.tometable.find(query, function(err, lessons){
+          res.json(lessons);
+        });
+      });
+      router.route("/tometable/:id")
+        .get(function(req, res){
+          db.tometable.findOne({
+            _id: req.params.id
+          }, function(err, lesson){
+            if(lesson){
+              if(lesson.userid == req.auth.userid){
+                res.json(lesson);
+              }
+              else{
+                unauthorised(res);
+              }
+            }
+            else{
+              res.sendStatus(404);
+            }
+          });
+        })
+        .delete(function(req, res){
+          db.tometable.findOne({
+            _id: req.params.id
+          }, function(err, lesson){
+            if(lesson){
+              if(lesson.userid == req.auth.userid){
+                db.tometable.update({
+                  _id: req.params.id
+                }, {
+                  $set: {
+                    deleted: true
+                  }
+                }, function(err, result){
+                  if(err){
+                    res.sendStatus(500);
+                  }
+                  else {
+                    res.sendStatus(200);
+                  }
+                });
+              }
+              else{
+                unauthorised(res);
+              }
+            }
+            else{
+              res.sendStatus(404);
+            }
+          });
+        })
+        .post(function(req, res){
+          db.tometable.findOne({
+            _id: req.params.id
+          }, function(err, lesson){
+            if(lesson){
+              res.sendStatus(422);
+            }
+            else {
+              db.tometable.insert({
+                _id: req.params.id,
+                subject: req.body.subject,
+                teacher: req.body.teacher,
+                room: req.body.room,
+                week: parseInt(req.body.week),
+                day: parseInt(req.body.day),
+                starttome: JSON.parse(req.body.starttome),
+                endtome: JSON.parse(req.body.endtome),
+                deleted: JSON.parse(req.body.deleted.toLowerCase()),
+                userid: req.auth.userid
+              }, function(err, inserted){
+                if(err){
+                  res.sendStatus(500);
+                }
+                else {
+                  res.sendStatus(200);
+                }
+              });
+            }
+          });
+        });
 
 
   return router;
