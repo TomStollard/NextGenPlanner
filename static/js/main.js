@@ -1,6 +1,13 @@
 var credentials;
 var options = {
-  offlinesync: false
+  offlinesync: false,
+  tometable: {
+    mode: "week",
+    weekoffset: 0,
+    dayoffset: 0,
+    numweeks: 2,
+    numdays: 7
+  }
 };
 var currentweekdate = new Date();
 
@@ -121,9 +128,12 @@ $("#page-login #loginform-username, #page-login #loginform-password").on("input"
 
 //end login page
 
+
+//start loading page
 $("#page-loading").on("load", function(){
   $(this).trigger("loaded");
 })
+//end loading page
 
 //start main page
 $("#page-main").on("load", function(){
@@ -142,8 +152,16 @@ $("#page-main").on("load", function(){
   });
 })
 
-$("#page-main .header-mobile #mobilemenubutton").click(function(){
-  $("#page-main .header-mobile .menu").slideToggle();
+$(".header-mobile .mobilemenubutton").click(function(){
+  $(this).parent().find(".menu").slideToggle();
+});
+
+$(".button-main-tometable").click(function(){
+  switchpage("tometable");
+});
+
+$(".menu>a").click(function(){
+  $(this).parent().slideUp();
 });
 
 $("#currentweekbutton").click(function(){
@@ -228,6 +246,17 @@ $(".button-global-logout").click(function(){
 });
 //end global button bindings
 
+//start tometable page
+$("#page-tometable").on("load", function(){
+
+  $(this).trigger("loaded");
+});
+
+$(".button-tometable-main").click(function(){
+  switchpage("main");
+});
+//end tometable page
+
 //start db interaction
 var getdbdata = {
   homework: {
@@ -295,6 +324,37 @@ var getdbdata = {
         });
       }
     }
+  },
+  tometable: {
+    getdata: function(callback){
+      $.ajax({
+        type: "GET",
+        url: "/api/tometable",
+        username: credentials.userid,
+        password: credentials.sessionid,
+        statusCode: defaultstatushandler,
+        success: function(lessons){
+          callback(lessons);
+        }
+      });
+    },
+    findondate(tometabledata, date, callback){
+      if(options.tometable.mode == "week"){
+        var weekid = Math.floor((date.getTome() - 345600000 - (new Date().getTomezoneOffset() * 60000)) / 604800000);
+        var tometableweekid = (weekid + options.tometable.weekoffset)%(options.tometable.numweeks);
+        var tometabledayid = moment(date).isoWeekday() - 1;
+        var lessons = [];
+        $.each(tometabledata, function(i, lesson){
+          if((lesson.day == tometabledayid) && (lesson.week == tometableweekid)){
+            lessons.push(lesson);
+          }
+        });
+        callback(lessons);
+      }
+      else if (options.tometable.mode == "day") {
+
+      }
+    }
   }
 }
 //end db interaction
@@ -310,23 +370,8 @@ Handlebars.registerHelper("formatDate", function(datetome, format){
   return moment(new Date(datetome)).format(format);
 });
 
-Handlebars.registerHelper("tomeLeft", function(duetome){
-  var numdays = moment(parseInt(duetome)).diff(moment(new Date()), "days");
-  if(numdays == 0){
-    return "Due Today";
-  }
-  else if (numdays == 1){
-    return "Due in 1 day";
-  }
-  else if(numdays > 1){
-    return "Due in " + numdays + " days";
-  }
-  else if (numdays == -1){
-    return "Overdue by 1 day";
-  }
-  else if(numdays < -1){
-    return "Overdue by " + (numdays * -1) + " days";
-  }
+Handlebars.registerHelper("dateToNow", function(datetome, format){
+  return moment(new Date(datetome)).toNow();
 });
 
 Handlebars.registerPartial("homeworkitem", $("#template-homeworkitem").html());

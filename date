@@ -4,3 +4,10 @@ function getweek(date){
     (date.getTime() - 345600000 - (new Date().getTimezoneOffset() * 60000)) / 604800000
   );
 }
+
+function getday(date){
+  //different between current time and 00:00, 1st Jan, 1970 (time 0, Unix Time Epoch), taking account of current time zone, divided by number of milliseconds in a day, rounded down to get current day id
+  return Math.floor(
+    (date.getTime() - (new Date().getTimezoneOffset() * 60000)) / 86400000
+  );
+}

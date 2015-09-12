@@ -38,12 +38,12 @@
         <div class="homeworkitem">
           <div class="subject">{{subject}}</div>
           <div class="homework">{{homework}}</div>
-          <div class="due" class="{{#if complete}}complete{{else}}incomplete{{/if}}">{{tomeLeft due}}</div>
+          <div class="due" class="{{#if complete}}complete{{else}}incomplete{{/if}}">Due {{dateToNow due}}</div>
         </div>
       </script>
       <script id="template-thisweek" type="text/x-handlebars-template">
         {{#each days}}
-          {{formatDate date "dddd Do MMMM YYYY"}}
+          <div class="week-dayname">{{formatDate date "dddd Do MMMM YYYY"}}</div>
           {{#each homeworkitems}}
             {{> homeworkitem}}
           {{/each}}
@@ -93,7 +93,7 @@
       </div>
       <div class="header-mobile">
         <div class="headerinner">
-          <span class="glyphicon glyphicon-menu-hamburger" id="mobilemenubutton"></span>
+          <span class="glyphicon glyphicon-menu-hamburger mobilemenubutton"></span>
           <h1>Tom's Planner</h1>
           <div class="menu">
             <a class="button-main-tometable">Tometable</a>
@@ -120,7 +120,7 @@
         <div>
           <div class="panel panel-default" id="mainpage-panel-weeknotes">
             <div class="panel-heading">
-              <h3 class="panel-title">Notes</h3>
+              <h3 class="panel-title">Week Notes</h3>
             </div>
             <div class="panel-body">Week Notes Here</div>
           </div>
@@ -149,6 +149,30 @@
               <h3 class="panel-title">To Complete</h3>
             </div>
             <div class="panel-body">Uncompleted homework here</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-tometable">
+      <div class="header-desktop">
+        <div class="headerinner">
+          <h1>Tom's Tometable</h1>
+          <div class="icons">
+            <img class="button-tometable-main" src="/imgs/tometable.png" />
+            <img class="button-tometable-settings" src="/imgs/settings.png" />
+            <img class="button-global-logout" src="/imgs/logout.png" />
+          </div>
+        </div>
+      </div>
+      <div class="header-mobile">
+        <div class="headerinner">
+          <span class="glyphicon glyphicon-menu-hamburger mobilemenubutton"></span>
+          <h1>Tom's Tometable</h1>
+          <div class="menu">
+            <a class="button-tometable-main">Home</a>
+            <a class="button-main-settings">Settings</a>
+            <a class="button-global-logout">Logout</a>
           </div>
         </div>
       </div>
