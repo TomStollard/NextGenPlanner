@@ -1,15 +1,16 @@
 var credentials;
-var tometable;
+var tometable = [{"_id":"55f094c4980b359294067ed5","userid":"55e2af6d20ee7908126c260c","deleted":false,"day":0,"week":0,"tome":[14,50],"subject":"Maths","teacher":"Mr McCrink","room":"23"}];
 var options = {
   offlinesync: false,
+  nextdaytome: [15, 50],
   tometable: {
-    mode: "week",
+    mode: "day",
     multiweek: {
-      offset: 0,
+      offset: 1,
       numweeks: 2
     },
     multiday: {
-      offset: 0,
+      offset: -1,
       schooldays: [0,1,2,3,4],
       numdays: 10
     }
@@ -222,6 +223,21 @@ function loadweekdetails(callback){
 }
 
 function loaddaydetails(callback){
+  var daydate = moment().startOf("day");
+  var dayname = "Today";
+  var nowtome = [new Date().getHours(), new Date().getMinutes()];
+  if((nowtome[0] == options.nextdaytome[0] && nowtome[0] >= options.nextdaytome[1]) || (nowtome[0] > options.nextdaytome[0])){
+    daydate.add(1, "days");
+    dayname = "Tomorrow";
+  }
+  var lessons = dbdata.tometable.findondate(tometable, daydate.toDate());
+  var i = 0;
+  while((lessons.length < 1) && (i < 30)){
+    daydate.add(1, "days");
+    lessons = dbdata.tometable.findondate(tometable, daydate.toDate());
+    i++;
+  }
+
   callback();
 }
 
@@ -368,7 +384,9 @@ var dbdata = {
             }
           }
           dayid += options.tometable.multiday.offset;
+          console.log(dayid);
           var tometabledayid = dayid%options.tometable.multiday.numdays; //get day id in tometable
+          console.log(tometabledayid);
           var lessons = [];
           $.each(tometabledata, function(i, lesson){ //loop through lessons, check if on correct day
             if((lesson.day == tometabledayid)){
@@ -381,9 +399,9 @@ var dbdata = {
           return [];
         }
       }
-    }
-    else {
-      return [];
+      else {
+        return [];
+      }
     }
   }
 }
