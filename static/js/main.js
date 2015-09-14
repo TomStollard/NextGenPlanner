@@ -1,12 +1,18 @@
 var credentials;
+var tometable;
 var options = {
   offlinesync: false,
   tometable: {
     mode: "week",
-    weekoffset: 0,
-    dayoffset: 0,
-    numweeks: 2,
-    numdays: 7
+    multiweek: {
+      offset: 0,
+      numweeks: 2
+    },
+    multiday: {
+      offset: 0,
+      schooldays: [0,1,2,3,4],
+      numdays: 10
+    }
   }
 };
 var currentweekdate = new Date();
@@ -197,7 +203,7 @@ $("#nextweekbutton").click(function(){
 function loadweekdetails(callback){
   var weekstart = moment(currentweekdate).startOf('isoWeek');
   var weekend = weekstart.clone().add(7, "days").subtract(1, "second");
-  getdbdata.homework.setbetweendates(weekstart.toDate(), weekend.toDate(), function(allhomework){
+  dbdata.homework.setbetweendates(weekstart.toDate(), weekend.toDate(), function(allhomework){
     var days = [];
     for(var i = 0; i < 7; i++){
       var day = {};
@@ -220,7 +226,7 @@ function loaddaydetails(callback){
 }
 
 function loadtododetails(callback){
-  getdbdata.homework.complete("false", function(allhomework){
+  dbdata.homework.complete("false", function(allhomework){
     $("#mainpage-panel-todo .panel-body").html(templates.todo({homework: allhomework}));
     callback();
   });
@@ -258,7 +264,7 @@ $(".button-tometable-main").click(function(){
 //end tometable page
 
 //start db interaction
-var getdbdata = {
+var dbdata = {
   homework: {
     setbetweendates: function(date1, date2, callback){
       //takes two date objects, calls callback with a single argument, all homework items set between these dates
@@ -338,22 +344,46 @@ var getdbdata = {
         }
       });
     },
-    findondate(tometabledata, date, callback){
+    findondate(tometabledata, date){
       if(options.tometable.mode == "week"){
-        var weekid = Math.floor((date.getTome() - 345600000 - (new Date().getTomezoneOffset() * 60000)) / 604800000);
-        var tometableweekid = (weekid + options.tometable.weekoffset)%(options.tometable.numweeks);
-        var tometabledayid = moment(date).isoWeekday() - 1;
+        var weekid = moment(date).diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
+        var tometableweekid = (weekid + options.tometable.multiweek.offset)%(options.tometable.multiweek.numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
+        var tometabledayid = moment(date).isoWeekday() - 1; //get day id from
         var lessons = [];
         $.each(tometabledata, function(i, lesson){
           if((lesson.day == tometabledayid) && (lesson.week == tometableweekid)){
             lessons.push(lesson);
           }
         });
-        callback(lessons);
+        return lessons;
       }
       else if (options.tometable.mode == "day") {
-
+        var dayinweek = moment(date).isoWeekday() - 1;
+        if(dayinweek in options.tometable.multiday.schooldays){
+          var dayid = moment(date).diff(moment(345600000), "days"); //get num of days between first monday in 1970 and date given
+          dayid -= (moment(date).diff(moment(345600000), "weeks") * (7-options.tometable.multiday.schooldays.length)); //subtract all days not counted in previous weeks
+          for(var i = 0; i < dayinweek; i++){ //loop through previous days this week, and remove if not included in rotation
+            if(!(i in options.tometable.multiday.schooldays)){
+              dayid -= 1;
+            }
+          }
+          dayid += options.tometable.multiday.offset;
+          var tometabledayid = dayid%options.tometable.multiday.numdays; //get day id in tometable
+          var lessons = [];
+          $.each(tometabledata, function(i, lesson){ //loop through lessons, check if on correct day
+            if((lesson.day == tometabledayid)){
+              lessons.push(lesson);
+            }
+          });
+          return lessons;
+        }
+        else {
+          return [];
+        }
       }
+    }
+    else {
+      return [];
     }
   }
 }
