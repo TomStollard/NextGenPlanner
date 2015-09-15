@@ -49,37 +49,40 @@
           {{/each}}
         {{/each}}
       </script>
-      <script id="template-todaytomorrow" type="text/x-handlebars-template">
-        {{#each dayitems}}
-            {{#if tome}}
-              <div class="dayitem">
-                <div class="tome">{{tome}}</div>
-                <div class="content">{{content}}</div>
-              </div>
-            {{else}}
-              <div class="dayitem">
-                <div class="content">{{content}}</div>
-              </div>
-            {{/if}}
-        {{/each}}
-
-        <h1>Lessons</h1>
-        {{#if lessons}}
-          {{#each lessons}}
-            <div class="lesson">{{name}} - {{teacher}} - {{room}}</div>
+      <script id="template-dayview" type="text/x-handlebars-template">
+        <div class="panel-heading"><h3 class="panel-title">{{dayname}}</h3></div>
+        <div class="panel-body">
+          {{#each dayitems}}
+              {{#if tome}}
+                <div class="dayitem dayitem-full">
+                  <div class="tome">{{tome}}</div>
+                  <div class="content">{{content}}</div>
+                </div>
+              {{else}}
+                <div class="dayitem dayitem-contentonly">
+                  <div class="content">{{content}}</div>
+                </div>
+              {{/if}}
           {{/each}}
-        {{else}}
-          No Lessons
-        {{/if}}
 
-        <h1>Homework</h1>
-        {{#if homework}}
-          {{#each homework}}
-            {{> homeworkitem}}
-          {{/each}}
-        {{else}}
-          No homework due in.
-        {{/if}}
+          <h3>Lessons</h3>
+          {{#if lessons}}
+            {{#each lessons}}
+              <div class="lesson">{{starttome.[0]}}:{{starttome.[1]}}-{{endtome.[0]}}:{{endtome.[1]}} - {{subject}} - {{teacher}} - Room {{room}}</div>
+            {{/each}}
+          {{else}}
+            No Lessons
+          {{/if}}
+
+          <h3>Homework</h3>
+          {{#if homework}}
+            {{#each homework}}
+              {{> homeworkitem}}
+            {{/each}}
+          {{else}}
+            No homework due in.
+          {{/if}}
+        </div>
       </script>
       <div class="header-desktop">
         <div class="headerinner">

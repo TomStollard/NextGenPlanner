@@ -1,5 +1,5 @@
 var credentials;
-var tometable = [{"_id":"55f094c4980b359294067ed5","userid":"55e2af6d20ee7908126c260c","deleted":false,"day":0,"week":0,"tome":[14,50],"subject":"Maths","teacher":"Mr McCrink","room":"23"}];
+var tometable = [{"_id":"55f094c4980b359294067ed5","userid":"55e2af6d20ee7908126c260c","deleted":false,"day":0,"week":0,"startperiod":0,"endperiod":0,"subject":"Maths","teacher":"Mr McCrink","room":"23"}];
 var options = {
   offlinesync: false,
   nextdaytome: [15, 50],
@@ -11,9 +11,18 @@ var options = {
     },
     multiday: {
       offset: -1,
-      schooldays: [0,1,2,3,4],
       numdays: 10
-    }
+    },
+    schooldays: [0,1,2,3,4],
+    periods: [
+      [09, 10, 09, 55],
+      [09, 55, 10, 40],
+      [10, 40, 11, 25],
+      [11, 45, 12, 30],
+      [12, 30, 13, 15],
+      [14, 25, 15, 10],
+      [15, 10, 15, 55]
+    ]
   }
 };
 var currentweekdate = new Date();
@@ -64,7 +73,7 @@ function switchpage(newpage){
 
 var defaultstatushandler = {
   404: function(){
-    bootbox.alert("Not Found")
+    bootbox.alert("Not Found");
   },
   401: function(){
     bootbox.alert("Sorry, your session appears to have expired or been removed. Please log in again.");
@@ -207,15 +216,17 @@ function loadweekdetails(callback){
   dbdata.homework.setbetweendates(weekstart.toDate(), weekend.toDate(), function(allhomework){
     var days = [];
     for(var i = 0; i < 7; i++){
-      var day = {};
-      day.date = moment(weekstart).add(i, "days").toDate();
-      day.homeworkitems = [];
-      $.each(allhomework, function(i, homeworkitem){
-        if((day.date.getTome() < homeworkitem.set) && (homeworkitem.set < moment(day.date).add(24, "hours").subtract(1, "second").valueOf())){
-          day.homeworkitems.push(homeworkitem);
-        }
-      });
-      days.push(day);
+      if(i in options.tometable.schooldays){
+        var day = {};
+        day.date = moment(weekstart).add(i, "days").toDate();
+        day.homeworkitems = [];
+        $.each(allhomework, function(i, homeworkitem){
+          if((day.date.getTome() < homeworkitem.set) && (homeworkitem.set < moment(day.date).add(24, "hours").subtract(1, "second").valueOf())){
+            day.homeworkitems.push(homeworkitem);
+          }
+        });
+        days.push(day);
+      }
     }
     $("#mainpage-panel-weekhomework .panel-body").html(templates.thisweek({days: days}));
     return callback();
@@ -235,8 +246,20 @@ function loaddaydetails(callback){
   while((lessons.length < 1) && (i < 30)){
     daydate.add(1, "days");
     lessons = dbdata.tometable.findondate(tometable, daydate.toDate());
+    dayname = daydate.format("dddd do");
     i++;
   }
+
+  dbdata.tometable.addperiodtomes(lessons);
+  dbdata.tometable.sortbyperiod(lessons);
+
+  $("#mainpage-panel-todaytomorrow").html(templates.dayview({
+    dayitems: [],
+    lessons: lessons,
+    homework: [],
+    dayname: dayname
+  }));
+  console.log(lessons);
 
   callback();
 }
@@ -360,7 +383,7 @@ var dbdata = {
         }
       });
     },
-    findondate(tometabledata, date){
+    findondate: function(tometabledata, date){
       if(options.tometable.mode == "week"){
         var weekid = moment(date).diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
         var tometableweekid = (weekid + options.tometable.multiweek.offset)%(options.tometable.multiweek.numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
@@ -375,11 +398,11 @@ var dbdata = {
       }
       else if (options.tometable.mode == "day") {
         var dayinweek = moment(date).isoWeekday() - 1;
-        if(dayinweek in options.tometable.multiday.schooldays){
+        if(dayinweek in options.tometable.schooldays){
           var dayid = moment(date).diff(moment(345600000), "days"); //get num of days between first monday in 1970 and date given
-          dayid -= (moment(date).diff(moment(345600000), "weeks") * (7-options.tometable.multiday.schooldays.length)); //subtract all days not counted in previous weeks
+          dayid -= (moment(date).diff(moment(345600000), "weeks") * (7-options.tometable.schooldays.length)); //subtract all days not counted in previous weeks
           for(var i = 0; i < dayinweek; i++){ //loop through previous days this week, and remove if not included in rotation
-            if(!(i in options.tometable.multiday.schooldays)){
+            if(!(i in options.tometable.schooldays)){
               dayid -= 1;
             }
           }
@@ -402,6 +425,24 @@ var dbdata = {
       else {
         return [];
       }
+    },
+    addperiodtomes: function(tometabledata){
+      $.each(tometabledata, function(i, lesson){
+        console.log(lesson);
+        lesson.starttome = options.tometable.periods[lesson.startperiod].slice(0, 2);
+        lesson.endtome = options.tometable.periods[lesson.endperiod].slice(2);
+      })
+    },
+    sortbyperiod: function(tometabledata){
+      tometabledata.sort(function(a, b){
+        if(a.startperiod < b.startperiod){
+          return -1;
+        }
+        if(a.startperiod > b.startperiod){
+          return 1;
+        }
+        return 0;
+      });
     }
   }
 }
@@ -410,7 +451,7 @@ var dbdata = {
 //set up templates
 var templates = {
   "thisweek": Handlebars.compile($("#template-thisweek").html()),
-  "todaytomorrow": Handlebars.compile($("#template-todaytomorrow").html()),
+  "dayview": Handlebars.compile($("#template-dayview").html()),
   "todo": Handlebars.compile($("#template-todo").html())
 }
 
