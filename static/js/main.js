@@ -534,6 +534,7 @@ Handlebars.registerHelper("formatDate", function(datetome, format){
 
 Handlebars.registerHelper("dateToNow", function(datetome, format){
   return moment(new Date(datetome)).toNow();
+  return moment(new Date(datetome)).fromNow();
 });
 
 Handlebars.registerHelper("humanReadableIndex", function(index){
