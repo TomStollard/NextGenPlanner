@@ -1,10 +1,14 @@
 var credentials;
-var tometable = [{"_id":"55f094c4980b359294067ed5","userid":"55e2af6d20ee7908126c260c","deleted":false,"day":0,"week":1,"startperiod":0,"endperiod":6,"subject":"Maths","teacher":"Mr McCrink","room":"23"}];
+//var tometable = [{"_id":"55f094c4980b359294067ed5","userid":"55e2af6d20ee7908126c260c","deleted":false,"day":4,"week":0,"startperiod":4,"endperiod":5,"subject":"Maths","teacher":"Mr McCrink","room":"23"}];
+var tometable = [];
+var switching = false;
+var localoptions = {
+  offlinesync: false
+}
 var options = {
-  offlinesync: false,
   nextdaytome: [15, 50],
   tometable: {
-    mode: "day",
+    mode: "week",
     multiweek: {
       offset: 0,
       numweeks: 2
@@ -29,6 +33,12 @@ var currentweekdate = new Date();
 
 $(document).ready(function(){
   if(Modernizr.localstorage){
+    if(window.localStorage["localoptions"]){
+      localoptions = JSON.parse(window.localStorage["localoptions"]);
+    }
+    if(localoptions.offlinesync){
+      options = JSON.parse(window.localStorage["options"]);
+    }
     if(window.localStorage["credentials"]){
       credentials = JSON.parse(window.localStorage["credentials"]);
       switchpage("main");
@@ -43,32 +53,62 @@ $(document).ready(function(){
 });
 
 function switchpage(newpage){
-  var newpagediv = $("#page-" + newpage);
-  var visiblepages = $(".page.visible");
-  visiblepages.removeClass("visible");
-  newpagediv.data("loaded", false);
-  newpagediv.on("loaded", function(){
-    newpagediv.data("loaded", true);
-  })
-  newpagediv.trigger("load");
-  visiblepages.fadeOut(function(){
-    newpagediv.off("loaded");
-    if(newpagediv.data("loaded")){
-      newpagediv.fadeIn(function(){
-        newpagediv.addClass("visible");
-        newpagediv.trigger("visible");
-      });
-      newpagediv.data("loaded", false);
-    }
-    else{
-      newpagediv.on("loaded", function(){
+  if(switching){
+    setTomeout(function(){
+      switchpage(newpage);
+    }, 200);
+  }
+  else{
+    switching = true;
+    var newpagediv = $("#page-" + newpage);
+    var visiblepages = $(".page.visible");
+    visiblepages.removeClass("visible");
+    newpagediv.data("loaded", false);
+    newpagediv.on("loaded", function(){
+      newpagediv.data("loaded", true);
+    });
+    newpagediv.trigger("load");
+    visiblepages.fadeOut(function(){
+      console.log("maingone");
+      newpagediv.off("loaded");
+      if(newpagediv.data("loaded")){
         newpagediv.fadeIn(function(){
           newpagediv.addClass("visible");
           newpagediv.trigger("visible");
+          switching = false;
         });
-      });
-    }
-  });
+        newpagediv.data("loaded", false);
+      }
+      else{
+        newpagediv.on("loaded", function(){
+          newpagediv.fadeIn(function(){
+            newpagediv.addClass("visible");
+            newpagediv.trigger("visible");
+            switching = false;
+          });
+        });
+      }
+    });
+  }
+}
+
+function loadtometable(callback){
+  if(localoptions.offlinesync){
+    tometable = JSON.parse(window.localStorage["tometable"]);
+  }
+  else{
+    $.ajax({
+      type: "GET",
+      url: "/api/tometable",
+      username: credentials.userid,
+      password: credentials.sessionid,
+      statusCode: defaultstatushandler,
+      success: function(tometabledata){
+        tometable = tometabledata;
+        callback();
+      }
+    });
+  }
 }
 
 var defaultstatushandler = {
@@ -76,8 +116,8 @@ var defaultstatushandler = {
     bootbox.alert("Not Found");
   },
   401: function(){
-    bootbox.alert("Sorry, your session appears to have expired or been removed. Please log in again.");
     switchpage("login");
+    bootbox.alert("Sorry, your session appears to have expired or been removed. Please log in again.");
   }
 }
 
@@ -153,18 +193,20 @@ $("#page-loading").on("load", function(){
 
 //start main page
 $("#page-main").on("load", function(){
-  async.parallel([
-    function(callback){
-      loadweekdetails(callback);
-    },
-    function(callback){
-      loadtododetails(callback);
-    },
-    function(callback){
-      loaddaydetails(callback);
-    }
-  ], function(){
-    $("#page-main").trigger("loaded");
+  loadtometable(function(){
+    async.parallel([
+      function(callback){
+        loadweekdetails(callback);
+      },
+      function(callback){
+        loadtododetails(callback);
+      },
+      function(callback){
+        loaddaydetails(callback);
+      }
+    ], function(){
+      $("#page-main").trigger("loaded");
+    });
   });
 })
 
@@ -533,7 +575,6 @@ Handlebars.registerHelper("formatDate", function(datetome, format){
 });
 
 Handlebars.registerHelper("dateToNow", function(datetome, format){
-  return moment(new Date(datetome)).toNow();
   return moment(new Date(datetome)).fromNow();
 });
 
