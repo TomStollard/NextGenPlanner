@@ -252,6 +252,10 @@ $("#nextweekbutton").click(function(){
   });
 });
 
+$("#addhomeworkbutton").click(function(){
+  $("#modal-addhomework").html(templates.modaladdhomework()).modal("show");
+});
+
 function loadweekdetails(callback){
   var weekstart = moment(currentweekdate).startOf('isoWeek');
   var weekend = weekstart.clone().add(7, "days").subtract(1, "second");
@@ -567,7 +571,8 @@ var templates = {
   "dayview": Handlebars.compile($("#template-dayview").html()),
   "todo": Handlebars.compile($("#template-todo").html()),
   "tometableweekmode": Handlebars.compile($("#template-tometable-weekmode").html()),
-  "tometabledaymode": Handlebars.compile($("#template-tometable-daymode").html())
+  "tometabledaymode": Handlebars.compile($("#template-tometable-daymode").html()),
+  "modaladdhomework": Handlebars.compile($("#template-modal-addhomework").html())
 }
 
 Handlebars.registerHelper("formatDate", function(datetome, format){

@@ -33,7 +33,36 @@
         </div>
       </div>
     </div>
+    <style>
+      #modal-addhomework .modal-header{
+        background-color: white;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+      }
+      #modal-addhomework .modal-content{
+        background-color: grey;
+      }
+      #modal-addhomework .modal-footer{
+        text-align: center;
+      }
+    </style>
     <div class="page" id="page-main">
+      <div class="modal fade" id="modal-addhomework"></div>
+      <script id="template-modal-addhomework" type="text/x-handlebars-template">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span>&tomes;</span></button>
+              <h4 class="modal-title">Add Homework</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default submit">Add</button>
+            </div>
+          </div>
+        </div>
+      </script>
       <script id="template-homeworkitem" type="text/x-handlebars-template">
         <div class="homeworkitem">
           <div class="subject">{{subject}}</div>
