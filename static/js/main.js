@@ -17,7 +17,7 @@ var options = {
       offset: 6,
       numdays: 10
     },
-    schooldays: [0,1,2,3,4],
+    schooldays: [0,2,3,4],
     periods: [
       [09, 10, 09, 55],
       [09, 55, 10, 40],
@@ -30,6 +30,12 @@ var options = {
   }
 };
 var currentweekdate = new Date();
+//calendar disabled dates - read pickaday documentation, passed as argument when initialising (different to .set("enable/disable") when initialised)
+//firstDay argument must also be set to true, otherwise week starts on Sun and everything is offset
+var todisable = [true];
+$.each(options.tometable.schooldays, function(i, day){
+  todisable.push(day + 1);
+});
 
 $(document).ready(function(){
   if(Modernizr.localstorage){
@@ -222,6 +228,23 @@ $(".menu>a").click(function(){
   $(this).parent().slideUp();
 });
 
+$("#movedatepicker").pickadate({
+  disable: todisable,
+  firstDay: true
+});
+$("#movedatepicker").on("change", function(){
+  if($("#movedatepicker").val()){
+    console.log($("#movedatepicker").val());
+    currentweekdate = new Date($("#movedatepicker").val());
+    $("#mainpage-panel-weeknotes").fadeOut();
+    $("#mainpage-panel-weekhomework").fadeOut(function(){
+      loadweekdetails(function(){
+        $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeIn();
+      });
+    });
+  }
+});
+
 $("#currentweekbutton").click(function(){
   currentweekdate = new Date();
   $("#mainpage-panel-weeknotes").fadeOut();
@@ -254,6 +277,10 @@ $("#nextweekbutton").click(function(){
 
 $("#addhomeworkbutton").click(function(){
   $("#modal-addhomework").html(templates.modaladdhomework()).modal("show");
+  $("#modal-addhomework input[name='setpicker']").pickadate({
+    disable: todisable,
+    firstDay: true
+  });
 });
 
 function loadweekdetails(callback){
@@ -523,13 +550,15 @@ var dbdata = {
       });
       $.each(weeks, function(x, week){
         $.each(week, function(y, day){
-          for(var i = 0; i < options.tometable.periods.length; i++){
-            if(day[i]){
-              i = day[i].endperiod;
-            }
-            else {
-              day[i] = false;
-            }
+          if(day){
+            for(var i = 0; i < options.tometable.periods.length; i++){
+              if(day[i]){
+                i = day[i].endperiod;
+              }
+              else {
+                day[i] = false;
+              }
+            }  
           }
         });
       })
