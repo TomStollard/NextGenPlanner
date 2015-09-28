@@ -1,0 +1,28 @@
+{
+  "name": "NextGenPlanner",
+  "main": "index.js",
+  "version": "0.0.0",
+  "authors": [
+    "Tom Stollard <code@tomstollard.me.uk>"
+  ],
+  "description": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "bootbox.js": "bootbox#~4.4.0",
+    "modernizr": "~3.0.0",
+    "dexie": "~1.2.0",
+    "moment": "~2.10.6",
+    "async": "~1.4.2",
+    "pickadate": "~3.5.6"
+  }
+}

@@ -1,0 +1,46 @@
+{{#if days.length}}
+  <div class="tometable">
+    <div class="periods">
+      {{#each periods}}
+        <div>
+        <div>
+          <div class="num">
+            {{humanReadableIndex @index}}
+          </div>
+          <div class="tomes">
+            {{this.[0]}}:{{this.[1]}}<br>{{this.[2]}}:{{this.[3]}}
+          </div>
+        </div>
+        </div>
+      {{/each}}
+    </div>
+    {{#each days}}
+      <div class="tometableday">
+        <div class="daynamecontainer">
+          <div class="dayname">
+            Day {{humanReadableIndex @index}}
+          </div>
+        </div>
+        {{#each this}}
+          {{#if this}}
+            <div class="tometablelesson" style="height: {{this.height}};">
+              <div class="tometablelessoninner">
+                <div class="tometablelessontext">
+                  {{this.subject}}
+                  <br>
+                  {{this.teacher}}
+                  <br>
+                  Room {{this.room}}
+                </div>
+              </div>
+            </div>
+          {{else}}
+            <div class="tometablegap"></div>
+          {{/if}}
+        {{/each}}
+      </div>
+    {{/each}}
+  </div>
+{{else}}
+  No Tometable
+{{/if}}

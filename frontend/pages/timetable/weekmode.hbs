@@ -1,0 +1,4 @@
+{{#each weeks}}
+  <h1>Week {{humanReadableIndex @index}}</h1>
+  {{> tometable days=this periods=../periods}}
+{{/each}}
