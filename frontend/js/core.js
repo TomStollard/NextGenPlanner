@@ -1,0 +1,123 @@
+var credentials;
+//var tometable = [{"_id":"55f094c4980b359294067ed5","userid":"55e2af6d20ee7908126c260c","deleted":false,"day":4,"week":0,"startperiod":4,"endperiod":5,"subject":"Maths","teacher":"Mr McCrink","room":"23"}];
+var tometable = [];
+var switching = false;
+var localoptions = {
+  offlinesync: false
+}
+var options = {
+  nextdaytome: [15, 50],
+  tometable: {
+    mode: "week",
+    multiweek: {
+      offset: 0,
+      numweeks: 2
+    },
+    multiday: {
+      offset: 6,
+      numdays: 10
+    },
+    schooldays: [0,2,3,4],
+    periods: [
+      [09, 10, 09, 55],
+      [09, 55, 10, 40],
+      [10, 40, 11, 25],
+      [11, 45, 12, 30],
+      [12, 30, 13, 15],
+      [14, 25, 15, 10],
+      [15, 10, 15, 55]
+    ]
+  }
+};
+var currentweekdate = new Date();
+//calendar disabled dates - read pickaday documentation, passed as argument when initialising (different to .set("enable/disable") when initialised)
+//firstDay argument must also be set to true, otherwise week starts on Sun and everything is offset
+var todisable = [true];
+$.each(options.tometable.schooldays, function(i, day){
+  todisable.push(day + 1);
+});
+
+$(document).ready(function(){
+  if(window.localStorage["localoptions"]){
+    localoptions = JSON.parse(window.localStorage["localoptions"]);
+  }
+  if(localoptions.offlinesync){
+    options = JSON.parse(window.localStorage["options"]);
+  }
+  if(window.localStorage["credentials"]){
+    credentials = JSON.parse(window.localStorage["credentials"]);
+    switchpage("main");
+  }
+  else {
+    switchpage("login");
+  }
+});
+
+function switchpage(newpage){
+  if(switching){
+    setTomeout(function(){
+      switchpage(newpage);
+    }, 200);
+  }
+  else{
+    switching = true;
+    var newpagediv = $("#page-" + newpage);
+    var visiblepages = $(".page.visible");
+    visiblepages.removeClass("visible");
+    newpagediv.data("loaded", false);
+    newpagediv.on("loaded", function(){
+      newpagediv.data("loaded", true);
+    });
+    newpagediv.trigger("load");
+    visiblepages.fadeOut(function(){
+      console.log("maingone");
+      newpagediv.off("loaded");
+      if(newpagediv.data("loaded")){
+        newpagediv.fadeIn(function(){
+          newpagediv.addClass("visible");
+          newpagediv.trigger("visible");
+          switching = false;
+        });
+        newpagediv.data("loaded", false);
+      }
+      else{
+        newpagediv.on("loaded", function(){
+          newpagediv.fadeIn(function(){
+            newpagediv.addClass("visible");
+            newpagediv.trigger("visible");
+            switching = false;
+          });
+        });
+      }
+    });
+  }
+}
+
+function loadtometable(callback){
+  if(localoptions.offlinesync){
+    tometable = JSON.parse(window.localStorage["tometable"]);
+  }
+  else{
+    $.ajax({
+      type: "GET",
+      url: "/api/tometable",
+      username: credentials.userid,
+      password: credentials.sessionid,
+      statusCode: defaultstatushandler,
+      success: function(tometabledata){
+        tometable = tometabledata;
+        callback();
+      }
+    });
+  }
+}
+
+var defaultstatushandler = {
+  404: function(){
+    bootbox.alert("Not Found");
+  },
+  401: function(){
+    switchpage("login");
+    bootbox.alert("Sorry, your session appears to have expired or been removed. Please log in again.");
+  }
+}

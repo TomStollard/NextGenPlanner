@@ -1,7 +1,7 @@
 $("#page-tometable").on("load", function(){
   if(options.tometable.mode == "day"){
     $("#tometablecontainer").html(
-      templates.tometabledaymode({
+      templates.tometable.daymode({
         periods: options.tometable.periods,
         days: dbdata.tometable.sortintodays(dbdata.tometable.addlessonheight(tometable))
       })
@@ -11,7 +11,7 @@ $("#page-tometable").on("load", function(){
     console.log("HI!");
     console.log(dbdata.tometable.sortintoweeks(dbdata.tometable.addlessonheight(tometable)));
     $("#tometablecontainer").html(
-        templates.tometableweekmode({
+        templates.tometable.weekmode({
           periods: options.tometable.periods,
           weeks: dbdata.tometable.sortintoweeks(dbdata.tometable.addlessonheight(tometable))
         })

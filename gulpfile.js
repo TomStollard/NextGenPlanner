@@ -25,11 +25,18 @@ var libraries = [
     js: ["bower_components/moment/moment.js"]
   },
   {
-    css: ["bower_components/pickadate/lib/thtmes/classic.css", "bower_components/pickadate/lib/thtmes/classic.date.css"],
-    js: ["bower_components/pickadate/lib/picker.js", "bower_components/pickadate/lib/picker.date.js"]
+    css: [],
+    js: ["bower_components/handlebars/handlebars.runtome.js"]
   },
+  {
+    css: ["bower_components/pickadate/lib/themes/classic.css", "bower_components/pickadate/lib/themes/classic.date.css"],
+    js: ["bower_components/pickadate/lib/picker.js", "bower_components/pickadate/lib/picker.date.js"]
+  }
 ];
 var pages = [
+  "loading",
+  "login",
+  "main",
   "tometable"
 ];
 //end config
@@ -122,4 +129,57 @@ gulp.task("pages", ["pages:css", "pages:js", "pages:html", "pages:templates"]);
     }))
     .pipe(minifyHTML())
     .pipe(gulp.dest("./frontend_build"));
+  });
+
+  gulp.task("pages:templates", function(){
+    var templates = [];
+    var partials = [];
+    for(var pageid in pages){
+      templates.push("./frontend/pages/" + pages[pageid] + "/[^_]*.hbs");
+      partials.push("./frontend/pages/" + pages[pageid] + "/_*.hbs");
+    }
+
+    merge(
+      gulp.src(templates, {base: "./frontend/pages/"})
+      .pipe(handlebars())
+      .pipe(wrap("Handlebars.template(<%= contents %>)"))
+      .pipe(declare({
+        namespace: "templates",
+        noRedeclare: true,
+        processName: function(filePath){return declare.processNameByPath(filePath.replace("frontend\\pages\\", ""))}
+      })),
+      gulp.src(partials)
+      .pipe(handlebars())
+      .pipe(wrap("Handlebars.registerPartial(<%= processPartialName(file.relative) %>, Handlebars.template(<%= contents %>));", {}, {
+        imports: {
+          processPartialName: function(fileName) {
+            return JSON.stringify(fileName.replace(".js", "").substr(1));
+          }
+        }
+      }))
+    )
+    .pipe(concat("templates.js"))
+    .pipe(gulp.dest("./frontend_build/js"));
+  });
+
+gulp.task("other", ["other:mainjs", "other:maincss", "other:imgs"]);
+
+  gulp.task("other:mainjs", function(){
+    gulp.src("./frontend/js/*.js")
+    .pipe(uglify())
+    .pipe(concat("main.js"))
+    .pipe(gulp.dest("./frontend_build/js"))
+  });
+
+  gulp.task("other:maincss", function(){
+    gulp.src("./frontend/css/*.css")
+    .pipe(autoprefixer())
+    .pipe(minifycss())
+    .pipe(concat("main.css"))
+    .pipe(gulp.dest("./frontend_build/css"))
+  });
+
+  gulp.task("other:imgs", function(){
+    gulp.src("./frontend/imgs/*")
+    .pipe(gulp.dest("./frontend_build/imgs"))
   });
