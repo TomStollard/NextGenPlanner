@@ -170,6 +170,7 @@ gulp.task("pages#watch", function(){
       }))
     )
     .pipe(concat("templates.js"))
+    .pipe(uglify())
     .pipe(gulp.dest("./frontend_build/js"));
   });
 
