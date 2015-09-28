@@ -42,6 +42,7 @@ var pages = [
 //end config
 
 var gulp = require("gulp"),
+    watch = require("gulp-watch"),
     concat = require("gulp-concat"),
     minifycss = require("gulp-minify-css"),
     autoprefixer = require("gulp-autoprefixer"),
@@ -54,10 +55,9 @@ var gulp = require("gulp"),
     wrap = require("gulp-wrap");
 
 gulp.task("default", ["libraries", "pages", "other"]);
-gulp.task("watch", ["libraries#watch", "pages#watch", "other#watch"]);
+gulp.task("watch", ["pages#watch", "other#watch"]);
 
 gulp.task("libraries", ["libraries:css", "libraries:js"]);
-gulp.task("libraries#watch", ["libraries:css#watch", "libraries:js#watch"]);
 
   gulp.task("libraries:css", function(){
     cssfiles = [];
@@ -88,6 +88,12 @@ gulp.task("libraries#watch", ["libraries:css#watch", "libraries:js#watch"]);
   });
 
 gulp.task("pages", ["pages:css", "pages:js", "pages:html", "pages:templates"]);
+gulp.task("pages#watch", function(){
+  gulp.watch("./frontend/pages/**/*.html", ["pages:html"]);
+  gulp.watch("./frontend/pages/**/*.hbs", ["pages:templates"]);
+  gulp.watch("./frontend/pages/**/*.js", ["pages:js"]);
+  gulp.watch("./frontend/pages/**/*.*css", ["pages:css"]);
+})
 
   gulp.task("pages:css", function(){
     var cssfiles = [];
