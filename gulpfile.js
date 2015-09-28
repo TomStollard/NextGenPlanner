@@ -90,6 +90,7 @@ gulp.task("libraries", ["libraries:css", "libraries:js"]);
 gulp.task("pages", ["pages:css", "pages:js", "pages:html", "pages:templates"]);
 gulp.task("pages#watch", function(){
   gulp.watch("./frontend/pages/**/*.html", ["pages:html"]);
+  gulp.watch("./frontend/index.html", ["pages:html"]);
   gulp.watch("./frontend/pages/**/*.hbs", ["pages:templates"]);
   gulp.watch("./frontend/pages/**/*.js", ["pages:js"]);
   gulp.watch("./frontend/pages/**/*.*css", ["pages:css"]);
@@ -173,6 +174,11 @@ gulp.task("pages#watch", function(){
   });
 
 gulp.task("other", ["other:mainjs", "other:maincss", "other:imgs"]);
+gulp.task("other#watch", function(){
+  gulp.watch("./frontend/js/**", ["other:mainjs"]);
+  gulp.watch("./frontend/css/**", ["other:maincss"]);
+  gulp.watch("./frontend/imgs/**", ["other:imgs"]);
+})
 
   gulp.task("other:mainjs", function(){
     gulp.src("./frontend/js/*.js")
