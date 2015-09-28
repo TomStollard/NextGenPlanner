@@ -141,7 +141,9 @@ gulp.task("pages", ["pages:css", "pages:js", "pages:html", "pages:templates"]);
 
     merge(
       gulp.src(templates, {base: "./frontend/pages/"})
-      .pipe(handlebars())
+      .pipe(handlebars({
+        handlebars: require("handlebars")
+      }))
       .pipe(wrap("Handlebars.template(<%= contents %>)"))
       .pipe(declare({
         namespace: "templates",
@@ -149,7 +151,9 @@ gulp.task("pages", ["pages:css", "pages:js", "pages:html", "pages:templates"]);
         processName: function(filePath){return declare.processNameByPath(filePath.replace("frontend\\pages\\", ""))}
       })),
       gulp.src(partials)
-      .pipe(handlebars())
+      .pipe(handlebars({
+        handlebars: require("handlebars")
+      }))
       .pipe(wrap("Handlebars.registerPartial(<%= processPartialName(file.relative) %>, Handlebars.template(<%= contents %>));", {}, {
         imports: {
           processPartialName: function(fileName) {
