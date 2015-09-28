@@ -53,6 +53,7 @@ var gulp = require("gulp"),
     declare = require("gulp-declare"),
     handlebars = require("gulp-handlebars"),
     wrap = require("gulp-wrap");
+    sourcemaps = require("gulp-sourcemaps");
 
 gulp.task("default", ["libraries", "pages", "other"]);
 gulp.task("watch", ["pages#watch", "other#watch"]);
@@ -67,9 +68,11 @@ gulp.task("libraries", ["libraries:css", "libraries:js"]);
       }
     }
     gulp.src(cssfiles)
+    .pipe(sourcemaps.init())
     .pipe(autoprefixer())
     .pipe(minifycss())
     .pipe(concat("libs.css"))
+    .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/css"));
   });
 
@@ -82,8 +85,10 @@ gulp.task("libraries", ["libraries:css", "libraries:js"]);
     }
 
     gulp.src(jsfiles)
+    .pipe(sourcemaps.init())
     .pipe(concat("libs.js"))
     .pipe(uglify())
+    .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/js"));
   });
 
@@ -103,9 +108,11 @@ gulp.task("pages#watch", function(){
     }
 
     gulp.src(cssfiles)
+    .pipe(sourcemaps.init())
     .pipe(autoprefixer())
     .pipe(minifycss())
     .pipe(concat("pages.css"))
+    .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/css"));
   });
 
@@ -116,8 +123,10 @@ gulp.task("pages#watch", function(){
     }
 
     gulp.src(jsfiles)
+    .pipe(sourcemaps.init())
     .pipe(concat("pages.js"))
     .pipe(uglify())
+    .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/js"));
   });
 
@@ -183,16 +192,20 @@ gulp.task("other#watch", function(){
 
   gulp.task("other:mainjs", function(){
     gulp.src("./frontend/js/*.js")
+    .pipe(sourcemaps.init())
     .pipe(uglify())
     .pipe(concat("main.js"))
+    .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/js"))
   });
 
   gulp.task("other:maincss", function(){
     gulp.src("./frontend/css/*.css")
+    .pipe(sourcemaps.init())
     .pipe(autoprefixer())
     .pipe(minifycss())
     .pipe(concat("main.css"))
+    .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/css"))
   });
 
