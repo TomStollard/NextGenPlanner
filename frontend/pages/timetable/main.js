@@ -8,8 +8,6 @@ $("#page-tometable").on("load", function(){
     );
   }
   if(options.tometable.mode == "week"){
-    console.log("HI!");
-    console.log(dbdata.tometable.sortintoweeks(dbdata.tometable.addlessonheight(tometable)));
     $("#tometablecontainer").html(
         templates.tometable.weekmode({
           periods: options.tometable.periods,

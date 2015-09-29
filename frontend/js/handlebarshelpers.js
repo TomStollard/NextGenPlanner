@@ -9,3 +9,7 @@ Handlebars.registerHelper("dateToNow", function(datetome, format){
 Handlebars.registerHelper("humanReadableIndex", function(index){
   return index + 1;
 });
+
+Handlebars.registerHelper("dayName", function(index){
+  return ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][index];
+});

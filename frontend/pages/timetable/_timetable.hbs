@@ -18,7 +18,11 @@
       <div class="tometableday">
         <div class="daynamecontainer">
           <div class="dayname">
-            Day {{humanReadableIndex @index}}
+            {{#if ../weekmode}}
+              {{dayName @index}}
+            {{else}}
+              Day {{humanReadableIndex @index}}
+            {{/if}}
           </div>
         </div>
         {{#each this}}

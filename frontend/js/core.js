@@ -17,7 +17,7 @@ var options = {
       offset: 6,
       numdays: 10
     },
-    schooldays: [0,2,3,4],
+    schooldays: [0,1,2,3,4],
     periods: [
       [09, 10, 09, 55],
       [09, 55, 10, 40],

@@ -83,8 +83,6 @@ var dbdata = {
         if(options.tometable.mode == "week"){
           var weekid = moment(date).diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
           var tometableweekid = (weekid + options.tometable.multiweek.offset)%(options.tometable.multiweek.numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
-          console.log(date);
-          console.log(tometableweekid);
           var tometabledayid = moment(date).isoWeekday() - 1; //get day id from
           var lessons = [];
           $.each(tometabledata, function(i, lesson){
