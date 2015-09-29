@@ -104,7 +104,7 @@ gulp.task("pages#watch", function(){
   gulp.task("pages:css", function(){
     var cssfiles = [];
     for(var pageid in pages){
-      cssfiles.push("./frontend/pages/" + pages[pageid] + "/*.css");
+      cssfiles.push("./frontend/pages/" + pages[pageid] + "/**/*.css");
     }
 
     gulp.src(cssfiles)
@@ -119,7 +119,7 @@ gulp.task("pages#watch", function(){
   gulp.task("pages:js", function(){
     var jsfiles = [];
     for(var pageid in pages){
-      jsfiles.push("./frontend/pages/" + pages[pageid] + "/*.js");
+      jsfiles.push("./frontend/pages/" + pages[pageid] + "/**/*.js");
     }
 
     gulp.src(jsfiles)
@@ -151,8 +151,8 @@ gulp.task("pages#watch", function(){
     var templates = [];
     var partials = [];
     for(var pageid in pages){
-      templates.push("./frontend/pages/" + pages[pageid] + "/[^_]*.hbs");
-      partials.push("./frontend/pages/" + pages[pageid] + "/_*.hbs");
+      templates.push("./frontend/pages/" + pages[pageid] + "/**/*.hbs");
+      partials.push("./frontend/pages/" + pages[pageid] + "/**/partials/*.hbs");
     }
 
     merge(
@@ -164,16 +164,16 @@ gulp.task("pages#watch", function(){
       .pipe(declare({
         namespace: "templates",
         noRedeclare: true,
-        processName: function(filePath){return declare.processNameByPath(filePath.replace("frontend\\pages\\", ""))}
+        processName: function(filePath){return declare.processNameByPath(filePath.replace("frontend\\pages\\", "").replace("templates\\", ""))}
       })),
-      gulp.src(partials)
+      gulp.src(partials, {base: "./frontend/pages/"})
       .pipe(handlebars({
         handlebars: require("handlebars")
       }))
       .pipe(wrap("Handlebars.registerPartial(<%= processPartialName(file.relative) %>, Handlebars.template(<%= contents %>));", {}, {
         imports: {
           processPartialName: function(fileName) {
-            return JSON.stringify(fileName.replace(".js", "").substr(1));
+            return JSON.stringify(fileName.replace(".js", "").replace("templates\\", "").replace("partials\\", "").replace("\\", "."));
           }
         }
       }))
