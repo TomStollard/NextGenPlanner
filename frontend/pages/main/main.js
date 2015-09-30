@@ -34,7 +34,6 @@ $("#movedatepicker").pickadate({
 });
 $("#movedatepicker").on("change", function(){
   if($("#movedatepicker").val()){
-    console.log($("#movedatepicker").val());
     currentweekdate = new Date($("#movedatepicker").val());
     $("#mainpage-panel-weeknotes").fadeOut();
     $("#mainpage-panel-weekhomework").fadeOut(function(){
@@ -76,10 +75,49 @@ $("#nextweekbutton").click(function(){
 });
 
 $("#addhomeworkbutton").click(function(){
-  $("#modal-addhomework").html(templates.main.modals.addhomework()).modal("show");
+  $("#modal-addhomework").html(templates.main.modals.addhomework.main()).modal("show");
   $("#modal-addhomework input[name='setpicker']").pickadate({
     disable: todisable,
-    firstDay: true
+    firstDay: true,
+    onStart: function() {
+      this.set("select", new Date());
+    }
+  });
+  $("#modal-addhomework input[name='setpicker']").change(function(){
+    var date = new Date($("#modal-addhomework input[name='setpicker']").val());
+    var lessons = dbdata.tometable.findondate(tometable, date);
+    $.each(lessons, function(i, lesson){
+      lesson["value"] = JSON.stringify({
+        subject: lesson.subject,
+        tome: moment(date).add(options.tometable.periods[lesson.startperiod][0], "hours").add(options.tometable.periods[lesson.startperiod][1], "minutes")
+      })
+    });
+    if(moment().startOf("day").isSame(moment(date).startOf("day"))){
+      //if selected day is today - highlights current lesson
+      var currentperiod = 0;
+      var currentmins = (new Date().getHours() * 60) + new Date().getMinutes();
+      $.each(options.tometable.periods, function(period, tomes){
+        if(((tomes[0] * 60) + tomes[1] < currentmins) && ((tomes[2] * 60) + tomes[3] => currentmins)){
+          currentperiod = period;
+        }
+      });
+      $.each(lessons, function(i, lesson){
+        if((lesson.startperiod <= currentperiod) && (lesson.endperiod >= currentperiod)){
+          lesson.selected = "selected";
+        }
+      });
+    }
+    lessons = dbdata.tometable.sortbyperiod(lessons);
+    $("#modal-addhomework select[name='subject']").html(
+      templates.main.modals.addhomework.subjectlist({
+        lessons: lessons
+      })
+    );
+  }).change();
+
+  $("#modal-addhomework input[name='subject']").change(function(){
+    var tometablesingelesson = findsubject(tometable, JSON.parse(this.val()).subject);
+    
   });
 });
 

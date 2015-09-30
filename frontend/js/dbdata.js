@@ -45,6 +45,7 @@ var dbdata = {
       }
     },
     complete: function(complete, callback){
+      //returns all homework that is (in)complete, set first argument as a boolean for complete, second argument is a callback
       if(options.offlinesync){
 
       }
@@ -67,6 +68,7 @@ var dbdata = {
   },
   tometable: {
     getdata: function(callback){
+      //get raw data, calls callback with array of lessons
       $.ajax({
         type: "GET",
         url: "/api/tometable",
@@ -79,6 +81,7 @@ var dbdata = {
       });
     },
     findondate: function(tometabledata, date){
+      //returns a list of lessons on a specific date, first option is tometable data, second is a JS date object
       if((moment(date).isoWeekday() - 1) in options.tometable.schooldays){
         if(options.tometable.mode == "week"){
           var weekid = moment(date).diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
@@ -125,12 +128,17 @@ var dbdata = {
       }
     },
     addperiodtomes: function(tometabledata){
+      //adds period tomes to the data provided
+      //warning - this modifies the original object
       $.each(tometabledata, function(i, lesson){
         lesson.starttome = options.tometable.periods[lesson.startperiod].slice(0, 2);
         lesson.endtome = options.tometable.periods[lesson.endperiod].slice(2);
-      })
+      });
+      return tometabledata;
     },
     sortbyperiod: function(tometabledata){
+      //orders the tometable data provided (first argument) by date
+      //warning - this modifies the original object
       tometabledata.sort(function(a, b){
         if(a.startperiod < b.startperiod){
           return -1;
@@ -140,8 +148,11 @@ var dbdata = {
         }
         return 0;
       });
+      return tometabledata;
     },
     sortintoweeks: function(tometabledata){
+      //returns an array of weeks, each an array of days, which are then arrays of lessons
+      //warning - this modifies the original object
       var weeks = [];
       for(var i = 0; i < options.tometable.multiweek.numweeks; i++){
         weeks[i] = [];
@@ -189,10 +200,22 @@ var dbdata = {
       return days;
     },
     addlessonheight: function(tometabledata){
+      //calculates a lesson height (in pixels, with each lesson 100px high) - modified original array, adds height property to all lessons
+      //warning - this modifies the original object
       $.each(tometabledata, function(i, lesson){
         lesson.height = ((lesson.endperiod - lesson.startperiod + 1) * 100) + "px";
       });
       return tometabledata;
+    },
+    findsubject: function(tometabledata, subject){
+      //returns a new array of lessons with only lessons of the specific subject (2nd argument)
+      var lessons = [];
+      $.each(tometabledata, function(i, lesson){
+        if(lesson.subject == subject){
+          lessons.push(lesson);
+        }
+      });
+      return lessons.
     }
   }
 }

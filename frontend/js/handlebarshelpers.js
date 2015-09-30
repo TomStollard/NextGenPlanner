@@ -1,5 +1,10 @@
 Handlebars.registerHelper("formatDate", function(datetome, format){
-  return moment(new Date(datetome)).format(format);
+  if(datetome){
+    return moment(new Date(datetome)).format(format);
+  }
+  else{
+    return moment(new Date()).format(format);
+  }
 });
 
 Handlebars.registerHelper("dateToNow", function(datetome, format){
