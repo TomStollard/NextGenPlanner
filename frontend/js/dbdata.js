@@ -215,7 +215,7 @@ var dbdata = {
           lessons.push(lesson);
         }
       });
-      return lessons.
+      return lessons;
     }
   }
 }

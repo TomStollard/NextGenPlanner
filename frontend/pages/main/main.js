@@ -97,7 +97,7 @@ $("#addhomeworkbutton").click(function(){
       var currentperiod = 0;
       var currentmins = (new Date().getHours() * 60) + new Date().getMinutes();
       $.each(options.tometable.periods, function(period, tomes){
-        if(((tomes[0] * 60) + tomes[1] < currentmins) && ((tomes[2] * 60) + tomes[3] => currentmins)){
+        if((((tomes[0] * 60) + tomes[1]) < currentmins) && (((tomes[2] * 60) + tomes[3]) >= currentmins)){
           currentperiod = period;
         }
       });
@@ -117,7 +117,6 @@ $("#addhomeworkbutton").click(function(){
 
   $("#modal-addhomework input[name='subject']").change(function(){
     var tometablesingelesson = findsubject(tometable, JSON.parse(this.val()).subject);
-    
   });
 });
 
