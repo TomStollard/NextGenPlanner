@@ -11,7 +11,7 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var db = mongojs(process.env.DBURL, ["sessions", "users", "homework", "tometable"]);
+var db = mongojs(process.env.DBURL, ["sessions", "users", "homework", "tometable"], {authMechanism: 'ScramSHA1'});
 
 var apirouter = require("./api.js")(db);
 var loginrouter = require("./login.js")(db);
