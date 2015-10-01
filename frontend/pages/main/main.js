@@ -89,7 +89,7 @@ $("#addhomeworkbutton").click(function(){
     $.each(lessons, function(i, lesson){
       lesson["value"] = JSON.stringify({
         subject: lesson.subject,
-        tome: moment(date).add(options.tometable.periods[lesson.startperiod][0], "hours").add(options.tometable.periods[lesson.startperiod][1], "minutes")
+        tome: moment(date).add(options.tometable.periods[lesson.startperiod][0], "hours").add(options.tometable.periods[lesson.startperiod][1], "minutes").valueOf()
       })
     });
     if(moment().startOf("day").isSame(moment(date).startOf("day"))){
@@ -113,11 +113,33 @@ $("#addhomeworkbutton").click(function(){
         lessons: lessons
       })
     );
+    $("#modal-addhomework select[name='subject']").change();
   }).change();
 
-  $("#modal-addhomework input[name='subject']").change(function(){
-    var tometablesingelesson = findsubject(tometable, JSON.parse(this.val()).subject);
-  });
+  $("#modal-addhomework select[name='subject']").change(function(){
+    var tometableSingleLesson = dbdata.tometable.findsubject(tometable, JSON.parse($(this).val()).subject);
+    var x = 1;
+    var startdate = new Date($("#modal-addhomework input[name='setpicker']").val())
+    var lessons = [];
+    while(x < 30){
+      $.each(dbdata.tometable.findondate(tometableSingleLesson, moment(startdate).add(x, "days").toDate()), function(i, lesson){
+        lessons.push({
+          teacher: lesson.teacher,
+          date: moment(startdate).startOf("day").add(x, "days").add(options.tometable.periods[lesson.startperiod][0], "hours").add(options.tometable.periods[lesson.startperiod][1], "minutes").toDate(),
+          period: lesson.startperiod
+        });
+      });
+      x++;
+    }
+    lessons.sort(function(a, b){
+      return a.date - b.date;
+    });
+    $("#modal-addhomework select[name='duelesson']").html(
+      templates.main.modals.addhomework.duelessonlist({
+        lessons: lessons
+      })
+    );
+  }).change();
 });
 
 function loadweekdetails(callback){

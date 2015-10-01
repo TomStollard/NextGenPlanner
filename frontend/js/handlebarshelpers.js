@@ -7,8 +7,19 @@ Handlebars.registerHelper("formatDate", function(datetome, format){
   }
 });
 
-Handlebars.registerHelper("dateToNow", function(datetome, format){
+Handlebars.registerHelper("dateToNow", function(datetome){
   return moment(new Date(datetome)).fromNow();
+});
+
+Handlebars.registerHelper("dateCalendar", function(datetome){
+  return moment(datetome).calendar(null, {
+    sameDay: "[Today]",
+    nextDay: "[Tomorrow]",
+    nextWeek: "[Next] dddd",
+    lastDay: "[Yesterday]",
+    lastWeek: "[Last] dddd",
+    sameElse : "Do MMM"
+  });
 });
 
 Handlebars.registerHelper("humanReadableIndex", function(index){
