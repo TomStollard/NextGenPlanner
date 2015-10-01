@@ -21,3 +21,14 @@ $("#page-tometable").on("load", function(){
 $(".button-tometable-main").click(function(){
   switchpage("main");
 });
+
+$("#addlessonbutton").click(function(){
+  $("#modal-addlesson").html(
+    templates.tometable.modals.addlesson.main({
+      periods: options.tometable.periods,
+      days: options.tometable.schooldays,
+      weekmode: Boolean(options.tometable.mode == "week"),
+      numweeks: options.tometable.multiweek.numweeks
+    })
+  ).modal("show");
+});
