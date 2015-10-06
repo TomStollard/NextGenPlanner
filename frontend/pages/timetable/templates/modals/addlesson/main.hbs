@@ -10,7 +10,9 @@
           <label for="setpicker" class="col-xs-2 control-label">Subject</label>
           <div class="col-xs-10">
             <div style="position: relative;">
-              <input type="text" name="subject" value="" class="form-control"></input>
+              <input type="text" name="subject" value="" class="form-control" style="position: absolute; z-index: 2; background: transparent;"></input>
+              <input type="text" name="subject-suggest" disabled="true" value="" class="form-control" style="position: absolute; z-index: 1; color: lightgrey; background: white;"></input>
+              <div style="height: 34px;"></div>
             </div>
           </div>
         </div>
@@ -26,7 +28,7 @@
           <label for="setpicker" class="col-xs-2 control-label">Location</label>
           <div class="col-xs-10">
             <div style="position: relative;">
-              <input type="text" name="teacher" value="" class="form-control" value="Room "></input>
+              <input type="text" name="location" value="" class="form-control" value="Room "></input>
             </div>
           </div>
         </div>

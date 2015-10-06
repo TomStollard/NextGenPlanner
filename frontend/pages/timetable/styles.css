@@ -84,3 +84,24 @@
   width: 100%;
   text-align: center;
 }
+
+.autocomplete-suggestions{
+  border: 1px solid darkgrey;
+  border-top: none;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: white;
+}
+
+.autocomplete-suggestion{
+  padding: 2px 5px;
+  border-bottom: 1px solid lightgrey
+}
+
+.autocomplete-suggestion:last-child{
+  border-bottom: none;
+}
+
+.autocomplete-selected{
+  background-color: lightgrey;
+}

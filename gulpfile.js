@@ -31,6 +31,10 @@ var libraries = [
   {
     css: ["bower_components/pickadate/lib/themes/classic.css", "bower_components/pickadate/lib/themes/classic.date.css"],
     js: ["bower_components/pickadate/lib/picker.js", "bower_components/pickadate/lib/picker.date.js"]
+  },
+  {
+    css: [],
+    js: ["bower_components/devbridge-autocomplete/dist/jquery.autocomplete.js"]
   }
 ];
 var pages = [
