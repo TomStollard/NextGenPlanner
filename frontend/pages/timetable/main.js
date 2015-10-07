@@ -35,7 +35,7 @@ $("#addlessonbutton").click(function(){
   $.each(tometable, function(i, lesson){
     subjects.push(lesson.subject);
     teachers.push(lesson.teacher);
-    locations.push(lesson.room);
+    locations.push(lesson.location);
   });
   console.log(locations);
   $("#modal-addlesson").html(
@@ -62,7 +62,7 @@ $("#addlessonbutton").click(function(){
       $.each(tometable, function(i, lesson){
         if(lesson.subject == $("#modal-addlesson input[name='subject']").val()){
           teacher = lesson.teacher;
-          location = lesson.room;
+          location = lesson.location;
         }
       });
       $("#modal-addlesson input[name='teacher']").val(teacher);

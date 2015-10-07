@@ -308,7 +308,7 @@ module.exports = function(db){
                 _id: req.params.id,
                 subject: req.body.subject,
                 teacher: req.body.teacher,
-                room: req.body.room,
+                location: req.body.location,
                 week: parseInt(req.body.week),
                 day: parseInt(req.body.day),
                 starttome: JSON.parse(req.body.starttome),
