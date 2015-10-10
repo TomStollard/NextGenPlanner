@@ -311,8 +311,8 @@ module.exports = function(db){
                 location: req.body.location,
                 week: parseInt(req.body.week),
                 day: parseInt(req.body.day),
-                starttome: JSON.parse(req.body.starttome),
-                endtome: JSON.parse(req.body.endtome),
+                startperiod: JSON.parse(req.body.startperiod),
+                endperiod: JSON.parse(req.body.endperiod),
                 deleted: JSON.parse(req.body.deleted.toLowerCase()),
                 userid: req.auth.userid
               }, function(err, inserted){

@@ -37,13 +37,37 @@ $("#addlessonbutton").click(function(){
     teachers.push(lesson.teacher);
     locations.push(lesson.location);
   });
-  console.log(locations);
+  var nextperiod = 0;
+  var nextday = 0;
+  var nextweek = 0;
+  var lastlesson = dbdata.tometable.getlastlesson(tometable);
+  nextperiod = lastlesson.endperiod + 1;
+  if(nextperiod >= options.tometable.periods.length){
+    nextperiod = 0;
+    nextday = lastlesson.day + 1;
+  }
+  else{
+    nextday = lastlesson.day;
+  }
+  if(nextday >= options.tometable.schooldays.length){
+    nextday = 0;
+    nextweek = lastlesson.week + 1;
+  }
+  else{
+    nextweek = lastlesson.week;
+  }
+  if(nextweek >= options.tometable.multiweek.numweeks){
+    nextweek = 0;
+  }
   $("#modal-addlesson").html(
     templates.tometable.modals.addlesson.main({
       periods: options.tometable.periods,
       days: options.tometable.schooldays,
       weekmode: Boolean(options.tometable.mode == "week"),
-      numweeks: options.tometable.multiweek.numweeks
+      numweeks: options.tometable.multiweek.numweeks,
+      defaultperiod: nextperiod,
+      defaultday: nextday,
+      defaultweek: nextweek
     })
   )
   .on("shown.bs.modal", function(){
@@ -66,9 +90,48 @@ $("#addlessonbutton").click(function(){
         }
       });
       $("#modal-addlesson input[name='teacher']").val(teacher);
-      $("#modal-addlesson input[name='location']").val(location);
     })
     .focus();
+
+    $("#modal-addlesson input[name='teacher']").autocomplete({
+      lookup: teachers,
+      onHint: function(hint){
+        $("#modal-addlesson input[name='teacher-suggest']").val(hint);
+      },
+      onSelect: function(){
+        $(this).change();
+      }
+    }).change(function(){
+      var location = "";
+      $.each(tometable, function(i, lesson){
+        if(lesson.subject == $("#modal-addlesson input[name='subject']").val() && lesson.teacher == $("#modal-addlesson input[name='teacher']").val()){
+          location = lesson.location;
+        }
+      });
+      if(location){
+        $("#modal-addlesson input[name='location']").val(location);
+      }
+      else{
+        $.each(tometable, function(i, lesson){
+          if(lesson.subject == $("#modal-addlesson input[name='subject']").val()){
+            location = lesson.location;
+          }
+        });
+        $("#modal-addlesson input[name='location']").val(location);
+      }
+    });
   })
   .modal("show");
+
+  $("#modal-addlesson form").submit(function(e){
+    e.preventDefault();
+    console.log({
+      subject: $("#modal-addlesson form input[name='subject']").val(),
+      teacher: $("#modal-addlesson form input[name='techer']").val(),
+      location: $("#modal-addlesson form input[name='location']").val(),
+      startperiod: $("#modal-addlesson form select[name='startperiod']").val(),
+      day: $("#modal-addlesson form select[name='day']").val(),
+      week: (parseInt($("#modal-addlesson form input[name='week']").val()) - 1)
+    });
+  });
 });

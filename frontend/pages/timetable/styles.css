@@ -105,3 +105,16 @@
 .autocomplete-selected{
   background-color: lightgrey;
 }
+
+.form-control.autocomplete-input{
+  position: absolute;
+  z-index: 2;
+  background: transparent;
+}
+
+.form-control.autocomplete-suggest{
+  position: absolute;
+  z-index: 1;
+  color: lightgrey;
+  background: white;
+}

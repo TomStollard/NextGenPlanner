@@ -29,3 +29,15 @@ Handlebars.registerHelper("humanReadableIndex", function(index){
 Handlebars.registerHelper("dayName", function(index){
   return ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][index];
 });
+
+Handlebars.registerHelper("ifeq", function(a, b, options){
+  console.log("ifeq");
+  console.log(a);
+  console.log(b);
+  if(a == b){
+    return options.fn(this);
+  }
+  else{
+    return options.inverse(this);
+  }
+});

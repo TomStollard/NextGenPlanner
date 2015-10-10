@@ -216,6 +216,23 @@ var dbdata = {
         }
       });
       return lessons;
+    },
+    getlastlesson: function(tometabledata){
+      var max = 0;
+      var lastthing;
+      $.each(tometabledata, function(i, lesson){
+        if(options.tometable.mode == "week"){
+          var orderid = (lesson.week * options.tometable.schooldays.length * options.tometable.periods.length) + (lesson.day * options.tometable.periods.length) + (lesson.endperiod);
+        }
+        else if(options.tometable.mode == "day"){
+          var orderid = (lesson.day * options.tometable.periods.length) + (lesson.endperiod);
+        }
+        if(orderid > max){
+          max = orderid;
+          lastthing = lesson;
+        }
+      });
+      return lastthing;
     }
   }
 }
