@@ -54,29 +54,21 @@ $(document).ready(function(){
 });
 
 function switchpage(newpage){
-  if(switching){
-    setTomeout(function(){
-      switchpage(newpage);
-    }, 200);
-  }
-  else{
-    switching = true;
-    var newpagediv = $("#page-" + newpage);
-    var visiblepages = $(".page.visible");
-    visiblepages.removeClass("visible");
-    newpagediv.data("loaded", false);
+  var newpagediv = $("#page-" + newpage);
+  var visiblepages = $(".page.visible");
+  $(".page.visible").removeClass("visible");
+  newpagediv.data("loaded", false);
+  if(visiblepages.length){
     newpagediv.on("loaded", function(){
       newpagediv.data("loaded", true);
     });
     newpagediv.trigger("load");
     visiblepages.fadeOut(function(){
-      console.log("maingone");
       newpagediv.off("loaded");
       if(newpagediv.data("loaded")){
         newpagediv.fadeIn(function(){
           newpagediv.addClass("visible");
           newpagediv.trigger("visible");
-          switching = false;
         });
         newpagediv.data("loaded", false);
       }
@@ -85,11 +77,19 @@ function switchpage(newpage){
           newpagediv.fadeIn(function(){
             newpagediv.addClass("visible");
             newpagediv.trigger("visible");
-            switching = false;
           });
         });
       }
     });
+  }
+  else{
+    newpagediv.on("loaded", function(){
+      newpagediv.fadeIn(function(){
+        newpagediv.addClass("visible");
+        newpagediv.trigger("visible");
+      });
+    });
+    newpagediv.trigger("load");
   }
 }
 
@@ -114,7 +114,7 @@ function loadtometable(callback){
 
 var defaultstatushandler = {
   404: function(){
-    bootbox.alert("Not Found");
+    bootbox.alert("Error 404: Not Found");
   },
   401: function(){
     switchpage("login");

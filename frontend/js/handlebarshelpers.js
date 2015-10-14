@@ -31,9 +31,6 @@ Handlebars.registerHelper("dayName", function(index){
 });
 
 Handlebars.registerHelper("ifeq", function(a, b, options){
-  console.log("ifeq");
-  console.log(a);
-  console.log(b);
   if(a == b){
     return options.fn(this);
   }

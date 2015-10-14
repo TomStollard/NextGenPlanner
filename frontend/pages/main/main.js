@@ -117,6 +117,7 @@ $("#addhomeworkbutton").click(function(){
   }).change();
 
   $("#modal-addhomework select[name='subject']").change(function(){
+    $("#modal-addhomework select[name='duelesson']").html("");
     var tometableSingleLesson = dbdata.tometable.findsubject(tometable, JSON.parse($(this).val()).subject);
     var x = 1;
     var startdate = new Date($("#modal-addhomework input[name='setpicker']").val())

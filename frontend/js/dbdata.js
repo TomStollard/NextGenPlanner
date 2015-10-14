@@ -233,6 +233,38 @@ var dbdata = {
         }
       });
       return lastthing;
+    },
+    insert: function(data, callback){
+      $.ajax({
+        type: "POST",
+        url: "/api/tometable",
+        username: credentials.userid,
+        password: credentials.sessionid,
+        data: data,
+        statusCode: defaultstatushandler,
+        success: callback
+      });
+    },
+    update: function(id, data, callback){
+      console.log(id);
+      $.ajax({
+        type: "PUT",
+        url: "/api/tometable/" + id,
+        username: credentials.userid,
+        password: credentials.sessionid,
+        data: data,
+        statusCode: defaultstatushandler,
+        success: callback
+      });
+    },
+    findbyid: function(tometabledata, id){
+      var found;
+      $.each(tometabledata, function(i, lesson){
+        if(lesson._id == id){
+          found = lesson;
+        }
+      });
+      return found;
     }
   }
 }

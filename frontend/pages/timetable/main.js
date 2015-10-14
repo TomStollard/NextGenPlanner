@@ -15,6 +15,46 @@ function loadtometablepage(callback){
         })
     );
   }
+  $(".tometablelessoninner").click(function(){
+    $("#modal-editlesson").html(
+      templates.tometable.modals.editlesson.main({
+        periods: options.tometable.periods,
+        days: options.tometable.schooldays,
+        weekmode: Boolean(options.tometable.mode == "week"),
+        numweeks: options.tometable.multiweek.numweeks,
+        lesson: dbdata.tometable.findbyid(tometable, $(this).parent().data("id"))
+      })
+    )
+    .on("shown.bs.modal", function(){
+      $("#modal-editlesson input[name='subject']").focus();
+      $("#modal-editlesson form").submit(function(e){
+        e.preventDefault();
+        dbdata.tometable.update(
+          $("#modal-editlesson form input[name='id']").val(),
+          {
+          subject: $("#modal-editlesson form input[name='subject']").val(),
+          teacher: $("#modal-editlesson form input[name='teacher']").val(),
+          location: $("#modal-editlesson form input[name='location']").val(),
+          startperiod: $("#modal-editlesson form select[name='startperiod']").val(),
+          endperiod: $("#modal-editlesson form select[name='endperiod']").val(),
+          day: $("#modal-editlesson form select[name='day']").val(),
+          week: (parseInt($("#modal-editlesson form input[name='week']").val()) - 1)
+          },
+          function(tometabledata){
+            $("#modal-editlesson").modal("hide");
+            loadtometable(function(){
+              $("#tometablecontainer").fadeOut(function(){
+                loadtometablepage(function(){
+                  $("#tometablecontainer").fadeIn();
+                })
+              });
+            });
+          }
+        );
+      });
+    })
+    .modal("show");
+  });
   callback();
 }
 
@@ -41,23 +81,25 @@ $("#addlessonbutton").click(function(){
   var nextday = 0;
   var nextweek = 0;
   var lastlesson = dbdata.tometable.getlastlesson(tometable);
-  nextperiod = lastlesson.endperiod + 1;
-  if(nextperiod >= options.tometable.periods.length){
-    nextperiod = 0;
-    nextday = lastlesson.day + 1;
-  }
-  else{
-    nextday = lastlesson.day;
-  }
-  if(nextday >= options.tometable.schooldays.length){
-    nextday = 0;
-    nextweek = lastlesson.week + 1;
-  }
-  else{
-    nextweek = lastlesson.week;
-  }
-  if(nextweek >= options.tometable.multiweek.numweeks){
-    nextweek = 0;
+  if(lastlesson){
+    nextperiod = lastlesson.endperiod + 1;
+    if(nextperiod >= options.tometable.periods.length){
+      nextperiod = 0;
+      nextday = lastlesson.day + 1;
+    }
+    else{
+      nextday = lastlesson.day;
+    }
+    if(nextday >= options.tometable.schooldays.length){
+      nextday = 0;
+      nextweek = lastlesson.week + 1;
+    }
+    else{
+      nextweek = lastlesson.week;
+    }
+    if(nextweek >= options.tometable.multiweek.numweeks){
+      nextweek = 0;
+    }
   }
   $("#modal-addlesson").html(
     templates.tometable.modals.addlesson.main({
@@ -72,7 +114,7 @@ $("#addlessonbutton").click(function(){
   )
   .on("shown.bs.modal", function(){
     $("#modal-addlesson input[name='subject']").autocomplete({
-      lookup: subjects,
+      lookup: subjects.filter(function(elem, pos) {return subjects.indexOf(elem) == pos}),
       onHint: function(hint){
         $("#modal-addlesson input[name='subject-suggest']").val(hint);
       },
@@ -90,18 +132,20 @@ $("#addlessonbutton").click(function(){
         }
       });
       $("#modal-addlesson input[name='teacher']").val(teacher);
+      $("#modal-addlesson input[name='teacher']").change();
     })
     .focus();
 
     $("#modal-addlesson input[name='teacher']").autocomplete({
-      lookup: teachers,
+      lookup: teachers.filter(function(elem, pos) {return teachers.indexOf(elem) == pos}),
       onHint: function(hint){
         $("#modal-addlesson input[name='teacher-suggest']").val(hint);
       },
       onSelect: function(){
         $(this).change();
       }
-    }).change(function(){
+    })
+    .change(function(){
       var location = "";
       $.each(tometable, function(i, lesson){
         if(lesson.subject == $("#modal-addlesson input[name='subject']").val() && lesson.teacher == $("#modal-addlesson input[name='teacher']").val()){
@@ -120,18 +164,45 @@ $("#addlessonbutton").click(function(){
         $("#modal-addlesson input[name='location']").val(location);
       }
     });
+
+    $("#modal-addlesson form select[name='startperiod']").change(function(){
+      console.log("change");
+      $("#modal-addlesson form select[name='endperiod']").val(parseInt($("#modal-addlesson form select[name='startperiod']").val()));
+      $("#modal-addlesson form select[name='endperiod']>option").each(function(i, option){
+        if(parseInt($(option).attr("value")) < parseInt($("#modal-addlesson form select[name='startperiod']").val())){
+          $(option).attr("disabled", "disabled");
+        }
+        else{
+          $(option).removeAttr("disabled");
+        }
+      });
+    })
+    .change();
   })
   .modal("show");
 
   $("#modal-addlesson form").submit(function(e){
     e.preventDefault();
-    console.log({
+    dbdata.tometable.insert(
+      {
       subject: $("#modal-addlesson form input[name='subject']").val(),
-      teacher: $("#modal-addlesson form input[name='techer']").val(),
+      teacher: $("#modal-addlesson form input[name='teacher']").val(),
       location: $("#modal-addlesson form input[name='location']").val(),
       startperiod: $("#modal-addlesson form select[name='startperiod']").val(),
+      endperiod: $("#modal-addlesson form select[name='endperiod']").val(),
       day: $("#modal-addlesson form select[name='day']").val(),
       week: (parseInt($("#modal-addlesson form input[name='week']").val()) - 1)
-    });
+      },
+      function(tometabledata){
+        $("#modal-addlesson").modal("hide");
+        loadtometable(function(){
+          $("#tometablecontainer").fadeOut(function(){
+            loadtometablepage(function(){
+              $("#tometablecontainer").fadeIn();
+            })
+          });
+        });
+      }
+    );
   });
 });

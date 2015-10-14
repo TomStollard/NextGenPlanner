@@ -232,9 +232,6 @@ module.exports = function(db){
         var query = {
           userid: req.auth.userid
         }
-        if(!req.query.includedeleted){
-          query["deleted"] = false;
-        }
         if(req.query.day){
           query["set"] = parseInt(req.query.day);
         }
@@ -247,75 +244,54 @@ module.exports = function(db){
         db.tometable.find(query, function(err, lessons){
           res.json(lessons);
         });
+      })
+      .post(function(req, res){
+        db.tometable.insert({
+          subject: req.body.subject,
+          teacher: req.body.teacher,
+          location: req.body.location,
+          week: parseInt(req.body.week),
+          day: parseInt(req.body.day),
+          startperiod: parseInt(req.body.startperiod),
+          endperiod: parseInt(req.body.endperiod),
+          userid: req.auth.userid
+        }, function(err, inserted){
+          if(err){
+            res.sendStatus(500);
+          }
+          else {
+            res.sendStatus(200);
+          }
+        });
       });
-      router.route("/tometable/:id")
-        .get(function(req, res){
-          db.tometable.findOne({
-            _id: req.params.id
-          }, function(err, lesson){
-            if(lesson){
-              if(lesson.userid == req.auth.userid){
-                res.json(lesson);
-              }
-              else{
-                unauthorised(res);
-              }
+
+    router.route("/tometable/:id")
+      .get(function(req, res){
+        db.tometable.findOne({
+          _id: db.ObjectId(req.params.id)
+        }, function(err, lesson){
+          if(lesson){
+            if(lesson.userid == req.auth.userid){
+              res.json(lesson);
             }
             else{
-              res.sendStatus(404);
+              unauthorised(res);
             }
-          });
-        })
-        .delete(function(req, res){
-          db.tometable.findOne({
-            _id: req.params.id
-          }, function(err, lesson){
-            if(lesson){
-              if(lesson.userid == req.auth.userid){
-                db.tometable.update({
-                  _id: req.params.id
-                }, {
-                  $set: {
-                    deleted: true
-                  }
-                }, function(err, result){
-                  if(err){
-                    res.sendStatus(500);
-                  }
-                  else {
-                    res.sendStatus(200);
-                  }
-                });
-              }
-              else{
-                unauthorised(res);
-              }
-            }
-            else{
-              res.sendStatus(404);
-            }
-          });
-        })
-        .post(function(req, res){
-          db.tometable.findOne({
-            _id: req.params.id
-          }, function(err, lesson){
-            if(lesson){
-              res.sendStatus(422);
-            }
-            else {
-              db.tometable.insert({
-                _id: req.params.id,
-                subject: req.body.subject,
-                teacher: req.body.teacher,
-                location: req.body.location,
-                week: parseInt(req.body.week),
-                day: parseInt(req.body.day),
-                startperiod: JSON.parse(req.body.startperiod),
-                endperiod: JSON.parse(req.body.endperiod),
-                deleted: JSON.parse(req.body.deleted.toLowerCase()),
-                userid: req.auth.userid
-              }, function(err, inserted){
+          }
+          else{
+            res.sendStatus(404);
+          }
+        });
+      })
+      .delete(function(req, res){
+        db.tometable.findOne({
+          _id: req.params.id
+        }, function(err, lesson){
+          if(lesson){
+            if(lesson.userid == req.auth.userid){
+              db.tometable.remove({
+                _id: req.params.id
+              }, function(err, result){
                 if(err){
                   res.sendStatus(500);
                 }
@@ -324,8 +300,77 @@ module.exports = function(db){
                 }
               });
             }
-          });
+            else{
+              unauthorised(res);
+            }
+          }
+          else{
+            res.sendStatus(404);
+          }
         });
+      })
+      .post(function(req, res){
+        db.tometable.findOne({
+          _id: req.params.id
+        }, function(err, lesson){
+          if(lesson){
+            res.sendStatus(422);
+          }
+          else {
+            db.tometable.insert({
+              _id: req.params.id,
+              subject: req.body.subject,
+              teacher: req.body.teacher,
+              location: req.body.location,
+              week: parseInt(req.body.week),
+              day: parseInt(req.body.day),
+              startperiod: JSON.parse(req.body.startperiod),
+              endperiod: JSON.parse(req.body.endperiod),
+              userid: req.auth.userid
+            }, function(err, inserted){
+              if(err){
+                res.sendStatus(500);
+              }
+              else {
+                res.sendStatus(200);
+              }
+            });
+          }
+        });
+      })
+      .put(function(req, res){
+        db.tometable.findOne({
+          _id: db.ObjectId(req.params.id)
+        }, function(err, lesson){
+          if(lesson){
+            if(lesson.userid == req.auth.userid){
+              db.tometable.update({
+                _id: db.ObjectId(req.params.id)
+              },
+              {
+                $set: {
+                  subject: req.body.subject,
+                  teacher: req.body.teacher,
+                  location: req.body.location,
+                  week: parseInt(req.body.week),
+                  day: parseInt(req.body.day),
+                  startperiod: JSON.parse(req.body.startperiod),
+                  endperiod: JSON.parse(req.body.endperiod)
+                }
+              },
+              function(){
+                res.sendStatus(200);
+              });
+            }
+            else{
+              unauthorised(res);
+            }
+          }
+          else{
+            res.sendStatus(404);
+          }
+        });
+      });
 
 
   return router;

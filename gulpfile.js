@@ -187,7 +187,7 @@ gulp.task("pages#watch", function(){
     .pipe(gulp.dest("./frontend_build/js"));
   });
 
-gulp.task("other", ["other:mainjs", "other:maincss", "other:imgs"]);
+gulp.task("other", ["other:mainjs", "other:maincss", "other:imgs", "other:bsfonts"]);
 gulp.task("other#watch", function(){
   gulp.watch("./frontend/js/**", ["other:mainjs"]);
   gulp.watch("./frontend/css/**", ["other:maincss"]);
@@ -216,4 +216,9 @@ gulp.task("other#watch", function(){
   gulp.task("other:imgs", function(){
     gulp.src("./frontend/imgs/*")
     .pipe(gulp.dest("./frontend_build/imgs"))
+  });
+
+  gulp.task("other:bsfonts", function(){
+    gulp.src("bower_components/bootstrap/dist/fonts/*")
+    .pipe(gulp.dest("./frontend_build/fonts"))
   });

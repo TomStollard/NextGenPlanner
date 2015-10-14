@@ -16,7 +16,7 @@
   <h3>Lessons</h3>
   {{#if lessons}}
     {{#each lessons}}
-      <div class="lesson">{{starttome.[0]}}:{{starttome.[1]}}-{{endtome.[0]}}:{{endtome.[1]}} - {{subject}} - {{teacher}} - {{location}}</div>
+      <div class="lesson">{{humanReadableIndex @index}} ({{starttome.[0]}}:{{starttome.[1]}}-{{endtome.[0]}}:{{endtome.[1]}}): {{subject}} - {{teacher}} - {{location}}</div>
     {{/each}}
   {{else}}
     No Lessons
