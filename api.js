@@ -285,12 +285,12 @@ module.exports = function(db){
       })
       .delete(function(req, res){
         db.tometable.findOne({
-          _id: req.params.id
+          _id: db.ObjectId(req.params.id)
         }, function(err, lesson){
           if(lesson){
             if(lesson.userid == req.auth.userid){
               db.tometable.remove({
-                _id: req.params.id
+                _id: db.ObjectId(req.params.id)
               }, function(err, result){
                 if(err){
                   res.sendStatus(500);

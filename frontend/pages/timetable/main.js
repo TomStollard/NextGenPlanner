@@ -27,6 +27,22 @@ function loadtometablepage(callback){
     )
     .on("shown.bs.modal", function(){
       $("#modal-editlesson input[name='subject']").focus();
+      $("#modal-editlesson input[name='delete']").off("click");
+      $("#modal-editlesson input[name='delete']").click(function(){
+        dbdata.tometable.delete(
+          $("#modal-editlesson form input[name='id']").val(),
+          function(){
+            $("#modal-editlesson").modal("hide");
+            loadtometable(function(){
+              $("#tometablecontainer").fadeOut(function(){
+                loadtometablepage(function(){
+                  $("#tometablecontainer").fadeIn();
+                })
+              });
+            });
+          }
+        );
+      });
       $("#modal-editlesson form").submit(function(e){
         e.preventDefault();
         dbdata.tometable.update(
@@ -40,7 +56,7 @@ function loadtometablepage(callback){
           day: $("#modal-editlesson form select[name='day']").val(),
           week: (parseInt($("#modal-editlesson form input[name='week']").val()) - 1)
           },
-          function(tometabledata){
+          function(){
             $("#modal-editlesson").modal("hide");
             loadtometable(function(){
               $("#tometablecontainer").fadeOut(function(){

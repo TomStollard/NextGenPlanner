@@ -246,13 +246,22 @@ var dbdata = {
       });
     },
     update: function(id, data, callback){
-      console.log(id);
       $.ajax({
         type: "PUT",
         url: "/api/tometable/" + id,
         username: credentials.userid,
         password: credentials.sessionid,
         data: data,
+        statusCode: defaultstatushandler,
+        success: callback
+      });
+    },
+    delete: function(id, callback){
+      $.ajax({
+        type: "DELETE",
+        url: "/api/tometable/" + id,
+        username: credentials.userid,
+        password: credentials.sessionid,
         statusCode: defaultstatushandler,
         success: callback
       });
