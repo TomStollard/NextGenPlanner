@@ -38,3 +38,12 @@ Handlebars.registerHelper("ifeq", function(a, b, options){
     return options.inverse(this);
   }
 });
+
+Handlebars.registerHelper("ifnoteq", function(a, b, options){
+  if(a != b){
+    return options.fn(this);
+  }
+  else{
+    return options.inverse(this);
+  }
+});
