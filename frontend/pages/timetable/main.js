@@ -181,6 +181,16 @@ $("#addlessonbutton").click(function(){
       }
     });
 
+    $("#modal-addlesson input[name='location']").autocomplete({
+      lookup: locations.filter(function(elem, pos) {return locations.indexOf(elem) == pos}),
+      onHint: function(hint){
+        $("#modal-addlesson input[name='location-suggest']").val(hint);
+      },
+      onSelect: function(){
+        $(this).change();
+      }
+    })
+
     $("#modal-addlesson form select[name='startperiod']").change(function(){
       console.log("change");
       $("#modal-addlesson form select[name='endperiod']").val(parseInt($("#modal-addlesson form select[name='startperiod']").val()));
