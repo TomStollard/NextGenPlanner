@@ -30,11 +30,9 @@
             <div class="tometablelesson" style="height: {{this.height}};" data-id="{{this._id}}">
               <div class="tometablelessoninner">
                 <div class="tometablelessontext">
-                  {{this.subject}}
-                  <br>
-                  {{this.teacher}}
-                  <br>
-                  {{this.location}}
+                  {{#if this.subject}}<b>{{this.subject}}</b><br>{{/if}}
+                  {{#if this.teacher}}{{this.teacher}}<br>{{/if}}
+                  {{#if this.location}}{{this.location}}<br>{{/if}}
                 </div>
               </div>
             </div>
