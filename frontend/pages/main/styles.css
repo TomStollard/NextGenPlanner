@@ -100,6 +100,16 @@
   text-align: center;
 }
 
+#modal-addhomework .homeworkcontent{
+  width: 100%;
+  background-color: white;
+  box-shadow: white 0px 0px 5px;
+}
+
+#modal-addhomework .homeworkcontent .editor{
+  height: 150px;
+}
+
 #movedatepicker{
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
