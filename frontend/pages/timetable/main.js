@@ -192,7 +192,6 @@ $("#addlessonbutton").click(function(){
     })
 
     $("#modal-addlesson form select[name='startperiod']").change(function(){
-      console.log("change");
       $("#modal-addlesson form select[name='endperiod']").val(parseInt($("#modal-addlesson form select[name='startperiod']").val()));
       $("#modal-addlesson form select[name='endperiod']>option").each(function(i, option){
         if(parseInt($(option).attr("value")) < parseInt($("#modal-addlesson form select[name='startperiod']").val())){
