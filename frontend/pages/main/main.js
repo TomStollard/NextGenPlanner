@@ -75,7 +75,24 @@ $("#nextweekbutton").click(function(){
 });
 
 $("#addhomeworkbutton").click(function(){
-  $("#modal-addhomework").html(templates.main.modals.addhomework.main()).modal("show");
+  $("#modal-addhomework").html(templates.main.modals.addhomework.main())
+  .on("shown.bs.modal", function(){
+    
+  })
+  .modal("show");
+
+  advancedEditor = new Quill('#editor', {
+    modules: {
+      'toolbar': {
+        container: '#toolbar'
+      },
+      'link-tooltip': true,
+      'image-tooltip': true,
+      'multi-cursor': true
+    },
+    styles: false,
+    theme: 'snow'
+  });
   $("#modal-addhomework input[name='setpicker']").pickadate({
     disable: todisable,
     firstDay: true,
