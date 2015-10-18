@@ -77,22 +77,19 @@ $("#nextweekbutton").click(function(){
 $("#addhomeworkbutton").click(function(){
   $("#modal-addhomework").html(templates.main.modals.addhomework.main())
   .on("shown.bs.modal", function(){
-    
+    editors["addhomework"].focus();
   })
   .modal("show");
 
-  advancedEditor = new Quill('#editor', {
+  editors["addhomework"] = new Quill("#modal-addhomework .homeworkcontent .editor", {
     modules: {
-      'toolbar': {
-        container: '#toolbar'
-      },
-      'link-tooltip': true,
-      'image-tooltip': true,
-      'multi-cursor': true
+      "toolbar": {
+        container: "#modal-addhomework .homeworkcontent .toolbar"
+      }
     },
-    styles: false,
-    theme: 'snow'
+    theme: "snow"
   });
+
   $("#modal-addhomework input[name='setpicker']").pickadate({
     disable: todisable,
     firstDay: true,
@@ -158,6 +155,10 @@ $("#addhomeworkbutton").click(function(){
       })
     );
   }).change();
+
+  $("#modal-addhomework form").submit(function(e){
+    console.log("hi!");
+  });
 });
 
 function loadweekdetails(callback){
