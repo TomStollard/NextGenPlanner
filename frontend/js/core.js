@@ -59,6 +59,7 @@ function switchpage(newpage){
   $(".page.visible").removeClass("visible");
   newpagediv.data("loaded", false);
   if(visiblepages.length){
+    newpagediv.off("loaded");
     newpagediv.on("loaded", function(){
       newpagediv.data("loaded", true);
     });
