@@ -37,6 +37,10 @@ var libraries = [
     js: ["bower_components/devbridge-autocomplete/dist/jquery.autocomplete.js"]
   },
   {
+    css: [],
+    js: ["bower_components/node-uuid/uuid.js"]
+  },
+  {
     css: ["bower_components/quill/dist/quill.snow.css"],
     js: ["bower_components/quill/dist/quill.min.js"]
   }

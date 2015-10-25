@@ -25,6 +25,7 @@
     "moment": "~2.10.6",
     "pickadate": "~3.5.6",
     "devbridge-autocomplete": "devbridge/jQuery-Autocomplete#~1.2.24",
-    "quill": "~0.20.0"
+    "quill": "~0.20.0",
+    "node-uuid": "~1.4.3"
   }
 }
