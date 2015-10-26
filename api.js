@@ -214,7 +214,8 @@ module.exports = function(db){
             homework: req.body.homework,
             due: parseInt(req.body.due),
             complete: JSON.parse(req.body.complete.toLowerCase()),
-            userid: req.auth.userid
+            userid: req.auth.userid,
+            deleted: JSON.parse(req.body.deleted)
           }, function(err, inserted){
             if(err){
               res.sendStatus(500);

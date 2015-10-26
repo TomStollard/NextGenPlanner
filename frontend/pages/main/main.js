@@ -11,6 +11,7 @@ $("#page-main").on("load", function(){
         loaddaydetails(callback);
       }
     ], function(){
+      updatehomeworkbindings();
       $("#page-main").trigger("loaded");
     });
   });
@@ -157,7 +158,34 @@ $("#addhomeworkbutton").click(function(){
   }).change();
 
   $("#modal-addhomework form").submit(function(e){
-    console.log("hi!");
+    e.preventDefault();
+    var id = uuid.v4() + "-" + new Date().getTome() + "-"+ credentials.sessionid;
+    dbdata.homework.insert(id, {
+      subject: JSON.parse($("#modal-addhomework select[name='subject']").val()).subject,
+      set: JSON.parse($("#modal-addhomework select[name='subject']").val()).tome,
+      due: parseInt($("#modal-addhomework select[name='duelesson']").val()),
+      homework: editors["addhomework"].getHTML(),
+      complete: false,
+      deleted: false
+    }, function(){
+      $("#modal-addhomework").modal("hide");
+      $.when($("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework, #mainpage-panel-todaytomorrow, #mainpage-panel-todo").fadeOut()).then(function(){
+        async.parallel([
+          function(callback){
+            loadweekdetails(callback);
+          },
+          function(callback){
+            loadtododetails(callback);
+          },
+          function(callback){
+            loaddaydetails(callback);
+          }
+        ], function(){
+          updatehomeworkbindings();
+          $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework, #mainpage-panel-todaytomorrow, #mainpage-panel-todo").fadeIn();
+        });
+      });
+    });
   });
 });
 
@@ -172,7 +200,7 @@ function loadweekdetails(callback){
         day.date = moment(weekstart).add(i, "days").toDate();
         day.homeworkitems = [];
         $.each(allhomework, function(i, homeworkitem){
-          if((day.date.getTome() < homeworkitem.set) && (homeworkitem.set < moment(day.date).add(24, "hours").subtract(1, "second").valueOf())){
+          if((day.date.getTome() < homeworkitem.set) && (homeworkitem.set < moment(day.date).add(24, "hours").subtract(1, "millisecond").valueOf())){
             day.homeworkitems.push(homeworkitem);
           }
         });
@@ -204,6 +232,10 @@ function loaddaydetails(callback){
   dbdata.tometable.addperiodtomes(lessons);
   dbdata.tometable.sortbyperiod(lessons);
 
+  dbdata.homework.duebetweendates(daydate.toDate(), moment(daydate).add(1, "days").subtract(1, "millisecond").toDate(), function(data){
+    console.log(data);
+  })
+
   $("#mainpage-panel-todaytomorrow").html(templates.main.dayview({
     dayitems: [],
     lessons: lessons,
@@ -218,5 +250,18 @@ function loadtododetails(callback){
   dbdata.homework.complete("false", function(allhomework){
     $("#mainpage-panel-todo .panel-body").html(templates.main.todo({homework: allhomework}));
     callback();
+  });
+}
+
+function updatehomeworkbindings(){
+  $(".homeworkitem .due").off("click");
+  $(".homeworkitem .due").click(function(){
+    var complete = $(this).hasClass("complete");
+    if(complete){
+      $(this).removeClass("complete").addClass("incomplete")
+    }
+    else{
+      $(this).removeClass("incomplete").addClass("complete")
+    }
   });
 }

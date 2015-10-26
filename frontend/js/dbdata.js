@@ -1,5 +1,21 @@
 var dbdata = {
   homework: {
+    insert: function(id, data, callback){
+      if(options.offlinesync){
+
+      }
+      else{
+        $.ajax({
+          type: "POST",
+          url: "/api/homework/" + id,
+          data: data,
+          username: credentials.userid,
+          password: credentials.sessionid,
+          statusCode: defaultstatushandler,
+          success: callback
+        });
+      }
+    },
     setbetweendates: function(date1, date2, callback){
       //takes two date objects, calls callback with a single argument, all homework items set between these dates
       if(options.offlinesync){
@@ -23,6 +39,8 @@ var dbdata = {
       }
     },
     duebetweendates: function(date1, date2, callback){
+      console.log(date1);
+      console.log(date2);
       //takes two date objects, calls callback with a single argument, all homework items set between these dates
       if(options.offlinesync){
 
