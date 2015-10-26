@@ -16,7 +16,7 @@
   <h3>Lessons</h3>
   {{#if lessons}}
     {{#each lessons}}
-      <div class="lesson">{{humanReadableIndex startperiod}}{{#ifnoteq startperiod endperiod}}-{{humanReadableIndex endperiod}}{{/ifnoteq}} ({{starttome.[0]}}:{{starttome.[1]}}-{{endtome.[0]}}:{{endtome.[1]}}): {{#if subject}}{{subject}}{{/if}}{{#if teacher}} - {{teacher}}{{/if}}{{#if location}} - {{location}}{{/if}}</div>
+      <div class="lesson"><span style="font-weight: bold; display: inline-block;">{{humanReadableIndex startperiod}}{{#ifnoteq startperiod endperiod}}-{{humanReadableIndex endperiod}}{{/ifnoteq}} ({{starttome.[0]}}:{{starttome.[1]}}-{{endtome.[0]}}:{{endtome.[1]}}): {{#if subject}}{{subject}}{{/if}}</span><span style="display: inline-block;">{{#if teacher}} - {{teacher}}{{/if}}{{#if location}} - {{location}}{{/if}}</span></div>
     {{/each}}
   {{else}}
     No Lessons

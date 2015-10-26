@@ -1,5 +1,5 @@
-<div class="homeworkitem">
+<div class="homeworkitem" data-id="{{_id}}">
   <div class="subject">{{subject}}</div>
-  <div class="homework">{{homework}}</div>
-  <div class="due" class="{{#if complete}}complete{{else}}incomplete{{/if}}">Due {{dateToNow due}}</div>
+  <div class="homework">{{{homework}}}</div>
+  <div class="due {{#if complete}}complete{{else}}incomplete{{/if}}"><div>Due {{dateToNow due}}</div></div>
 </div>
