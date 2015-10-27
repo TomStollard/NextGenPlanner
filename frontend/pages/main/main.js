@@ -122,18 +122,16 @@ function loaddaydetails(callback){
   dbdata.tometable.addperiodtomes(lessons);
   dbdata.tometable.sortbyperiod(lessons);
 
-  dbdata.homework.duebetweendates(daydate.toDate(), moment(daydate).add(1, "days").subtract(1, "millisecond").toDate(), function(data){
-    console.log(data);
-  })
+  dbdata.homework.duebetweendates(daydate.toDate(), moment(daydate).add(1, "days").subtract(1, "millisecond").toDate(), function(homework){
+    $("#mainpage-panel-todaytomorrow").html(templates.main.dayview({
+      dayitems: [],
+      lessons: lessons,
+      homework: homework,
+      dayname: dayname
+    }));
+    callback();
+  });
 
-  $("#mainpage-panel-todaytomorrow").html(templates.main.dayview({
-    dayitems: [],
-    lessons: lessons,
-    homework: [],
-    dayname: dayname
-  }));
-
-  callback();
 }
 
 function loadtododetails(callback){
