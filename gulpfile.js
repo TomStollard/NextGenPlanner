@@ -66,6 +66,7 @@ var gulp = require("gulp"),
     handlebars = require("gulp-handlebars"),
     wrap = require("gulp-wrap");
     sourcemaps = require("gulp-sourcemaps");
+    sass = require("gulp-sass");
 
 gulp.task("default", ["libraries", "pages", "other"]);
 gulp.task("watch", ["pages#watch", "other#watch"]);
@@ -81,6 +82,7 @@ gulp.task("libraries", ["libraries:css", "libraries:js"]);
     }
     gulp.src(cssfiles)
     .pipe(sourcemaps.init())
+    .pipe(sass())
     .pipe(autoprefixer())
     .pipe(minifycss())
     .pipe(concat("libs.css"))
@@ -121,6 +123,7 @@ gulp.task("pages#watch", function(){
 
     gulp.src(cssfiles)
     .pipe(sourcemaps.init())
+    .pipe(sass())
     .pipe(autoprefixer())
     .pipe(minifycss())
     .pipe(concat("pages.css"))
@@ -214,6 +217,7 @@ gulp.task("other#watch", function(){
   gulp.task("other:maincss", function(){
     gulp.src("./frontend/css/*.css")
     .pipe(sourcemaps.init())
+    .pipe(sass())
     .pipe(autoprefixer())
     .pipe(minifycss())
     .pipe(concat("main.css"))

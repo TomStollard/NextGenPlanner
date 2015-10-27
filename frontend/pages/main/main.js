@@ -76,117 +76,7 @@ $("#nextweekbutton").click(function(){
 });
 
 $("#addhomeworkbutton").click(function(){
-  $("#modal-addhomework").html(templates.main.modals.addhomework.main())
-  .on("shown.bs.modal", function(){
-    editors["addhomework"].focus();
-  })
-  .modal("show");
-
-  editors["addhomework"] = new Quill("#modal-addhomework .homeworkcontent .editor", {
-    modules: {
-      "toolbar": {
-        container: "#modal-addhomework .homeworkcontent .toolbar"
-      }
-    },
-    theme: "snow"
-  });
-
-  $("#modal-addhomework input[name='setpicker']").pickadate({
-    disable: todisable,
-    firstDay: true,
-    onStart: function() {
-      this.set("select", new Date());
-    }
-  });
-  $("#modal-addhomework input[name='setpicker']").change(function(){
-    var date = new Date($("#modal-addhomework input[name='setpicker']").val());
-    var lessons = dbdata.tometable.findondate(tometable, date);
-    $.each(lessons, function(i, lesson){
-      lesson["value"] = JSON.stringify({
-        subject: lesson.subject,
-        tome: moment(date).add(options.tometable.periods[lesson.startperiod][0], "hours").add(options.tometable.periods[lesson.startperiod][1], "minutes").valueOf()
-      })
-    });
-    if(moment().startOf("day").isSame(moment(date).startOf("day"))){
-      //if selected day is today - highlights current lesson
-      var currentperiod = 0;
-      var currentmins = (new Date().getHours() * 60) + new Date().getMinutes();
-      $.each(options.tometable.periods, function(period, tomes){
-        if((((tomes[0] * 60) + tomes[1]) < currentmins) && (((tomes[2] * 60) + tomes[3]) >= currentmins)){
-          currentperiod = period;
-        }
-      });
-      $.each(lessons, function(i, lesson){
-        if((lesson.startperiod <= currentperiod) && (lesson.endperiod >= currentperiod)){
-          lesson.selected = "selected";
-        }
-      });
-    }
-    lessons = dbdata.tometable.sortbyperiod(lessons);
-    $("#modal-addhomework select[name='subject']").html(
-      templates.main.modals.addhomework.subjectlist({
-        lessons: lessons
-      })
-    );
-    $("#modal-addhomework select[name='subject']").change();
-  }).change();
-
-  $("#modal-addhomework select[name='subject']").change(function(){
-    $("#modal-addhomework select[name='duelesson']").html("");
-    var tometableSingleLesson = dbdata.tometable.findsubject(tometable, JSON.parse($(this).val()).subject);
-    var x = 1;
-    var startdate = new Date($("#modal-addhomework input[name='setpicker']").val())
-    var lessons = [];
-    while(x < 30){
-      $.each(dbdata.tometable.findondate(tometableSingleLesson, moment(startdate).add(x, "days").toDate()), function(i, lesson){
-        lessons.push({
-          teacher: lesson.teacher,
-          date: moment(startdate).startOf("day").add(x, "days").add(options.tometable.periods[lesson.startperiod][0], "hours").add(options.tometable.periods[lesson.startperiod][1], "minutes").toDate(),
-          period: lesson.startperiod
-        });
-      });
-      x++;
-    }
-    lessons.sort(function(a, b){
-      return a.date - b.date;
-    });
-    $("#modal-addhomework select[name='duelesson']").html(
-      templates.main.modals.addhomework.duelessonlist({
-        lessons: lessons
-      })
-    );
-  }).change();
-
-  $("#modal-addhomework form").submit(function(e){
-    e.preventDefault();
-    var id = uuid.v4() + "-" + new Date().getTome() + "-"+ credentials.sessionid;
-    dbdata.homework.insert(id, {
-      subject: JSON.parse($("#modal-addhomework select[name='subject']").val()).subject,
-      set: JSON.parse($("#modal-addhomework select[name='subject']").val()).tome,
-      due: parseInt($("#modal-addhomework select[name='duelesson']").val()),
-      homework: editors["addhomework"].getHTML(),
-      complete: false,
-      deleted: false
-    }, function(){
-      $("#modal-addhomework").modal("hide");
-      $.when($("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework, #mainpage-panel-todaytomorrow, #mainpage-panel-todo").fadeOut()).then(function(){
-        async.parallel([
-          function(callback){
-            loadweekdetails(callback);
-          },
-          function(callback){
-            loadtododetails(callback);
-          },
-          function(callback){
-            loaddaydetails(callback);
-          }
-        ], function(){
-          updatehomeworkbindings();
-          $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework, #mainpage-panel-todaytomorrow, #mainpage-panel-todo").fadeIn();
-        });
-      });
-    });
-  });
+  $("#modal-addhomework").trigger("show");
 });
 
 function loadweekdetails(callback){
@@ -253,15 +143,56 @@ function loadtododetails(callback){
   });
 }
 
+function loadmainpage(callback){
+  async.parallel([
+    function(callback){
+      loadweekdetails(callback);
+    },
+    function(callback){
+      loadtododetails(callback);
+    },
+    function(callback){
+      loaddaydetails(callback);
+    }
+  ], callback);
+};
+
 function updatehomeworkbindings(){
   $(".homeworkitem .due").off("click");
-  $(".homeworkitem .due").click(function(){
+  $(".homeworkitem .due").click(function(e){
+    e.stopImmediatePropagation();
     var complete = $(this).hasClass("complete");
-    if(complete){
-      $(this).removeClass("complete").addClass("incomplete")
-    }
-    else{
-      $(this).removeClass("incomplete").addClass("complete")
-    }
+    var id = $(this).parent().data("id");
+    var these = $(".homeworkitem[data-id='" + id + "'] .due");
+    async.parallel([
+      function(callback){
+        dbdata.homework.update(id, {
+          complete: !complete
+        }, function(){
+          if(complete){
+            $(these).removeClass("complete").addClass("incomplete")
+          }
+          else{
+            $(these).removeClass("incomplete").addClass("complete")
+          }
+          callback();
+        });
+      },
+      function(callback){
+        $("#mainpage-panel-todo .panel-body").slideUp(callback);
+      }
+    ], function(data){
+      loadtododetails(function(){
+        updatehomeworkbindings();
+        $("#mainpage-panel-todo .panel-body").slideDown();
+      });
+    });
+  });
+
+  $(".homeworkitem").off("click");
+  $(".homeworkitem").click(function(e){
+    var id = $(this).data("id");
+    $("#modal-edithomework").data("id", id);
+    $("#modal-edithomework").trigger("show");
   });
 }

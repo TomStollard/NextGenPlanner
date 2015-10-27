@@ -1,3 +1,3 @@
 {{#each lessons}}
-  <option value="{{formatDate this.date "x"}}">{{dateCalendar this.date}}, Period {{humanReadableIndex this.period}} with {{this.teacher}} ({{dateToNow this.date}})</option>
+  <option value="{{formatDate this.date "x"}}">{{dateCalendar this.date}}, Period {{humanReadableIndex this.period}}{{#if this.teacher}} with {{this.teacher}}{{/if}} ({{dateToNow this.date}})</option>
 {{/each}}

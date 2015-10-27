@@ -1,5 +1,20 @@
 var dbdata = {
   homework: {
+    getbyid: function(id, callback){
+      if(options.offlinesync){
+
+      }
+      else{
+        $.ajax({
+          type: "GET",
+          url: "/api/homework/" + id,
+          username: credentials.userid,
+          password: credentials.sessionid,
+          statusCode: defaultstatushandler,
+          success: callback
+        });
+      }
+    },
     insert: function(id, data, callback){
       if(options.offlinesync){
 
@@ -7,6 +22,22 @@ var dbdata = {
       else{
         $.ajax({
           type: "POST",
+          url: "/api/homework/" + id,
+          data: data,
+          username: credentials.userid,
+          password: credentials.sessionid,
+          statusCode: defaultstatushandler,
+          success: callback
+        });
+      }
+    },
+    update: function(id, data, callback){
+      if(options.offlinesync){
+
+      }
+      else{
+        $.ajax({
+          type: "PUT",
           url: "/api/homework/" + id,
           data: data,
           username: credentials.userid,
