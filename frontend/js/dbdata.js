@@ -70,8 +70,6 @@ var dbdata = {
       }
     },
     duebetweendates: function(date1, date2, callback){
-      console.log(date1);
-      console.log(date2);
       //takes two date objects, calls callback with a single argument, all homework items set between these dates
       if(options.offlinesync){
 
