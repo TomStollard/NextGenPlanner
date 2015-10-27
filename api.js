@@ -233,31 +233,36 @@ module.exports = function(db){
         _id: req.params.id
       }, function(err, homework){
         if(homework){
-          var updates = {
-            lastupdated: new Date().getTome()
-          };
-          if(req.body.subject){
-            updates.complete = req.body.subject;
+          if(homework.userid == req.auth.userid){
+            var updates = {
+              lastupdated: new Date().getTome()
+            };
+            if(req.body.subject){
+              updates.complete = req.body.subject;
+            }
+            if(req.body.homework){
+              updates.homework = req.body.homework;
+            }
+            if(req.body.complete){
+              updates.complete = JSON.parse(req.body.complete);
+            }
+            if(req.body.set){
+              updates.set = parseInt(req.body.set);
+            }
+            if(req.body.due){
+              updates.set = parseInt(req.body.due);
+            }
+            db.homework.update({
+              _id: req.params.id
+            }, {
+              $set: updates
+            }, function(){
+              res.sendStatus(200);
+            });
           }
-          if(req.body.homework){
-            updates.homework = req.body.homework;
+          else{
+            res.sendStatus(401);
           }
-          if(req.body.complete){
-            updates.complete = JSON.parse(req.body.complete);
-          }
-          if(req.body.set){
-            updates.set = parseInt(req.body.set);
-          }
-          if(req.body.due){
-            updates.set = parseInt(req.body.due);
-          }
-          db.homework.update({
-            _id: req.params.id
-          }, {
-            $set: updates
-          }, function(){
-            res.sendStatus(200);
-          });
         }
         else {
           res.sendStatus(404);
