@@ -245,7 +245,7 @@ module.exports = function(db){
               lastupdated: new Date().getTome()
             };
             if(req.body.subject){
-              updates.complete = req.body.subject;
+              updates.subject = req.body.subject;
             }
             if(req.body.homework){
               updates.homework = req.body.homework;
