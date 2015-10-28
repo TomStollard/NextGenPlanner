@@ -47,6 +47,21 @@ var dbdata = {
         });
       }
     },
+    delete: function(id, callback){
+      if(options.offlinesync){
+
+      }
+      else{
+        $.ajax({
+          type: "DELETE",
+          url: "/api/homework/" + id,
+          username: credentials.userid,
+          password: credentials.sessionid,
+          statusCode: defaultstatushandler,
+          success: callback
+        });
+      }
+    },
     setbetweendates: function(date1, date2, callback){
       //takes two date objects, calls callback with a single argument, all homework items set between these dates
       if(options.offlinesync){
@@ -108,6 +123,28 @@ var dbdata = {
           statusCode: defaultstatushandler,
           success: function(homeworkitems){
             callback(homeworkitems);
+          }
+        });
+      }
+    },
+    sort: {
+      bydue: function(order, data){
+        data.sort(function(a, b){
+          if(order){
+            return b.due - a.due;
+          }
+          else{
+            return a.due - b.due;
+          }
+        });
+      },
+      byset: function(order, data){
+        data.sort(function(a, b){
+          if(order){
+            return b.set - a.set;
+          }
+          else{
+            return a.set - b.set;
           }
         });
       }

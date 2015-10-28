@@ -58,6 +58,13 @@ module.exports = function(db){
     });
   });
 
+  router.use(function(req, res, next){
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
+    next();
+  });
+
   router.route("/sessions")
     .get(function(req, res){
       db.sessions.find({

@@ -15,10 +15,47 @@ $("#modal-edithomework").on("show", function(){
       theme: "snow"
     });
 
+    $("#modal-edithomework input[name='delete']").off("click")
+    .click(function(){
+      bootbox.confirm("Are you sure you want to delete this?", function(result){
+        if(result){
+          dbdata.homework.delete($("#modal-edithomework input[name='id']").val(), function(){
+            $.when($("#mainpage-panels .panel").fadeOut()).then(function(){
+              loadmainpage(function(){
+                $("#mainpage-panels .panel").fadeIn();
+              })
+            });
+            $("#modal-edithomework").modal("hide");
+          });
+        }
+      });
+    });
+
     $("#modal-edithomework form").off("submit")
     .submit(function(e){
       e.preventDefault();
-      
+      var id = $("#modal-edithomework input[name='id']").val();
+      console.log();
+      async.parallel([
+        function(callback){
+          $.when($("#mainpage-panels .panel").fadeOut()).then(callback);
+        },
+        function(callback){
+          dbdata.homework.update(id, {
+            set: moment($("#modal-edithomework input[name='setpicker']")).add(12, "hours").valueOf(),
+            due: moment($("#modal-edithomework input[name='duepicker']")).add(12, "hours").valueOf(),
+            subject: $("#modal-edithomework input[name='subject']").val(),
+            homework: editors.edithomework.getHTML()
+          }, function(){
+            $("#modal-edithomework").modal("hide");
+            callback();
+          });
+        }
+      ], function(){
+        loadmainpage(function(){
+          $("#mainpage-panels .panel").fadeIn();
+        })
+      });
     });
 
     $("#modal-edithomework").modal("show");

@@ -123,20 +123,23 @@ function loaddaydetails(callback){
   dbdata.tometable.sortbyperiod(lessons);
 
   dbdata.homework.duebetweendates(daydate.toDate(), moment(daydate).add(1, "days").subtract(1, "millisecond").toDate(), function(homework){
+    dbdata.homework.sort.byset(0, homework);
     $("#mainpage-panel-todaytomorrow").html(templates.main.dayview({
       dayitems: [],
       lessons: lessons,
       homework: homework,
       dayname: dayname
     }));
+
     callback();
   });
 
 }
 
 function loadtododetails(callback){
-  dbdata.homework.complete("false", function(allhomework){
-    $("#mainpage-panel-todo .panel-body").html(templates.main.todo({homework: allhomework}));
+  dbdata.homework.complete("false", function(homework){
+    dbdata.homework.sort.bydue(0, homework);
+    $("#mainpage-panel-todo .panel-body").html(templates.main.todo({homework: homework}));
     callback();
   });
 }
@@ -152,15 +155,18 @@ function loadmainpage(callback){
     function(callback){
       loaddaydetails(callback);
     }
-  ], callback);
+  ], function(){
+    updatehomeworkbindings();
+    callback();
+  });
 };
 
 function updatehomeworkbindings(){
-  $(".homeworkitem .due").off("click");
-  $(".homeworkitem .due").click(function(e){
+  $(".homeworkitem .due a.togglecompletelink").off("click");
+  $(".homeworkitem .due a.togglecompletelink").click(function(e){
     e.stopImmediatePropagation();
-    var complete = $(this).hasClass("complete");
-    var id = $(this).parent().data("id");
+    var complete = $(this).parent().parent().hasClass("complete");
+    var id = $(this).parent().parent().parent().data("id");
     var these = $(".homeworkitem[data-id='" + id + "'] .due");
     async.parallel([
       function(callback){
@@ -187,9 +193,9 @@ function updatehomeworkbindings(){
     });
   });
 
-  $(".homeworkitem").off("click");
-  $(".homeworkitem").click(function(e){
-    var id = $(this).data("id");
+  $(".homeworkitem .edithomeworklink").off("click");
+  $(".homeworkitem .edithomeworklink").click(function(e){
+    var id = $(this).parent().parent().data("id");
     $("#modal-edithomework").data("id", id);
     $("#modal-edithomework").trigger("show");
   });

@@ -1,5 +1,5 @@
 <div class="homeworkitem" data-id="{{_id}}">
-  <div class="subject">{{subject}}</div>
-  <div class="homework">{{{homework}}}</div>
-  <div class="due {{#if complete}}complete{{else}}incomplete{{/if}}"><div>Due {{dateToNow due}}</div></div>
+  <div class="subject"><div>{{subject}}</div></div>
+  <div class="homework"><a href="javascript:void(0)" class="edithomeworklink">{{{homework}}}</a></div>
+  <div class="due {{#if complete}}complete{{else}}incomplete{{/if}}"><div><a href="javascript:void(0)" class="togglecompletelink">Due {{dateToNow due}}</a></div></div>
 </div>

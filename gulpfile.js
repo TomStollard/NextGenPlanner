@@ -82,10 +82,9 @@ gulp.task("libraries", ["libraries:css", "libraries:js"]);
     }
     gulp.src(cssfiles)
     .pipe(sourcemaps.init())
-    .pipe(sass())
     .pipe(autoprefixer())
-    .pipe(minifycss())
     .pipe(concat("libs.css"))
+    .pipe(minifycss())
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/css"));
   });
@@ -118,15 +117,15 @@ gulp.task("pages#watch", function(){
   gulp.task("pages:css", function(){
     var cssfiles = [];
     for(var pageid in pages){
-      cssfiles.push("./frontend/pages/" + pages[pageid] + "/**/*.css");
+      cssfiles.push("./frontend/pages/" + pages[pageid] + "/**/*.*css");
     }
 
     gulp.src(cssfiles)
     .pipe(sourcemaps.init())
     .pipe(sass())
     .pipe(autoprefixer())
-    .pipe(minifycss())
     .pipe(concat("pages.css"))
+    .pipe(minifycss())
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/css"));
   });
@@ -208,19 +207,19 @@ gulp.task("other#watch", function(){
   gulp.task("other:mainjs", function(){
     gulp.src("./frontend/js/*.js")
     .pipe(sourcemaps.init())
-    .pipe(uglify())
     .pipe(concat("main.js"))
+    .pipe(uglify())
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/js"))
   });
 
   gulp.task("other:maincss", function(){
-    gulp.src("./frontend/css/*.css")
+    gulp.src("./frontend/css/*.*css")
     .pipe(sourcemaps.init())
     .pipe(sass())
     .pipe(autoprefixer())
-    .pipe(minifycss())
     .pipe(concat("main.css"))
+    .pipe(minifycss())
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/css"))
   });
