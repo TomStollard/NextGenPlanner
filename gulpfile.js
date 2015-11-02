@@ -67,6 +67,7 @@ var gulp = require("gulp"),
     wrap = require("gulp-wrap");
     sourcemaps = require("gulp-sourcemaps");
     sass = require("gulp-sass");
+    gulputil = require("gulp-util");
 
 gulp.task("default", ["libraries", "pages", "other"]);
 gulp.task("watch", ["pages#watch", "other#watch"]);
@@ -100,7 +101,7 @@ gulp.task("libraries", ["libraries:css", "libraries:js"]);
     gulp.src(jsfiles)
     .pipe(sourcemaps.init())
     .pipe(concat("libs.js"))
-    .pipe(uglify())
+    .pipe(uglify().on("error", gulputil.log))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/js"));
   });
@@ -139,7 +140,7 @@ gulp.task("pages#watch", function(){
     gulp.src(jsfiles)
     .pipe(sourcemaps.init())
     .pipe(concat("pages.js"))
-    .pipe(uglify())
+    .pipe(uglify().on("error", gulputil.log))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/js"));
   });
@@ -193,7 +194,7 @@ gulp.task("pages#watch", function(){
       }))
     )
     .pipe(concat("templates.js"))
-    .pipe(uglify())
+    .pipe(uglify().on("error", gulputil.log))
     .pipe(gulp.dest("./frontend_build/js"));
   });
 
@@ -208,7 +209,7 @@ gulp.task("other#watch", function(){
     gulp.src("./frontend/js/*.js")
     .pipe(sourcemaps.init())
     .pipe(concat("main.js"))
-    .pipe(uglify())
+    .pipe(uglify().on("error", gulputil.log))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("./frontend_build/js"))
   });
