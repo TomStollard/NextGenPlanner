@@ -359,5 +359,99 @@ var dbdata = {
       });
       return found;
     }
+  },
+  notes: {
+    week: {
+      findbyweektome: function(weektome, callback){
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "GET",
+            url: "/api/notes/week",
+            data: {
+              weektome: weektome
+            },
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            success: function(notes){
+              callback(notes);
+            }
+          });
+        }
+      },
+      findbyid: function(id, callback){
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "GET",
+            url: "/api/notes/week/" + id,
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            success: function(note){
+              callback(note);
+            }
+          });
+        }
+      },
+      insert: function(data, callback){
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "POST",
+            url: "/api/notes/week/" + data.id,
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            data: data,
+            success: function(){
+              callback();
+            }
+          });
+        }
+      },
+      update: function(data, callback){
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "PUT",
+            url: "/api/notes/week/" + data.id,
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            data: data,
+            success: function(){
+              callback();
+            }
+          });
+        }
+      },
+      delete: function(id, callback){
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "DELETE",
+            url: "/api/notes/week/" + id,
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            success: function(){
+              callback();
+            }
+          });
+        }
+      }
+    }
   }
 }

@@ -1,5 +1,5 @@
 {{#each days}}
-  <div class="week-dayname">{{formatDate date "dddd Do MMMM YYYY"}}</div>
+  <div class="week-dayname"><a href="javascript:void(0);" data-tome="{{formatDate date "x"}}">{{formatDate date "dddd Do MMMM YYYY"}}</a></div>
   {{#each homeworkitems}}
     {{> main.homeworkitem}}
   {{/each}}

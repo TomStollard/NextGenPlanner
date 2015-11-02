@@ -277,107 +277,71 @@ module.exports = function(db){
       });
     });;
 
-    router.route("/tometable")
-      .get(function(req, res){
-        var query = {
-          userid: req.auth.userid
-        }
-        if(req.query.day){
-          query["set"] = parseInt(req.query.day);
-        }
-        if(req.query.week){
-          query["week"] = parseInt(req.query.week);
-        }
-        if(req.query.subject){
-          query["subject"] = req.query.subject;
-        }
-        db.tometable.find(query, function(err, lessons){
-          res.json(lessons);
-        });
-      })
-      .post(function(req, res){
-        db.tometable.insert({
-          subject: req.body.subject,
-          teacher: req.body.teacher,
-          location: req.body.location,
-          week: parseInt(req.body.week),
-          day: parseInt(req.body.day),
-          startperiod: parseInt(req.body.startperiod),
-          endperiod: parseInt(req.body.endperiod),
-          userid: req.auth.userid
-        }, function(err, inserted){
-          if(err){
-            res.sendStatus(500);
-          }
-          else {
-            res.sendStatus(200);
-          }
-        });
+  router.route("/tometable")
+    .get(function(req, res){
+      var query = {
+        userid: req.auth.userid
+      }
+      if(req.query.day){
+        query["set"] = parseInt(req.query.day);
+      }
+      if(req.query.week){
+        query["week"] = parseInt(req.query.week);
+      }
+      if(req.query.subject){
+        query["subject"] = req.query.subject;
+      }
+      db.tometable.find(query, function(err, lessons){
+        res.json(lessons);
       });
+    })
+    .post(function(req, res){
+      db.tometable.insert({
+        subject: req.body.subject,
+        teacher: req.body.teacher,
+        location: req.body.location,
+        week: parseInt(req.body.week),
+        day: parseInt(req.body.day),
+        startperiod: parseInt(req.body.startperiod),
+        endperiod: parseInt(req.body.endperiod),
+        userid: req.auth.userid
+      }, function(err, inserted){
+        if(err){
+          res.sendStatus(500);
+        }
+        else {
+          res.sendStatus(200);
+        }
+      });
+    });
 
-    router.route("/tometable/:id")
-      .get(function(req, res){
-        db.tometable.findOne({
-          _id: db.ObjectId(req.params.id)
-        }, function(err, lesson){
-          if(lesson){
-            if(lesson.userid == req.auth.userid){
-              res.json(lesson);
-            }
-            else{
-              unauthorised(res);
-            }
+  router.route("/tometable/:id")
+    .get(function(req, res){
+      db.tometable.findOne({
+        _id: db.ObjectId(req.params.id)
+      }, function(err, lesson){
+        if(lesson){
+          if(lesson.userid == req.auth.userid){
+            res.json(lesson);
           }
           else{
-            res.sendStatus(404);
+            unauthorised(res);
           }
-        });
-      })
-      .delete(function(req, res){
-        db.tometable.findOne({
-          _id: db.ObjectId(req.params.id)
-        }, function(err, lesson){
-          if(lesson){
-            if(lesson.userid == req.auth.userid){
-              db.tometable.remove({
-                _id: db.ObjectId(req.params.id)
-              }, function(err, result){
-                if(err){
-                  res.sendStatus(500);
-                }
-                else {
-                  res.sendStatus(200);
-                }
-              });
-            }
-            else{
-              unauthorised(res);
-            }
-          }
-          else{
-            res.sendStatus(404);
-          }
-        });
-      })
-      .post(function(req, res){
-        db.tometable.findOne({
-          _id: req.params.id
-        }, function(err, lesson){
-          if(lesson){
-            res.sendStatus(422);
-          }
-          else {
-            db.tometable.insert({
-              _id: req.params.id,
-              subject: req.body.subject,
-              teacher: req.body.teacher,
-              location: req.body.location,
-              week: parseInt(req.body.week),
-              day: parseInt(req.body.day),
-              startperiod: JSON.parse(req.body.startperiod),
-              endperiod: JSON.parse(req.body.endperiod),
-              userid: req.auth.userid
-            }, function(err, inserted){
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    })
+    .delete(function(req, res){
+      db.tometable.findOne({
+        _id: db.ObjectId(req.params.id)
+      }, function(err, lesson){
+        if(lesson){
+          if(lesson.userid == req.auth.userid){
+            db.tometable.remove({
+              _id: db.ObjectId(req.params.id)
+            }, function(err, result){
               if(err){
                 res.sendStatus(500);
               }
@@ -386,41 +350,189 @@ module.exports = function(db){
               }
             });
           }
-        });
-      })
-      .put(function(req, res){
-        db.tometable.findOne({
-          _id: db.ObjectId(req.params.id)
-        }, function(err, lesson){
-          if(lesson){
-            if(lesson.userid == req.auth.userid){
-              db.tometable.update({
-                _id: db.ObjectId(req.params.id)
-              },
-              {
-                $set: {
-                  subject: req.body.subject,
-                  teacher: req.body.teacher,
-                  location: req.body.location,
-                  week: parseInt(req.body.week),
-                  day: parseInt(req.body.day),
-                  startperiod: JSON.parse(req.body.startperiod),
-                  endperiod: JSON.parse(req.body.endperiod)
-                }
-              },
-              function(){
-                res.sendStatus(200);
-              });
+          else{
+            unauthorised(res);
+          }
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    })
+    .post(function(req, res){
+      db.tometable.findOne({
+        _id: req.params.id
+      }, function(err, lesson){
+        if(lesson){
+          res.sendStatus(422);
+        }
+        else {
+          db.tometable.insert({
+            _id: req.params.id,
+            subject: req.body.subject,
+            teacher: req.body.teacher,
+            location: req.body.location,
+            week: parseInt(req.body.week),
+            day: parseInt(req.body.day),
+            startperiod: JSON.parse(req.body.startperiod),
+            endperiod: JSON.parse(req.body.endperiod),
+            userid: req.auth.userid
+          }, function(err, inserted){
+            if(err){
+              res.sendStatus(500);
             }
-            else{
-              unauthorised(res);
+            else {
+              res.sendStatus(200);
             }
+          });
+        }
+      });
+    })
+    .put(function(req, res){
+      db.tometable.findOne({
+        _id: db.ObjectId(req.params.id)
+      }, function(err, lesson){
+        if(lesson){
+          if(lesson.userid == req.auth.userid){
+            db.tometable.update({
+              _id: db.ObjectId(req.params.id)
+            },
+            {
+              $set: {
+                subject: req.body.subject,
+                teacher: req.body.teacher,
+                location: req.body.location,
+                week: parseInt(req.body.week),
+                day: parseInt(req.body.day),
+                startperiod: JSON.parse(req.body.startperiod),
+                endperiod: JSON.parse(req.body.endperiod)
+              }
+            },
+            function(){
+              res.sendStatus(200);
+            });
           }
           else{
-            res.sendStatus(404);
+            res.sendStatus(401);
           }
-        });
+        }
+        else{
+          res.sendStatus(404);
+        }
       });
+    });
+
+  router.route("/notes/week/")
+    .get(function(req, res){
+      var query = {
+        userid: req.auth.userid
+      }
+      if(req.query.weektome){
+        query.weektome = parseInt(req.query.weektome);
+      }
+      if(!req.query.includedeleted){
+        query["deleted"] = false;
+      }
+      db.weeknotes.find(query, function(err, notes){
+        res.json(notes);
+      });
+    });
+
+  router.route("/notes/week/:id")
+    .get(function(req, res){
+      db.weeknotes.findOne({
+        _id: req.params.id
+      }, function(err, weeknote){
+        if(weeknote){
+          if(weeknote.userid == req.auth.userid){
+            res.json(weeknote);
+          }
+          else{
+            res.sendStatus(401);
+          }
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    })
+    .post(function(req, res){
+      db.weeknotes.findOne({
+        _id: req.params.id
+      }, function(err, weeknote){
+        if(weeknote){
+          res.sendStatus(422);
+        }
+        else{
+          db.weeknotes.insert({
+            _id: req.params.id,
+            weektome: parseInt(req.body.weektome),
+            userid: req.auth.userid,
+            notes: req.body.notes,
+            deleted: false
+          }, function(){
+            res.sendStatus(200);
+          });
+        }
+      });
+    })
+    .put(function(req, res){
+      db.weeknotes.findOne({
+        _id: req.params.id
+      }, function(err, weeknote){
+        if(weeknote){
+          if(weeknote.userid == req.auth.userid){
+            var updates = {};
+            if(req.body.weektome){
+              updates.weektome = parseInt(req.body.weektome);
+            }
+            if(req.body.notes){
+              updates.notes = req.body.notes;
+            }
+            db.weeknotes.update({
+              _id: req.params.id
+            },
+            {
+              $set: updates
+            }, function(){
+              res.sendStatus(200);
+            });
+          }
+          else{
+            res.sendStatus(401);
+          }
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    })
+    .delete(function(req, res){
+      db.weeknotes.findOne({
+        _id: req.params.id
+      }, function(err, weeknote){
+        if(weeknote){
+          if(weeknote.userid == req.auth.userid){
+            db.weeknotes.update({
+              _id: req.params.id
+            },
+            {
+              $set: {
+                deleted: true
+              }
+            }, function(){
+              res.sendStatus(200);
+            });
+          }
+          else{
+            res.sendStatus(401);
+          }
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    });
 
 
   return router;

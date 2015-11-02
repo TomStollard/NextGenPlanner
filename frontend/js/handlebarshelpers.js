@@ -18,7 +18,7 @@ Handlebars.registerHelper("dateCalendar", function(datetome){
     nextWeek: "[Next] dddd",
     lastDay: "[Yesterday]",
     lastWeek: "[Last] dddd",
-    sameElse : "Do MMM"
+    sameElse : "ddd Do MMM"
   });
 });
 

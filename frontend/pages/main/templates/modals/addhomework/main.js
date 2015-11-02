@@ -83,7 +83,7 @@ $("#modal-addhomework").on("show", function(){
   $("#modal-addhomework form").off("submit");
   $("#modal-addhomework form").submit(function(e){
     e.preventDefault();
-    var id = uuid.v4() + "-" + new Date().getTome() + "-"+ credentials.sessionid;
+    var id = generateitemid();
     dbdata.homework.insert(id, {
       subject: JSON.parse($("#modal-addhomework select[name='subject']").val()).subject,
       set: JSON.parse($("#modal-addhomework select[name='subject']").val()).tome,

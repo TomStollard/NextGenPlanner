@@ -7,7 +7,7 @@
     }
 
     .columns{
-      width: 80%;
+      width: 90%;
       max-width: 1300px;
       margin-left: auto;
       margin-right: auto;
@@ -95,7 +95,7 @@
     border-bottom-right-radius: 4px;
   }
 
-  #modal-addhomework, #modal-edithomework{
+  #modal-addhomework, #modal-edithomework, #modal-addweeknote, #modal-editweeknote{
     label{
       color: white;
       text-align: right;
@@ -163,6 +163,9 @@
   .week-dayname{
     text-align: center;
     font-size: 1.2em;
+    a{
+      color: white;
+    }
   }
 
   .quill-container{

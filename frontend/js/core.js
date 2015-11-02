@@ -113,6 +113,10 @@ function loadtometable(callback){
   }
 }
 
+function generateitemid(){
+  return uuid.v4() + "-" + new Date().getTome() + "-"+ credentials.sessionid
+}
+
 var defaultstatushandler = {
   404: function(){
     bootbox.alert("Error 404: Not Found");

@@ -1,16 +1,6 @@
 $("#page-main").on("load", function(){
   loadtometable(function(){
-    async.parallel([
-      function(callback){
-        loadweekdetails(callback);
-      },
-      function(callback){
-        loadtododetails(callback);
-      },
-      function(callback){
-        loaddaydetails(callback);
-      }
-    ], function(){
+    loadmainpage(function(){
       updatehomeworkbindings();
       $("#page-main").trigger("loaded");
     });
@@ -45,34 +35,30 @@ $("#movedatepicker").on("change", function(){
   }
 });
 
-$("#currentweekbutton").click(function(){
-  currentweekdate = new Date();
-  $("#mainpage-panel-weeknotes").fadeOut();
-  $("#mainpage-panel-weekhomework").fadeOut(function(){
-    loadweekdetails(function(){
+function weekreload(){
+  $.when($("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeOut()).done(function(){
+    async.parallel([
+      loadweekdetails,
+      loadweeknotes
+    ], function(){
       $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeIn();
     });
   });
+}
+
+$("#currentweekbutton").click(function(){
+  currentweekdate = new Date();
+  weekreload();
 });
 
 $("#lastweekbutton").click(function(){
   currentweekdate = moment(currentweekdate).subtract(1, "week").toDate();
-  $("#mainpage-panel-weeknotes").fadeOut();
-  $("#mainpage-panel-weekhomework").fadeOut(function(){
-    loadweekdetails(function(){
-      $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeIn();
-    });
-  });
+  weekreload();
 });
 
 $("#nextweekbutton").click(function(){
   currentweekdate = moment(currentweekdate).add(1, "week").toDate();
-  $("#mainpage-panel-weeknotes").fadeOut();
-  $("#mainpage-panel-weekhomework").fadeOut(function(){
-    loadweekdetails(function(){
-      $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeIn();
-    });
-  });
+  weekreload();
 });
 
 $("#addhomeworkbutton").click(function(){
@@ -98,6 +84,30 @@ function loadweekdetails(callback){
       }
     }
     $("#mainpage-panel-weekhomework .panel-body").html(templates.main.thisweek({days: days}));
+    
+    return callback();
+  });
+}
+
+function loadweeknotes(callback){
+  var weekstart = moment(currentweekdate).startOf('isoWeek');
+  dbdata.notes.week.findbyweektome(weekstart.valueOf(), function(notes){
+    var note = "";
+    if(notes[0]){
+      note = notes[0];
+    }
+    $("#mainpage-panel-weeknotes").html(templates.main.weeknotes({note: note}));
+    $("#mainpage-panel-weeknotes .panel-heading a").off("click");
+    $("#mainpage-panel-weeknotes .panel-heading a").click(function(){
+      if(note){
+        $("#modal-editweeknote").data("id", notes[0]._id)
+        $("#modal-editweeknote").trigger("show");
+      }
+      else{
+        $("#modal-addweeknote").data("weektome", weekstart.valueOf());
+        $("#modal-addweeknote").trigger("show");
+      }
+    });
     return callback();
   });
 }
@@ -146,15 +156,10 @@ function loadtododetails(callback){
 
 function loadmainpage(callback){
   async.parallel([
-    function(callback){
-      loadweekdetails(callback);
-    },
-    function(callback){
-      loadtododetails(callback);
-    },
-    function(callback){
-      loaddaydetails(callback);
-    }
+    loadweeknotes,
+    loadweekdetails,
+    loaddaydetails,
+    loadtododetails
   ], function(){
     updatehomeworkbindings();
     callback();
