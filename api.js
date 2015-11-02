@@ -257,7 +257,7 @@ module.exports = function(db){
               updates.set = parseInt(req.body.set);
             }
             if(req.body.due){
-              updates.set = parseInt(req.body.due);
+              updates.due = parseInt(req.body.due);
             }
             db.homework.update({
               _id: req.params.id

@@ -15,6 +15,9 @@ $("#modal-edithomework").on("show", function(){
       theme: "snow"
     });
 
+    $("#modal-edithomework input[name='setpicker']").pickadate();
+    $("#modal-edithomework input[name='duepicker']").pickadate();
+
     $("#modal-edithomework input[name='delete']").off("click")
     .click(function(){
       bootbox.confirm("Are you sure you want to delete this?", function(result){
@@ -42,8 +45,8 @@ $("#modal-edithomework").on("show", function(){
         },
         function(callback){
           dbdata.homework.update(id, {
-            set: moment($("#modal-edithomework input[name='setpicker']")).add(12, "hours").valueOf(),
-            due: moment($("#modal-edithomework input[name='duepicker']")).add(12, "hours").valueOf(),
+            set: moment(new Date($("#modal-edithomework input[name='setpicker']").val())).add(12, "hours").valueOf(),
+            due: moment(new Date($("#modal-edithomework input[name='duepicker']").val())).add(12, "hours").valueOf(),
             subject: $("#modal-edithomework input[name='subject']").val(),
             homework: editors.edithomework.getHTML()
           }, function(){
