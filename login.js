@@ -2,7 +2,7 @@ module.exports = function(db){
   var express = require("express");
   var router = express.Router();
   var basicAuth = require("basic-auth");
-  var bcrypt = require('bcrypt');
+  var crypto = require('crypto');
 
   router.get("/", function(req, res){
     var basicauthdetails = basicAuth(req);
@@ -23,8 +23,8 @@ module.exports = function(db){
         username: basicauthdetails.name,
       }, function(err, user){
         if(user){
-          bcrypt.compare(basicauthdetails.pass, user.password, function(err, correct){
-            if(correct){
+          crypto.pbkdf2(basicauthdetails.pass, user.salt, 4096, 64, function(err, key){
+            if(user.password == key.toString("hex")){
               //user passwd correct
               //start new session
               var uuid = require('node-uuid');
