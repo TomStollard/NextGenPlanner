@@ -43,6 +43,20 @@ $("#page-login").on("visible", function(){
   $("loginform-username").focus();
 });
 
+$("#page-login .panel-title").click(function(){
+  var panel = $(this).parent();
+  if(panel.hasClass("active")){
+    panel.removeClass("active");
+    panel.find(".panel-content").slideUp();
+  }
+  else{
+    $("#page-login .pane.active .panel-content").slideUp();
+    $("#page-login .pane.active").removeClass("active");
+    panel.addClass("active");
+    panel.find(".panel-content").slideDown();
+  }
+});
+
 $("#page-login #loginform-rememberme input").change(function(){
   if($("#loginform-rememberme input").is(':checked')){
     $("#loginform-devicename").slideDown(function(){

@@ -2,21 +2,57 @@
   <div class="flexcontainer">
     <div id="login">
       <h1>NextGen Planner</h1>
-      <h2>Please sign in:</h2>
-      <form id="loginform">
-        <input id="loginform-username" class="form-control" type="text" placeholder="Username" autofocus>
-        <input id="loginform-password" class="form-control" type="password" placeholder="Password">
-        <div class="alert alert-danger" role="alert" id="loginform-credserror">
-          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-          <span class="sr-only">Error:</span>
-          Sorry, those credentials were incorrect. Please try again.
+      <div class="pane active">
+        <div class="panel-title">
+          <a>Login</a>
+          <img src="/imgs/arrow.png"></img>
+          <div class="clear: both;">&nbsp;</div>
         </div>
-        <div class="checkbox" id="loginform-rememberme">
-          <input type="checkbox" value="" id="test"><label for="test">Remember Me</label>
+        <div class="panel-content" style="display: block">
+          <form id="loginform">
+            <input id="loginform-username" class="form-control" type="text" placeholder="Username" autofocus>
+            <input id="loginform-password" class="form-control" type="password" placeholder="Password">
+            <div class="alert alert-danger" role="alert" id="loginform-credserror">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span class="sr-only">Error:</span>
+              Sorry, those credentials were incorrect. Please try again.
+            </div>
+            <div class="checkbox" id="loginform-rememberme">
+              <input type="checkbox" value="" id="test"><label for="test">Remember Me</label>
+            </div>
+            <input id="loginform-devicename" class="form-control" type="text" placeholder="Device Name">
+            <button id="loginform-submit" class="btn btn-primary" type="submit">Log In</button>
+          </form>
         </div>
-        <input id="loginform-devicename" class="form-control" type="text" placeholder="Device Name">
-        <button id="loginform-submit" class="btn btn-primary" type="submit">Log In</button>
-      </form>
+      </div>
+      <div class="pane">
+        <div class="panel-title">
+          <a>Sign Up</a>
+          <img src="/imgs/arrow.png"></img>
+          <div class="clear: both;">&nbsp;</div>
+        </div>
+        <div class="panel-content">
+          <form>
+            <div class="form-group">
+              <label for="username">Username:</label>
+              <input type="text" class="form-control" name="username"></input>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address:</label>
+              <input type="text" class="form-control" name="email"></input>
+            </div>
+            <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="text" class="form-control" name="password"></input>
+            </div>
+            <div class="form-group">
+              <label for="name">Name:</label>
+              <input type="text" class="form-control" name="name"></input>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Sign Up"></input>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>
