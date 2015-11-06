@@ -68,6 +68,7 @@ var gulp = require("gulp"),
     sourcemaps = require("gulp-sourcemaps");
     sass = require("gulp-sass");
     gulputil = require("gulp-util");
+    path = require("path");
 
 gulp.task("default", ["libraries", "pages", "other"]);
 gulp.task("watch", ["pages#watch", "other#watch"]);
@@ -179,7 +180,7 @@ gulp.task("pages#watch", function(){
       .pipe(declare({
         namespace: "templates",
         noRedeclare: true,
-        processName: function(filePath){return declare.processNameByPath(filePath.replace("frontend\\pages\\", "").replace("templates\\", ""))}
+        processName: function(filePath){return declare.processNameByPath(filePath.replace(path.join("frontend", "pages") + path.sep, "").replace("templates" + path.sep, ""))}
       })),
       gulp.src(partials, {base: "./frontend/pages/"})
       .pipe(handlebars({
@@ -188,7 +189,7 @@ gulp.task("pages#watch", function(){
       .pipe(wrap("Handlebars.registerPartial(<%= processPartialName(file.relative) %>, Handlebars.template(<%= contents %>));", {}, {
         imports: {
           processPartialName: function(fileName) {
-            return JSON.stringify(fileName.replace(".js", "").replace("templates\\", "").replace("partials\\", "").replace("\\", "."));
+            return JSON.stringify(fileName.replace(".js", "").replace("templates" + path.sep, "").replace("partials" + path.sep, "").replace(path.sep, "."));
           }
         }
       }))
