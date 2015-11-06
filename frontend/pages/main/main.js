@@ -41,6 +41,8 @@ function weekreload(){
       loadweekdetails,
       loadweeknotes
     ], function(){
+      updatedaynotebindings();
+      updatehomeworkbindings();
       $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeIn();
     });
   });
@@ -69,23 +71,35 @@ function loadweekdetails(callback){
   var weekstart = moment(currentweekdate).startOf('isoWeek');
   var weekend = weekstart.clone().add(7, "days").subtract(1, "second");
   dbdata.homework.setbetweendates(weekstart.toDate(), weekend.toDate(), function(allhomework){
-    var days = [];
-    for(var i = 0; i < 7; i++){
-      if(i in options.tometable.schooldays){
-        var day = {};
-        day.date = moment(weekstart).add(i, "days").toDate();
-        day.homeworkitems = [];
-        $.each(allhomework, function(i, homeworkitem){
-          if((day.date.getTome() < homeworkitem.set) && (homeworkitem.set < moment(day.date).add(24, "hours").subtract(1, "millisecond").valueOf())){
-            day.homeworkitems.push(homeworkitem);
-          }
-        });
-        days.push(day);
+    dbdata.notes.day.betweendates(weekstart.toDate(), weekend.toDate(), function(allnotes){
+      var days = [];
+      for(var i = 0; i < 7; i++){
+        if(i in options.tometable.schooldays){
+          var day = {};
+          day.date = moment(weekstart).add(i, "days").toDate();
+          day.homeworkitems = [];
+          day.notes = [];
+          $.each(allhomework, function(i, homeworkitem){
+            if((day.date.getTome() <= homeworkitem.set) && (homeworkitem.set < moment(day.date).add(24, "hours").subtract(1, "millisecond").valueOf())){
+              day.homeworkitems.push(homeworkitem);
+            }
+          });
+          $.each(allnotes, function(i, note){
+            if((day.date.getTome() <= note.daytome) && (note.daytome < moment(day.date).add(24, "hours").subtract(1, "millisecond").valueOf())){
+              day.notes.push(note);
+            }
+          });
+          days.push(day);
+        }
       }
-    }
-    $("#mainpage-panel-weekhomework .panel-body").html(templates.main.thisweek({days: days}));
-    
-    return callback();
+      $("#mainpage-panel-weekhomework .panel-body").html(templates.main.thisweek({days: days}));
+      $("#mainpage-panel-weekhomework .panel-body .week-dayname").off("click");
+      $("#mainpage-panel-weekhomework .panel-body .week-dayname a").click(function(){
+        $("#modal-adddaynote").data("daytome", $(this).data("tome"));
+        $("#modal-adddaynote").trigger("show");
+      });
+      return callback();
+    });
   });
 }
 
@@ -134,14 +148,17 @@ function loaddaydetails(callback){
 
   dbdata.homework.duebetweendates(daydate.toDate(), moment(daydate).add(1, "days").subtract(1, "millisecond").toDate(), function(homework){
     dbdata.homework.sort.byset(0, homework);
-    $("#mainpage-panel-todaytomorrow").html(templates.main.dayview({
-      dayitems: [],
-      lessons: lessons,
-      homework: homework,
-      dayname: dayname
-    }));
+    dbdata.notes.day.betweendates(daydate.toDate(), moment(daydate).add(1, "days").subtract(1, "millisecond").toDate(), function(notes){
+      $("#mainpage-panel-dayview").html(templates.main.dayview({
+        dayitems: [],
+        lessons: lessons,
+        homework: homework,
+        dayname: dayname,
+        notes: notes
+      }));
 
-    callback();
+      callback();
+    });
   });
 
 }
@@ -162,6 +179,7 @@ function loadmainpage(callback){
     loadtododetails
   ], function(){
     updatehomeworkbindings();
+    updatedaynotebindings();
     callback();
   });
 };
@@ -203,5 +221,14 @@ function updatehomeworkbindings(){
     var id = $(this).parent().parent().data("id");
     $("#modal-edithomework").data("id", id);
     $("#modal-edithomework").trigger("show");
+  });
+}
+
+function updatedaynotebindings(){
+  $(".daynote a.editnotelink").off("click");
+  $(".daynote a.editnotelink").click(function(){
+    var id = $(this).parent().parent().data("id");
+    $("#modal-editdaynote").data("id", id);
+    $("#modal-editdaynote").trigger("show");
   });
 }

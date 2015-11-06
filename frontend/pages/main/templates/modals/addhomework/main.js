@@ -106,7 +106,8 @@ $("#modal-addhomework").on("show", function(){
           }
         ], function(){
           updatehomeworkbindings();
-          $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework, #mainpage-panel-todaytomorrow, #mainpage-panel-todo").fadeIn();
+          updatedaynotebindings();
+          $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework, #mainpage-panel-dayview, #mainpage-panel-todo").fadeIn();
         });
       });
     });

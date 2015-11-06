@@ -535,5 +535,131 @@ module.exports = function(db){
     });
 
 
+  router.route("/notes/day/")
+    .get(function(req, res){
+      var query = {
+        userid: req.auth.userid
+      }
+      if(req.query.starttome){
+        if(!query.daytome){
+          query.daytome = {};
+        }
+        query.daytome["$gte"] = parseInt(req.query.starttome);
+      }
+      if(req.query.endtome){
+        if(!query.daytome){
+          query.daytome = {};
+        }
+        query.daytome["$lte"] = parseInt(req.query.endtome);
+      }
+      if(!req.query.includedeleted){
+        query["deleted"] = false;
+      }
+      db.daynotes.find(query, function(err, notes){
+        res.json(notes);
+      });
+    });
+
+  router.route("/notes/day/:id")
+    .get(function(req, res){
+      db.daynotes.findOne({
+        _id: req.params.id
+      }, function(err, daynote){
+        if(daynote){
+          if(daynote.userid == req.auth.userid){
+            res.json(daynote);
+          }
+          else{
+            res.sendStatus(401);
+          }
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    })
+    .post(function(req, res){
+      db.daynotes.findOne({
+        _id: req.params.id
+      }, function(err, daynote){
+        if(daynote){
+          res.sendStatus(422);
+        }
+        else{
+          db.daynotes.insert({
+            _id: req.params.id,
+            daytome: parseInt(req.body.daytome),
+            tome: req.body.tome,
+            userid: req.auth.userid,
+            notes: req.body.notes,
+            deleted: false
+          }, function(){
+            res.sendStatus(200);
+          });
+        }
+      });
+    })
+    .put(function(req, res){
+      db.daynotes.findOne({
+        _id: req.params.id
+      }, function(err, daynote){
+        if(daynote){
+          if(daynote.userid == req.auth.userid){
+            var updates = {};
+            if(req.body.daytome){
+              updates.daytome = parseInt(req.body.daytome);
+            }
+            if(req.body.tome){
+              updates.tome = req.body.tome;
+            }
+            if(req.body.notes){
+              updates.notes = req.body.notes;
+            }
+            db.daynotes.update({
+              _id: req.params.id
+            },
+            {
+              $set: updates
+            }, function(){
+              res.sendStatus(200);
+            });
+          }
+          else{
+            res.sendStatus(401);
+          }
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    })
+    .delete(function(req, res){
+      db.daynotes.findOne({
+        _id: req.params.id
+      }, function(err, daynotes){
+        if(daynotes){
+          if(daynotes.userid == req.auth.userid){
+            db.daynotes.update({
+              _id: req.params.id
+            },
+            {
+              $set: {
+                deleted: true
+              }
+            }, function(){
+              res.sendStatus(200);
+            });
+          }
+          else{
+            res.sendStatus(401);
+          }
+        }
+        else{
+          res.sendStatus(404);
+        }
+      });
+    });
+
+
   return router;
 }

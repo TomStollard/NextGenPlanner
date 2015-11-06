@@ -11,6 +11,10 @@ Handlebars.registerHelper("dateToNow", function(datetome){
   return moment(new Date(datetome)).fromNow();
 });
 
+Handlebars.registerHelper("json", function(data){
+  return JSON.stringify(data);
+});
+
 Handlebars.registerHelper("dateCalendar", function(datetome){
   return moment(datetome).calendar(null, {
     sameDay: "[Today]",

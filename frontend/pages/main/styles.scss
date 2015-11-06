@@ -70,17 +70,18 @@
     flex-grow: 1;
   }
 
-   .columns{
+  .columns{
     display: flex;
   }
 
-   .panel{
+  .panel{
     border: solid 1px #e2e2e2;
     background-color: #5b5b5b;
     color: white;
+    text-align: center;
   }
 
-   .panel-title{
+  .panel-title{
     text-align: center;
   }
 
@@ -95,7 +96,7 @@
     border-bottom-right-radius: 4px;
   }
 
-  #modal-addhomework, #modal-edithomework, #modal-addweeknote, #modal-editweeknote{
+  #modal-addhomework, #modal-edithomework, #modal-addweeknote, #modal-editweeknote, #modal-adddaynote, #modal-editdaynote{
     label{
       color: white;
       text-align: right;
@@ -150,6 +151,34 @@
       color: white;
     }
     .subject, .due{
+      max-width: 6em;
+      min-width: 6em;
+      display: flex;
+      div{
+        margin: auto;
+        text-align: center;
+      }
+    }
+  }
+
+  .daynote{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    border: solid 1px white;
+    text-align: center;
+
+    >div{
+      border: solid 1px grey;
+      padding: 3px;
+    }
+    >.notes{
+      flex-grow: 1;
+    }
+    a{
+      color: white;
+    }
+    .tome{
       max-width: 6em;
       min-width: 6em;
       display: flex;

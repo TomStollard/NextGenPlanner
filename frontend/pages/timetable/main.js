@@ -16,7 +16,6 @@ function loadtometablepage(callback){
     );
   }
   $(".tometablelessoninner").click(function(){
-    console.log("clicked");
     $("#modal-editlesson").data("id", $(this).parent().data("id"));
     $("#modal-editlesson").trigger("show");
   });

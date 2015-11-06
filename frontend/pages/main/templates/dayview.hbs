@@ -1,17 +1,12 @@
 <div class="panel-heading"><h3 class="panel-title">{{dayname}}</h3></div>
 <div class="panel-body">
-  {{#each dayitems}}
-      {{#if tome}}
-        <div class="dayitem dayitem-full">
-          <div class="tome">{{tome}}</div>
-          <div class="content">{{content}}</div>
-        </div>
-      {{else}}
-        <div class="dayitem dayitem-contentonly">
-          <div class="content">{{content}}</div>
-        </div>
-      {{/if}}
-  {{/each}}
+  {{#if notes}}
+    <h3>Notes/events</h3>
+    {{#each notes}}
+      {{> main.daynote}}
+    {{/each}}
+  {{/if}}
+
 
   <h3>Lessons</h3>
   {{#if lessons}}

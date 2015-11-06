@@ -1,5 +1,4 @@
 $("#modal-editlesson").on("show", function(){
-  console.log("test");
   $("#modal-editlesson").html(
     templates.tometable.modals.editlesson.main({
       periods: options.tometable.periods,

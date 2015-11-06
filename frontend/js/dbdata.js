@@ -452,6 +452,100 @@ var dbdata = {
           });
         }
       }
+    },
+    day: {
+      betweendates: function(date1, date2, callback){
+        //takes two date objects, calls callback with a single argument, all homework items set between these dates
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "GET",
+            url: "/api/notes/day",
+            data: {
+              starttome: date1.getTome(),
+              endtome: date2.getTome()
+            },
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            success: function(homeworkitems){
+              callback(homeworkitems);
+            }
+          });
+        }
+      },
+      insert: function(data, callback){
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "POST",
+            url: "/api/notes/day/" + data.id,
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            data: data,
+            success: function(){
+              callback();
+            }
+          });
+        }
+      },
+      findbyid: function(id, callback){
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "GET",
+            url: "/api/notes/day/" + id,
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            success: function(note){
+              callback(note);
+            }
+          });
+        }
+      },
+      update: function(data, callback){
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "PUT",
+            url: "/api/notes/day/" + data.id,
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            data: data,
+            success: function(){
+              callback();
+            }
+          });
+        }
+      },
+      delete: function(id, callback){
+        if(options.offlinesync){
+
+        }
+        else{
+          $.ajax({
+            type: "DELETE",
+            url: "/api/notes/day/" + id,
+            username: credentials.userid,
+            password: credentials.sessionid,
+            statusCode: defaultstatushandler,
+            success: function(){
+              callback();
+            }
+          });
+        }
+      }
     }
   }
 }
