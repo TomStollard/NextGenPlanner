@@ -1,6 +1,5 @@
 var mongojs = require("mongojs"),
     dotenv = require("dotenv"),
-    bcrypt = require("bcrypt"),
     crypto = require("crypto");
 
 dotenv.load();

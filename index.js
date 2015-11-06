@@ -1,8 +1,7 @@
 var express = require("express"),
     mongojs = require("mongojs"),
     dotenv = require("dotenv"),
-    bodyParser = require("body-parser"),
-    autoprefixer = require("express-autoprefixer");
+    bodyParser = require("body-parser");
 
 dotenv.load();
 
