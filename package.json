@@ -8,7 +8,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "build": "gulp",
-    "bower": "bower"
+    "bower": "bower",
+    "postinstall": "bower install && gulp"
   },
   "repository": {
     "type": "git",
