@@ -2,9 +2,9 @@
   <div class="flexcontainer">
     <div id="login">
       <h1>NextGen Planner</h1>
-      <div class="pane active">
+      <div class="pane active" id="pane-login">
         <div class="panel-title">
-          <a>Login</a>
+          <a href="javascript:void(0);">Login</a>
           <img src="/imgs/arrow.png"></img>
           <div class="clear: both;">&nbsp;</div>
         </div>
@@ -25,14 +25,14 @@
           </form>
         </div>
       </div>
-      <div class="pane">
+      <div class="pane" id="pane-signup">
         <div class="panel-title">
-          <a>Sign Up</a>
+          <a href="javascript:void(0);">Sign Up</a>
           <img src="/imgs/arrow.png"></img>
           <div class="clear: both;">&nbsp;</div>
         </div>
         <div class="panel-content">
-          <form>
+          <form id="signupform">
             <div class="form-group">
               <label for="username">Username:</label>
               <input type="text" class="form-control" name="username"></input>
@@ -43,7 +43,7 @@
             </div>
             <div class="form-group">
               <label for="password">Password:</label>
-              <input type="text" class="form-control" name="password"></input>
+              <input type="password" class="form-control" name="password"></input>
             </div>
             <div class="form-group">
               <label for="name">Name:</label>

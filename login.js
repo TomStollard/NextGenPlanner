@@ -59,5 +59,29 @@ module.exports = function(db){
     }
   });
 
+  router.post("/signup", function(req, res){
+    db.users.findOne({
+      username: req.body.username
+    }, function(err, user){
+      if(user){
+        res.status(422).send("Sorry, that username is already taken.")
+      }
+      else{
+        var salt = crypto.randomBytes(32).toString("hex");
+        crypto.pbkdf2(req.body.password, salt, 4096, 64, function(err, key){
+          db.users.insert({
+            username: req.body.username,
+            name: req.body.name,
+            email: req.body.email,
+            salt: salt,
+            password: key.toString("hex")
+          }, function(){
+            res.sendStatus(200);
+          });
+        });
+      }
+    });
+  })
+
   return router;
 }

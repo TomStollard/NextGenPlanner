@@ -1,9 +1,18 @@
 $("#page-login").on("load", function(){
-  $("#loginform-username").val("");
+  $("#pane-login").trigger("active");
+  $("#pane-login").trigger("activedisplayed");
+  $("#page-login").trigger("loaded");
+});
+
+$("#pane-login").on("active", function(){
+  $("#loginform-username").val("").focus();
   $("#loginform-password").val("");
   $("#loginform-rememberme input").prop('checked', false);
   $("#loginform-devicename").val("");
-  $("#page-login").trigger("loaded");
+});
+
+$("#pane-login").on("activedisplayed", function(){
+  $("#loginform-username").focus();
 });
 
 $("#loginform").submit(function(event){
@@ -39,12 +48,8 @@ $("#loginform").submit(function(event){
   return false;
 });
 
-$("#page-login").on("visible", function(){
-  $("loginform-username").focus();
-});
-
-$("#page-login .panel-title").click(function(){
-  var panel = $(this).parent();
+$("#page-login .panel-title a").click(function(){
+  var panel = $(this).parent().parent();
   if(panel.hasClass("active")){
     panel.removeClass("active");
     panel.find(".panel-content").slideUp();
@@ -53,7 +58,10 @@ $("#page-login .panel-title").click(function(){
     $("#page-login .pane.active .panel-content").slideUp();
     $("#page-login .pane.active").removeClass("active");
     panel.addClass("active");
-    panel.find(".panel-content").slideDown();
+    panel.trigger("active");
+    panel.find(".panel-content").slideDown(function(){
+      panel.trigger("activedisplayed");
+    });
   }
 });
 
@@ -70,4 +78,27 @@ $("#page-login #loginform-rememberme input").change(function(){
 
 $("#page-login #loginform-username, #page-login #loginform-password").on("input", function(){
   $("#loginform-credserror").slideUp();
+});
+
+$("#pane-signup").on("activedisplayed", function(){
+  $("#signupform input[name='username']").focus();
+});
+
+$("#signupform").submit(function(e){
+  e.preventDefault();
+  $.ajax({
+    type: "POST",
+    url: "/login/signup",
+    data: {
+      username: $("#signupform input[name='username']").val(),
+      password: $("#signupform input[name='password']").val(),
+      name: $("#signupform input[name='name']").val(),
+      email: $("#signupform input[name='email']").val()
+    },
+    success: function(){
+      $("#pane-login .panel-title a").click();
+      $("#loginform-username").val($("#signupform input[name='username']").val());
+      $("#loginform-password").val($("#signupform input[name='password']").val());
+    }
+  });
 });
