@@ -99,6 +99,11 @@ $("#signupform").submit(function(e){
       $("#pane-login .panel-title a").click();
       $("#loginform-username").val($("#signupform input[name='username']").val());
       $("#loginform-password").val($("#signupform input[name='password']").val());
+    },
+    statusCode: {
+      422: function(data){
+        bootbox.alert("Error: " + data.responseText);
+      }
     }
   });
 });
