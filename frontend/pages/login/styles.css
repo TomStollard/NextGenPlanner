@@ -16,7 +16,7 @@
 }
 
 #page-login #login .pane .panel-title{
-  border-top: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
   font-size: 1.3em;
   font-weight: bold;
   display: flex;
@@ -40,10 +40,6 @@
 
 #page-login #login .pane.active .panel-title img{
   -webkit-transform: rotate(-180deg);
-}
-
-#page-login #login .pane:last-child .panel-title{
-  border-bottom: 1px solid lightgrey;
 }
 
 #page-login #login .pane .panel-content{
