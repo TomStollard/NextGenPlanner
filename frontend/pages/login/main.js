@@ -37,7 +37,9 @@ $("#loginform").submit(function(event){
         window.localStorage["credentials"] = JSON.stringify(res);
       }
       credentials = res;
-      switchpage("main");
+      loaduserdata(function(){
+        switchpage("main");
+      });
     },
     statusCode: {
       401: function(){

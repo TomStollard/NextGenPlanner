@@ -65,6 +65,17 @@ module.exports = function(db){
     next();
   });
 
+  router.route("/user")
+    .get(function(req, res){
+      db.users.findOne({
+      _id: db.ObjectId(req.auth.userid)
+    }, function(err, user){
+      delete user.password;
+      delete user.salt;
+      res.json(user);
+    })
+  });
+
   router.route("/sessions")
     .get(function(req, res){
       db.sessions.find({

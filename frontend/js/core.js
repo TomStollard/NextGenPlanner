@@ -1,4 +1,4 @@
-var credentials;
+var credentials = {};
 //var tometable = [{"_id":"55f094c4980b359294067ed5","userid":"55e2af6d20ee7908126c260c","deleted":false,"day":4,"week":0,"startperiod":4,"endperiod":5,"subject":"Maths","teacher":"Mr McCrink","location":"23"}];
 var tometable = [];
 var editors = {};
@@ -38,19 +38,16 @@ $.each(options.tometable.schooldays, function(i, day){
 });
 
 $(document).ready(function(){
-  if(window.localStorage["localoptions"]){
-    localoptions = JSON.parse(window.localStorage["localoptions"]);
-  }
-  if(localoptions.offlinesync){
-    options = JSON.parse(window.localStorage["options"]);
-  }
-  if(window.localStorage["credentials"]){
-    credentials = JSON.parse(window.localStorage["credentials"]);
-    switchpage("main");
-  }
-  else {
-    switchpage("login");
-  }
+  loadlocaldata(function(){
+    if(credentials.userid){
+      loaduserdata(function(){
+        switchpage("main");
+      });
+    }
+    else {
+      switchpage("login");
+    }
+  });
 });
 
 function switchpage(newpage){
@@ -94,6 +91,20 @@ function switchpage(newpage){
   }
 }
 
+function loadlocaldata(callback){
+  if(window.localStorage["credentials"]){
+    credentials = JSON.parse(window.localStorage["credentials"]);
+  }
+  callback();
+}
+
+function loaduserdata(callback){
+    async.parallel([
+      loaduser,
+      loadtometable
+    ], callback);
+}
+
 function loadtometable(callback){
   if(localoptions.offlinesync){
     tometable = JSON.parse(window.localStorage["tometable"]);
@@ -112,6 +123,26 @@ function loadtometable(callback){
     });
   }
 }
+
+function loaduser(callback){
+  if(localoptions.offlinesync){
+  }
+  else{
+    $.ajax({
+      type: "GET",
+      url: "/api/user",
+      username: credentials.userid,
+      password: credentials.sessionid,
+      statusCode: defaultstatushandler,
+      success: function(userdata){
+        user = userdata;
+        callback();
+      }
+    });
+  }
+}
+
+
 
 function generateitemid(){
   return uuid.v4() + "-" + new Date().getTome() + "-"+ credentials.sessionid

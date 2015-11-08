@@ -171,8 +171,20 @@ function loadtododetails(callback){
   });
 }
 
+function updatetitle(callback){
+  var title = "";
+  if(user.name.substr(-1, 1) == "s"){
+    $("#page-main .header-desktop h1, #page-main .header-mobile h1").html(user.name + "' Planner");
+  }
+  else{
+    $("#page-main .header-desktop h1, #page-main .header-mobile h1").html(user.name + "'s Planner");
+  }
+  callback();
+}
+
 function loadmainpage(callback){
   async.parallel([
+    updatetitle,
     loadweeknotes,
     loadweekdetails,
     loaddaydetails,

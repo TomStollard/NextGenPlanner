@@ -1,4 +1,10 @@
 function loadtometablepage(callback){
+  if(user.name.substr(-1, 1) == "s"){
+    $("#page-tometable .header-desktop h1, #page-tometable .header-mobile h1").html(user.name + "' Tometable");
+  }
+  else{
+    $("#page-tometable .header-desktop h1, #page-tometable .header-mobile h1").html(user.name + "'s Tometable");
+  }
   if(options.tometable.mode == "day"){
     $("#tometablecontainer").html(
       templates.tometable.daymode({
