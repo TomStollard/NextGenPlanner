@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "v2 of NextGenPlanner, in Node.JS",
   "main": "index.js",
+  "license": "AGPL-3.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
@@ -13,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://dev.lan.tomstollard.me.uk/tom/NextGenPlanner.git"
+    "url": "https://github.com/TomStollard/NextGenPlanner.git"
   },
   "author": "Tom Stollard",
   "dependencies": {
