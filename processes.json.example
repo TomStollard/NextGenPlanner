@@ -7,7 +7,7 @@
       "env": {
         "DBURL": "NextGenPlanner"
       },
-      "post_update": "npm install"
+      "post_update": ["npm install"]
     }
   ]
 }
