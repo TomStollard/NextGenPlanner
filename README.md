@@ -40,11 +40,11 @@ A live version of this project can be found at <http://app.nextgenplanner.co.uk/
       - Copy processes.json.example to processes.json
       - Add your MongoDB URL to the DBURL parameter, under the env section.
 5. You can then start up the server.  
-    If you're running it for development:
+    - If you're running it for development:
       - Intall node-foreman: `npm install -g foreman`
       - Start the server: `nf run npm start`
 
-    If you're using pm2:
+    - If you're using pm2:
       - Run `pm2 start processes.json`
       - You can then manage the process using the name "NextGenPlanner", eg `pm2 restart NextGenPlanner`
     
