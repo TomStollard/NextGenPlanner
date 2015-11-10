@@ -19,22 +19,6 @@ $(".menu>a").click(function(){
   $(this).parent().slideUp();
 });
 
-$("#movedatepicker").pickadate({
-  disable: todisable,
-  firstDay: true
-});
-$("#movedatepicker").on("change", function(){
-  if($("#movedatepicker").val()){
-    currentweekdate = new Date($("#movedatepicker").val());
-    $("#mainpage-panel-weeknotes").fadeOut();
-    $("#mainpage-panel-weekhomework").fadeOut(function(){
-      loadweekdetails(function(){
-        $("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeIn();
-      });
-    });
-  }
-});
-
 function weekreload(){
   $.when($("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeOut()).done(function(){
     async.parallel([
@@ -61,6 +45,17 @@ $("#lastweekbutton").click(function(){
 $("#nextweekbutton").click(function(){
   currentweekdate = moment(currentweekdate).add(1, "week").toDate();
   weekreload();
+});
+
+$("#movedatepicker").pickadate({
+  disable: todisable,
+  firstDay: true
+});
+$("#movedatepicker").on("change", function(){
+  if($("#movedatepicker").val()){
+    currentweekdate = new Date($("#movedatepicker").val());
+    weekreload();
+  }
 });
 
 $("#addhomeworkbutton").click(function(){
