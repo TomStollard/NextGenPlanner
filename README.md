@@ -1,6 +1,6 @@
 # NextGenPlanner
 NextGen Planner is an online school planner built by the next generation, for the next generation. It includes a number of features, including:
-- Support for complex tometables, both week and day based, with options for setting school days
+- Support for complex tometables, both week and day based, with options for setting school days*
 - Homework adding system uses tometable data, allowing data to be entered quickly and easily
 - API that exposes all functionality
 - Almost completely client-side, allowing for good performance and use offline*
