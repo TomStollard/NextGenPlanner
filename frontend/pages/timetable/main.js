@@ -5,18 +5,18 @@ function loadtometablepage(callback){
   else{
     $("#page-tometable .header-desktop h1, #page-tometable .header-mobile h1").html(user.name + "'s Tometable");
   }
-  if(options.tometable.mode == "day"){
+  if(user.options.tometable.mode == "day"){
     $("#tometablecontainer").html(
       templates.tometable.daymode({
-        periods: options.tometable.periods,
+        periods: user.options.tometable.periods,
         days: dbdata.tometable.sortintodays(dbdata.tometable.addlessonheight(tometable))
       })
     );
   }
-  if(options.tometable.mode == "week"){
+  if(user.options.tometable.mode == "week"){
     $("#tometablecontainer").html(
         templates.tometable.weekmode({
-          periods: options.tometable.periods,
+          periods: user.options.tometable.periods,
           weeks: dbdata.tometable.sortintoweeks(dbdata.tometable.addlessonheight(tometable))
         })
     );

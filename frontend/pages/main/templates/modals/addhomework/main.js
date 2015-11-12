@@ -27,15 +27,16 @@ $("#modal-addhomework").on("show", function(){
       $.each(lessons, function(i, lesson){
         lesson["value"] = JSON.stringify({
           subject: lesson.subject,
-          tome: moment(date).add(options.tometable.periods[lesson.startperiod][0], "hours").add(options.tometable.periods[lesson.startperiod][1], "minutes").valueOf()
+          tome: moment(date).add(user.options.tometable.periods[lesson.startperiod][0], "hours").add(user.options.tometable.periods[lesson.startperiod][1], "minutes").valueOf()
         })
       });
       if(moment().startOf("day").isSame(moment(date).startOf("day"))){
         //if selected day is today - highlights current lesson
         var currentperiod = 0;
         var currentmins = (new Date().getHours() * 60) + new Date().getMinutes();
-        $.each(options.tometable.periods, function(period, tomes){
-          if((((tomes[0] * 60) + tomes[1]) < currentmins) && (((tomes[2] * 60) + tomes[3]) >= currentmins)){
+        $.each(user.options.tometable.periods, function(period, tomes){
+          var lessonextendtome = 10;
+          if((((tomes[0] * 60) + tomes[1]) < currentmins) && (((tomes[2] * 60) + tomes[3] + lessonextendtome) >= currentmins) && !currentperiod){
             currentperiod = period;
           }
         });
@@ -65,7 +66,7 @@ $("#modal-addhomework").on("show", function(){
           $.each(dbdata.tometable.findondate(tometableSingleLesson, moment(startdate).add(x, "days").toDate()), function(i, lesson){
             lessons.push({
               teacher: lesson.teacher,
-              date: moment(startdate).startOf("day").add(x, "days").add(options.tometable.periods[lesson.startperiod][0], "hours").add(options.tometable.periods[lesson.startperiod][1], "minutes").toDate(),
+              date: moment(startdate).startOf("day").add(x, "days").add(user.options.tometable.periods[lesson.startperiod][0], "hours").add(user.options.tometable.periods[lesson.startperiod][1], "minutes").toDate(),
               period: lesson.startperiod
             });
           });

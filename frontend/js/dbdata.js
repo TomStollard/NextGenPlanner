@@ -166,10 +166,10 @@ var dbdata = {
     },
     findondate: function(tometabledata, date){
       //returns a list of lessons on a specific date, first option is tometable data, second is a JS date object
-      if((moment(date).isoWeekday() - 1) in options.tometable.schooldays){
-        if(options.tometable.mode == "week"){
+      if((moment(date).isoWeekday() - 1) in user.options.tometable.schooldays){
+        if(user.options.tometable.mode == "week"){
           var weekid = moment(date).diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
-          var tometableweekid = (weekid + options.tometable.multiweek.offset)%(options.tometable.multiweek.numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
+          var tometableweekid = (weekid + user.options.tometable.multiweek.offset)%(user.options.tometable.multiweek.numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
           var tometabledayid = moment(date).isoWeekday() - 1; //get day id from
           var lessons = [];
           $.each(tometabledata, function(i, lesson){
@@ -179,18 +179,18 @@ var dbdata = {
           });
           return lessons;
         }
-        else if (options.tometable.mode == "day") {
+        else if (user.options.tometable.mode == "day") {
           var dayinweek = moment(date).isoWeekday() - 1;
-          if(dayinweek in options.tometable.schooldays){
+          if(dayinweek in user.options.tometable.schooldays){
             var dayid = moment(date).diff(moment(345600000), "days"); //get num of days between first monday in 1970 and date given
-            dayid -= (moment(date).diff(moment(345600000), "weeks") * (7-options.tometable.schooldays.length)); //subtract all days not counted in previous weeks
+            dayid -= (moment(date).diff(moment(345600000), "weeks") * (7-user.options.tometable.schooldays.length)); //subtract all days not counted in previous weeks
             for(var i = 0; i < dayinweek; i++){ //loop through previous days this week, and remove if not included in rotation
-              if(!(i in options.tometable.schooldays)){
+              if(!(i in user.options.tometable.schooldays)){
                 dayid -= 1;
               }
             }
-            dayid += options.tometable.multiday.offset;
-            var tometabledayid = dayid%options.tometable.multiday.numdays; //get day id in tometable
+            dayid += user.options.tometable.multiday.offset;
+            var tometabledayid = dayid%user.options.tometable.multiday.numdays; //get day id in tometable
             var lessons = [];
             $.each(tometabledata, function(i, lesson){ //loop through lessons, check if on correct day
               if((lesson.day == tometabledayid)){
@@ -215,8 +215,8 @@ var dbdata = {
       //adds period tomes to the data provided
       //warning - this modifies the original object
       $.each(tometabledata, function(i, lesson){
-        lesson.starttome = options.tometable.periods[lesson.startperiod].slice(0, 2);
-        lesson.endtome = options.tometable.periods[lesson.endperiod].slice(2);
+        lesson.starttome = user.options.tometable.periods[lesson.startperiod].slice(0, 2);
+        lesson.endtome = user.options.tometable.periods[lesson.endperiod].slice(2);
       });
       return tometabledata;
     },
@@ -238,9 +238,9 @@ var dbdata = {
       //returns an array of weeks, each an array of days, which are then arrays of lessons
       //warning - this modifies the original object
       var weeks = [];
-      for(var i = 0; i < options.tometable.multiweek.numweeks; i++){
+      for(var i = 0; i < user.options.tometable.multiweek.numweeks; i++){
         weeks[i] = [];
-        $.each(options.tometable.schooldays, function(x, dayid){
+        $.each(user.options.tometable.schooldays, function(x, dayid){
           weeks[i][dayid] = [];
         });
       }
@@ -250,7 +250,7 @@ var dbdata = {
       $.each(weeks, function(x, week){
         $.each(week, function(y, day){
           if(day){
-            for(var i = 0; i < options.tometable.periods.length; i++){
+            for(var i = 0; i < user.options.tometable.periods.length; i++){
               if(day[i]){
                 i = day[i].endperiod;
               }
@@ -265,14 +265,14 @@ var dbdata = {
     },
     sortintodays: function(tometabledata){
       var days = [];
-      for(var i = 0; i < options.tometable.multiday.numdays; i++){
+      for(var i = 0; i < user.options.tometable.multiday.numdays; i++){
         days[i] = [];
       }
       $.each(tometabledata, function(i, lesson){
         days[lesson.day][lesson.startperiod] = lesson;
       });
       $.each(days, function(y, day){
-        for(var i = 0; i < options.tometable.periods.length; i++){
+        for(var i = 0; i < user.options.tometable.periods.length; i++){
           if(day[i]){
             i = day[i].endperiod;
           }
@@ -305,11 +305,11 @@ var dbdata = {
       var max = 0;
       var lastthing;
       $.each(tometabledata, function(i, lesson){
-        if(options.tometable.mode == "week"){
-          var orderid = (lesson.week * options.tometable.schooldays.length * options.tometable.periods.length) + (lesson.day * options.tometable.periods.length) + (lesson.endperiod);
+        if(user.options.tometable.mode == "week"){
+          var orderid = (lesson.week * user.options.tometable.schooldays.length * user.options.tometable.periods.length) + (lesson.day * user.options.tometable.periods.length) + (lesson.endperiod);
         }
-        else if(options.tometable.mode == "day"){
-          var orderid = (lesson.day * options.tometable.periods.length) + (lesson.endperiod);
+        else if(user.options.tometable.mode == "day"){
+          var orderid = (lesson.day * user.options.tometable.periods.length) + (lesson.endperiod);
         }
         if(orderid > max){
           max = orderid;

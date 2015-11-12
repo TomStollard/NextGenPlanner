@@ -14,30 +14,30 @@ $("#modal-addlesson").on("show", function(){
   var lastlesson = dbdata.tometable.getlastlesson(tometable);
   if(lastlesson){
     nextperiod = lastlesson.endperiod + 1;
-    if(nextperiod >= options.tometable.periods.length){
+    if(nextperiod >= user.options.tometable.periods.length){
       nextperiod = 0;
       nextday = lastlesson.day + 1;
     }
     else{
       nextday = lastlesson.day;
     }
-    if(nextday >= options.tometable.schooldays.length){
+    if(nextday >= user.options.tometable.schooldays.length){
       nextday = 0;
       nextweek = lastlesson.week + 1;
     }
     else{
       nextweek = lastlesson.week;
     }
-    if(nextweek >= options.tometable.multiweek.numweeks){
+    if(nextweek >= user.options.tometable.multiweek.numweeks){
       nextweek = 0;
     }
   }
   $("#modal-addlesson").html(
     templates.tometable.modals.addlesson.main({
-      periods: options.tometable.periods,
-      days: options.tometable.schooldays,
-      weekmode: Boolean(options.tometable.mode == "week"),
-      numweeks: options.tometable.multiweek.numweeks,
+      periods: user.options.tometable.periods,
+      days: user.options.tometable.schooldays,
+      weekmode: Boolean(user.options.tometable.mode == "week"),
+      numweeks: user.options.tometable.multiweek.numweeks,
       defaultperiod: nextperiod,
       defaultday: nextday,
       defaultweek: nextweek

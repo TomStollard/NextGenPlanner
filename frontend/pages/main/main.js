@@ -69,7 +69,7 @@ function loadweekdetails(callback){
     dbdata.notes.day.betweendates(weekstart.toDate(), weekend.toDate(), function(allnotes){
       var days = [];
       for(var i = 0; i < 7; i++){
-        if(i in options.tometable.schooldays){
+        if(i in user.options.tometable.schooldays){
           var day = {};
           day.date = moment(weekstart).add(i, "days").toDate();
           day.homeworkitems = [];
@@ -125,7 +125,8 @@ function loaddaydetails(callback){
   var daydate = moment().startOf("day");
   var dayname = "Today";
   var nowtome = [new Date().getHours(), new Date().getMinutes()];
-  if((nowtome[0] == options.nextdaytome[0] && nowtome[0] >= options.nextdaytome[1]) || (nowtome[0] > options.nextdaytome[0])){
+  var lastperiod = user.options.tometable.periods[user.options.tometable.periods.length - 1];
+  if((nowtome[0] == lastperiod[2] && nowtome[0] >= lastperiod[3]) || (nowtome[0] > lastperiod[2])){
     daydate.add(1, "days");
     dayname = "Tomorrow";
   }
