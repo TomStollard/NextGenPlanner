@@ -15,6 +15,10 @@ $(".button-main-tometable").click(function(){
   switchpage("tometable");
 });
 
+$(".button-main-settings").click(function(){
+  $("#modal-options-main").trigger("show")
+});
+
 $(".menu>a").click(function(){
   $(this).parent().slideUp();
 });

@@ -1,0 +1,95 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal"><span>&tomes;</span></button>
+      <h4 class="modal-title">Options</h4>
+    </div>
+    <div class="modal-body">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#options-main-main" data-toggle="tab">Main</a></li>
+        <li><a href="#options-main-sessions" data-toggle="tab">Sessions</a></li>
+        <li><a href="#options-main-password" data-toggle="tab">Change Password</a></li>
+        <li><a href="#options-main-api" data-toggle="tab">API Keys</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade in active" id="options-main-main">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label for="username" class="col-xs-2 control-label">Username</label>
+              <div class="col-xs-10">
+                <div style="position: relative;">
+                  <input type="text" name="username" value="{{user.username}}" disabled class="form-control"></input>
+                </div>
+              </div>
+            </div>
+            <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> If you would like to change your username, please contact an administrator.</div>
+            <div class="form-group">
+              <label for="name" class="col-xs-2 control-label">Name</label>
+              <div class="col-xs-10">
+                <div style="position: relative;">
+                  <input type="text" name="name" value="{{user.name}}" class="form-control"></input>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email" class="col-xs-2 control-label">Email address</label>
+              <div class="col-xs-10">
+                <div style="position: relative;">
+                  <input type="text" name="email" value="{{user.email}}" class="form-control"></input>
+                </div>
+              </div>
+            </div>
+            <input type="submit" class="btn btn-default" value="Save"></input>
+          </form>
+        </div>
+        <div class="tab-pane fade" id="options-main-password">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label for="newpassword1" class="col-xs-2 control-label">New Password</label>
+              <div class="col-xs-10">
+                <div style="position: relative;">
+                  <input type="password" name="newpassword1" class="form-control"></input>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="newpassword2" class="col-xs-2 control-label">New Password (again)</label>
+              <div class="col-xs-10">
+                <div style="position: relative;">
+                  <input type="password" name="newpassword2" class="form-control"></input>
+                </div>
+              </div>
+            </div>
+            <input type="submit" class="btn btn-default" value="Change Password"></input>
+          </form>
+        </div>
+        <div class="tab-pane fade" id="options-main-sessions">
+          {{> main.sessiontable sessions=sessions}}
+        </div>
+        <div class="tab-pane fade" id="options-main-api">
+          <h3>Generate new API key</h3>
+          <form class="form-horizontal" id="generateapikey">
+            <div class="form-group">
+              <label for="name" class="col-xs-2 control-label">Expiry</label>
+              <div class="col-xs-10">
+                <div style="position: relative;">
+                  <input type="text" name="expiry" class="form-control" placeholder="Leave blank for no expiry"></input>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="name" class="col-xs-2 control-label">Description</label>
+              <div class="col-xs-10">
+                <div style="position: relative;">
+                  <input type="text" name="description" class="form-control"></input>
+                </div>
+              </div>
+            </div>
+            <input type="submit" class="btn btn-default" value="Generate"></input>
+          </form>
+          {{> main.sessiontable sessions=apikeys}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

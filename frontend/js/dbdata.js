@@ -547,5 +547,60 @@ var dbdata = {
         }
       }
     }
+  },
+  sessions: {
+    getall: function(callback){
+      $.ajax({
+        type: "GET",
+        url: "/api/sessions",
+        username: credentials.userid,
+        password: credentials.sessionid,
+        statusCode: defaultstatushandler,
+        success: callback
+      });
+    },
+    filterbytype: function(allsessions, type){
+      var sessions = [];
+      $.each(allsessions, function(i, session){
+        if(session.type == type){
+          sessions.push(session);
+        }
+      });
+      return sessions;
+    },
+    insert: function(data, callback){
+      $.ajax({
+        type: "POST",
+        url: "/api/sessions",
+        username: credentials.userid,
+        password: credentials.sessionid,
+        statusCode: defaultstatushandler,
+        success: callback,
+        data: data
+      });
+    },
+    delete: function(id, callback){
+      $.ajax({
+        type: "DELETE",
+        url: "/api/sessions/" + id,
+        username: credentials.userid,
+        password: credentials.sessionid,
+        statusCode: defaultstatushandler,
+        success: callback
+      });
+    }
+  },
+  user: {
+    update: function(data, callback){
+      $.ajax({
+        type: "PUT",
+        url: "/api/user/",
+        username: credentials.userid,
+        password: credentials.sessionid,
+        statusCode: defaultstatushandler,
+        data: data,
+        success: callback
+      });
+    }
   }
 }

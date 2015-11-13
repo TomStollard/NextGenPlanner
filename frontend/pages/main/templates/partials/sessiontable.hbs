@@ -1,0 +1,30 @@
+<table class="table">
+  <tr>
+    <th>Name</th>
+    <th>Exipres</th>
+    <th></th>
+  </tr>
+  {{#each sessions}}
+    <tr data-id="{{this._id}}">
+      <td>
+        {{#if this.description}}
+          {{this.description}}
+        {{else}}
+          No Name
+        {{/if}}
+      </td>
+      <td>
+        {{#if this.expiry}}
+          {{formatDate this.expiry "HH:MM:SS D MMMM, YYYY"}}
+          {{else}}
+          Never
+        {{/if}}
+      </td>
+      <td>
+        {{#unless this.current}}
+          <span class="glyphicon glyphicon-trash deletebutton"></span>
+        {{/unless}}
+      </td>
+    </tr>
+  {{/each}}
+</table>
