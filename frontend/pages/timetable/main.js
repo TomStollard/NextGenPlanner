@@ -38,6 +38,10 @@ $(".button-tometable-main").click(function(){
   switchpage("main");
 });
 
+$(".button-tometable-settings").click(function(){
+  $("#modal-options-tometable").trigger("show");
+});
+
 $("#addlessonbutton").click(function(){
   $("#modal-addlesson").trigger("show");
 });
