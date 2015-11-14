@@ -30,13 +30,13 @@ A live version of this project can be found at <http://app.nextgenplanner.co.uk/
     npm run bower install
     ```
     
-    `npm run build watch` is also available to continually re-build when files are modified - this is very useful in development, especially when combined with a tool like nodemon.
+    `npm run build watch` is also available to continually re-build when files are modified - this is very useful in development, especially when combined with a tool like nodemon (run it using `nf run nodemon`).
 4. You'll then need to set your environment variables.  
     If you just want to run it on your local machine during development:
       - Copy .env.example to .env
       - Add your MongoDB URL as the value of the DBURL variable
     
-    If you want to run it as a server, using pm2 is advised. You can also configure environment variables through it:
+    If you want to run it as a production server, using pm2 is advised. You can also configure environment variables through it:
       - Copy processes.json.example to processes.json
       - Add your MongoDB URL to the DBURL parameter, under the env section.
 5. You can then start up the server.  
