@@ -12,11 +12,18 @@
       <div class="tab-content">
         <div class="tab-pane fade in active" id="options-tometable-main">
           {{#each days}}
-            <input type="checkbox" {{#if this.active}}checked{{/if}} name="dayselect-{{this.num}}" class="dayselect">{{this.name}}</input><br>
+            <input type="checkbox" {{#if this.active}}checked{{/if}} data-day="{{this.num}}" class="dayselect">{{this.name}}</input><br>
           {{/each}}
         </div>
         <div class="tab-pane fade" id="options-tometable-periods">
-
+          <ol>
+            {{#each periods}}
+              <li>
+                From <select>{{> tometable.tomeselector from=0 to=23 value=this.[0]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[1]}}</select>
+                To <select>{{> tometable.tomeselector from=0 to=23 value=this.[2]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[3]}}</select>
+              </li>
+            {{/each}}
+          </ol>
         </div>
       </div>
     </div>

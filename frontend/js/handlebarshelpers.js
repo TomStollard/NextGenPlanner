@@ -51,3 +51,15 @@ Handlebars.registerHelper("ifnoteq", function(a, b, options){
     return options.inverse(this);
   }
 });
+
+Handlebars.registerHelper('for', function(from, to, block) {
+    var accum = '';
+    for(var i = from; i <= to; i++){
+      accum += block.fn(i);
+    }
+    return accum;
+});
+
+Handlebars.registerHelper('doubleDigit', function(value) {
+    return ("0" + value.toString()).slice(-2);
+});

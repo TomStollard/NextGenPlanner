@@ -16,7 +16,8 @@ $("#modal-options-tometable").on("show", function(){
   })
   $("#modal-options-tometable").html(
     templates.tometable.modals.options.main({
-      days: days
+      days: days,
+      periods: user.options.tometable.periods
     })
   );
   $("#modal-options-tometable").modal("show");

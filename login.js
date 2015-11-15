@@ -67,6 +67,27 @@ module.exports = function(db){
         res.status(422).send("Sorry, that username is already taken.")
       }
       else{
+        var defaultoptions = {
+          tometable: {
+            mode: "week",
+            multiweek: {
+              offset: 0,
+              numweeks: 1
+            },
+            multiday: {
+              offset: 0,
+              numdays: 5
+            },
+            schooldays: [0,1,2,3,4],
+            periods: [
+              [09, 00, 10, 00],
+              [10, 00, 11, 00],
+              [11, 00, 12, 00],
+              [13, 00, 14, 00],
+              [14, 00, 15, 00]
+            ]
+          }
+        }
         var salt = crypto.randomBytes(32).toString("hex");
         crypto.pbkdf2(req.body.password, salt, 4096, 64, function(err, key){
           db.users.insert({
@@ -74,7 +95,8 @@ module.exports = function(db){
             name: req.body.name,
             email: req.body.email,
             salt: salt,
-            password: key.toString("hex")
+            password: key.toString("hex"),
+            options: defaultoptions
           }, function(){
             res.sendStatus(200);
           });
