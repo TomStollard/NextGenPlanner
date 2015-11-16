@@ -13,18 +13,49 @@ $("#modal-options-tometable").on("show", function(){
       day.active = false;
     }
     days.push(day);
-  })
+  });
+
   $("#modal-options-tometable").html(
     templates.tometable.modals.options.main({
       days: days,
-      periods: user.options.tometable.periods
+      periods: user.options.tometable.periods,
+      numdays: user.options.tometable.multiday.numdays,
+      numweeks: user.options.tometable.multiweek.numweeks
     })
   );
+  $("#options-tometable-main form input[name='numdays']").change(function(){
+    var date = new Date();
+    var tometabledayid = dbdata.tometable.dayid(date);
+    var dayoffsets = [];
+    for(var i = 0; i < user.options.tometable.multiday.numdays; i++){
+      dayoffsets[i] = i - tometabledayid;
+    }
+    $("#options-tometable-main #daymodeconfig select").html(
+      templates.tometable.modals.options.dayselector({
+        dayoffsets: dayoffsets,
+        dayid: tometabledayid
+      })
+    );
+  })
+  .change();
+  $("#options-tometable-main form input[name='numweeks']").change(function(){
+    var tometableweekid = dbdata.tometable.weekid(new Date());
+    var weekoffsets = [];
+    for(var i = 0; i < user.options.tometable.multiweek.numweeks; i++){
+      weekoffsets[i] = i - tometableweekid;
+    }
+    $("#options-tometable-main #weekmodeconfig select").html(
+      templates.tometable.modals.options.weekselector({
+        weekoffsets: weekoffsets,
+        weekid: tometableweekid
+      })
+    );
+  })
+  .change();
   $("#options-tometable-periods .addbutton").click(function(){
     $("#options-tometable-periods form ol li:last-child").clone().appendTo("#options-tometable-periods form ol");
   });
   $("#options-tometable-periods form").submit(function(e){
-    console.log(e);
     e.preventDefault();
     var periods = [];
     $("#options-tometable-periods").find("li").each(function(period, li){
@@ -33,7 +64,6 @@ $("#modal-options-tometable").on("show", function(){
         periods[period][i] = parseInt($(tome).val());
       });
     });
-    console.log(periods);
     dbdata.user.update({
       options: {
         tometable: {

@@ -1,0 +1,3 @@
+{{#each weekoffsets}}
+  <option value="{{this}}" {{#ifeq @index ../weekid}}selected{{/ifeq}}>Week {{humanReadableIndex @index}}</option>
+{{/each}}

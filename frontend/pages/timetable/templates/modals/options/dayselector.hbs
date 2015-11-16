@@ -1,0 +1,3 @@
+{{#each dayoffsets}}
+  <option value="{{this}}" {{#ifeq @index ../dayid}}selected{{/ifeq}}>Day {{humanReadableIndex @index}}</option>
+{{/each}}

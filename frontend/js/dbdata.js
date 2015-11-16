@@ -168,9 +168,8 @@ var dbdata = {
       //returns a list of lessons on a specific date, first option is tometable data, second is a JS date object
       if((moment(date).isoWeekday() - 1) in user.options.tometable.schooldays){
         if(user.options.tometable.mode == "week"){
-          var weekid = moment(date).diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
-          var tometableweekid = (weekid + user.options.tometable.multiweek.offset)%(user.options.tometable.multiweek.numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
-          var tometabledayid = moment(date).isoWeekday() - 1; //get day id from
+          var tometableweekid = dbdata.tometable.weekid()
+          var tometabledayid = moment(date).isoWeekday() - 1; //get day id from date
           var lessons = [];
           $.each(tometabledata, function(i, lesson){
             if((lesson.day == tometabledayid) && (lesson.week == tometableweekid)){
@@ -180,28 +179,14 @@ var dbdata = {
           return lessons;
         }
         else if (user.options.tometable.mode == "day") {
-          var dayinweek = moment(date).isoWeekday() - 1;
-          if(dayinweek in user.options.tometable.schooldays){
-            var dayid = moment(date).diff(moment(345600000), "days"); //get num of days between first monday in 1970 and date given
-            dayid -= (moment(date).diff(moment(345600000), "weeks") * (7-user.options.tometable.schooldays.length)); //subtract all days not counted in previous weeks
-            for(var i = 0; i < dayinweek; i++){ //loop through previous days this week, and remove if not included in rotation
-              if(!(i in user.options.tometable.schooldays)){
-                dayid -= 1;
-              }
+          var tometabledayid = dbdata.tometable.dayid(date);
+          var lessons = [];
+          $.each(tometabledata, function(i, lesson){ //loop through lessons, check if on correct day
+            if((lesson.day == tometabledayid)){
+              lessons.push(lesson);
             }
-            dayid += user.options.tometable.multiday.offset;
-            var tometabledayid = dayid%user.options.tometable.multiday.numdays; //get day id in tometable
-            var lessons = [];
-            $.each(tometabledata, function(i, lesson){ //loop through lessons, check if on correct day
-              if((lesson.day == tometabledayid)){
-                lessons.push(lesson);
-              }
-            });
-            return lessons;
-          }
-          else {
-            return [];
-          }
+          });
+          return lessons;
         }
         else {
           return [];
@@ -210,6 +195,28 @@ var dbdata = {
       else{
         return [];
       }
+    },
+    dayid: function(date){
+      //returns a day number which will allow lessons to be found, or -1 if the date specified is not a school day
+      var dayinweek = moment(date).isoWeekday() - 1;
+      if(dayinweek in user.options.tometable.schooldays){
+        var dayid = moment(date).diff(moment(345600000), "days"); //get num of days between first monday in 1970 and date given
+        dayid -= (moment(date).diff(moment(345600000), "weeks") * (7-user.options.tometable.schooldays.length)); //subtract all days not counted in previous weeks
+        for(var i = 0; i < dayinweek; i++){ //loop through previous days this week, and remove if not included in rotation
+          if(!(i in user.options.tometable.schooldays)){
+            dayid -= 1;
+          }
+        }
+        dayid += user.options.tometable.multiday.offset;
+        return dayid%user.options.tometable.multiday.numdays; //get day id in tometable
+      }
+      else {
+        return -1;
+      }
+    },
+    weekid: function(date){
+      var weekid = moment().diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
+      return (weekid + user.options.tometable.multiweek.offset)%(user.options.tometable.multiweek.numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
     },
     addperiodtomes: function(tometabledata){
       //adds period tomes to the data provided
