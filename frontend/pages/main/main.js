@@ -73,7 +73,7 @@ function loadweekdetails(callback){
     dbdata.notes.day.betweendates(weekstart.toDate(), weekend.toDate(), function(allnotes){
       var days = [];
       for(var i = 0; i < 7; i++){
-        if(i in user.options.tometable.schooldays){
+        if(user.options.tometable.schooldays.indexOf(i) != -1){
           var day = {};
           day.date = moment(weekstart).add(i, "days").toDate();
           day.homeworkitems = [];

@@ -166,7 +166,7 @@ var dbdata = {
     },
     findondate: function(tometabledata, date){
       //returns a list of lessons on a specific date, first option is tometable data, second is a JS date object
-      if((moment(date).isoWeekday() - 1) in user.options.tometable.schooldays){
+      if(user.options.tometable.schooldays.indexOf((moment(date).isoWeekday() - 1)) != -1){
         if(user.options.tometable.mode == "week"){
           var tometableweekid = dbdata.tometable.weekid()
           var tometabledayid = moment(date).isoWeekday() - 1; //get day id from date
@@ -196,19 +196,25 @@ var dbdata = {
         return [];
       }
     },
-    dayid: function(date){
+    dayid: function(date, numdaysarg){
       //returns a day number which will allow lessons to be found, or -1 if the date specified is not a school day
+      if(numdaysarg){
+        var numdays = numdaysarg
+      }
+      else{
+        var numdays = user.options.tometable.multiday.numdays;
+      }
       var dayinweek = moment(date).isoWeekday() - 1;
-      if(dayinweek in user.options.tometable.schooldays){
+      if(user.options.tometable.schooldays.indexOf(dayinweek) != -1){
         var dayid = moment(date).diff(moment(345600000), "days"); //get num of days between first monday in 1970 and date given
         dayid -= (moment(date).diff(moment(345600000), "weeks") * (7-user.options.tometable.schooldays.length)); //subtract all days not counted in previous weeks
         for(var i = 0; i < dayinweek; i++){ //loop through previous days this week, and remove if not included in rotation
-          if(!(i in user.options.tometable.schooldays)){
+          if(user.options.tometable.schooldays.indexOf(i) == -1){
             dayid -= 1;
           }
         }
         dayid += user.options.tometable.multiday.offset;
-        return dayid%user.options.tometable.multiday.numdays; //get day id in tometable
+        return dayid%numdays; //get day id in tometable
       }
       else {
         return -1;

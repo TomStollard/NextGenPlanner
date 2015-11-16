@@ -16,6 +16,19 @@
             {{#each days}}
               <input type="checkbox" {{#if this.active}}checked{{/if}} data-day="{{this.num}}" class="dayselect">{{this.name}}</input><br>
             {{/each}}
+            <div class="alert alert-danger" id="changealert"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> You must save your day changes before making changes to other settings, since this will affect their results.</div>
+            <div class="form-group">
+              <label for="tometablemodeselector" class="col-xs-2 control-label">Tometable Mode</label>
+              <div class="col-xs-10">
+                <div style="position: relative;">
+                  <select name="tometablemodeselector" class="form-control">
+                    <option value="week" {{#ifeq mode "week"}}selected{{/ifeq}}>Week-based</option>
+                    <option value="day" {{#ifeq mode "day"}}selected{{/ifeq}}>Day-based</option>
+                  </select>
+                  (If you're not sure, most schools are week-based)
+                </div>
+              </div>
+            </div>
             <div id="daymodeconfig">
               <h3>Day Mode</h3>
               <div class="form-group">
@@ -54,6 +67,7 @@
                 </div>
               </div>
             </div>
+            <input type="submit" value="Save"></input>
           </form>
         </div>
         <div class="tab-pane fade" id="options-tometable-periods">

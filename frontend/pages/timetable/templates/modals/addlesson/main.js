@@ -21,21 +21,37 @@ $("#modal-addlesson").on("show", function(){
     else{
       nextday = lastlesson.day;
     }
-    if(nextday >= user.options.tometable.schooldays.length){
-      nextday = 0;
-      nextweek = lastlesson.week + 1;
+    if(user.options.tometable.mode == "week"){
+      if(nextday >= user.options.tometable.schooldays.length){
+        nextday = 0;
+        nextweek = lastlesson.week + 1;
+      }
+      else{
+        nextweek = lastlesson.week;
+      }
+      if(nextweek >= user.options.tometable.multiweek.numweeks){
+        nextweek = 0;
+      }
     }
-    else{
-      nextweek = lastlesson.week;
+    else if(user.options.tometable.mode == "day"){
+      if(nextday >= user.options.tometable.multiday.numdays){
+        nextday = 0;
+      }
     }
-    if(nextweek >= user.options.tometable.multiweek.numweeks){
-      nextweek = 0;
+  }
+  if(user.options.tometable.mode == "week"){
+    var days = user.options.tometable.schooldays
+  }
+  else if(user.options.tometable.mode == "day"){
+    var days = [];
+    for(var i = 0; i < user.options.tometable.multiday.numdays; i++){
+      days.push(i);
     }
   }
   $("#modal-addlesson").html(
     templates.tometable.modals.addlesson.main({
       periods: user.options.tometable.periods,
-      days: user.options.tometable.schooldays,
+      days: days,
       weekmode: Boolean(user.options.tometable.mode == "week"),
       numweeks: user.options.tometable.multiweek.numweeks,
       defaultperiod: nextperiod,
