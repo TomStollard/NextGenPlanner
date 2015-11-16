@@ -11,19 +11,32 @@
       </ul>
       <div class="tab-content">
         <div class="tab-pane fade in active" id="options-tometable-main">
+          <h3>School Days</h3>
           {{#each days}}
             <input type="checkbox" {{#if this.active}}checked{{/if}} data-day="{{this.num}}" class="dayselect">{{this.name}}</input><br>
           {{/each}}
+          <div id="daymodeconfig">
+            <h3>Day Mode</h3>
+          </div>
+          <div id="weekmodeconfig">
+            <h3>Week Mode</h3>
+          </div>
         </div>
         <div class="tab-pane fade" id="options-tometable-periods">
-          <ol>
-            {{#each periods}}
-              <li>
-                From <select>{{> tometable.tomeselector from=0 to=23 value=this.[0]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[1]}}</select>
-                To <select>{{> tometable.tomeselector from=0 to=23 value=this.[2]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[3]}}</select>
-              </li>
-            {{/each}}
-          </ol>
+          <form>
+            <ol>
+              {{#each periods}}
+                <li>
+                  From <select>{{> tometable.tomeselector from=0 to=23 value=this.[0]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[1]}}</select>
+                  To <select>{{> tometable.tomeselector from=0 to=23 value=this.[2]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[3]}}</select>
+                  <span class="glyphicon glyphicon-remove deletebutton" onclick="$(this).parent().remove()"></span>
+                </li>
+              {{/each}}
+            </ol>
+            <span class="glyphicon glyphicon-plus addbutton"></span>
+            <br>
+            <input type="submit" class="btn" value="Save" />
+          </form>
         </div>
       </div>
     </div>

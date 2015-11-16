@@ -104,7 +104,9 @@ function loaduserdata(callback){
         todisable.push(day + 1);
       });
 
-      callback();
+      if(callback){
+        callback();
+      }
     });
 }
 
