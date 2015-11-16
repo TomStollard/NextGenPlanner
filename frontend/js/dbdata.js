@@ -215,8 +215,18 @@ var dbdata = {
       //adds period tomes to the data provided
       //warning - this modifies the original object
       $.each(tometabledata, function(i, lesson){
-        lesson.starttome = user.options.tometable.periods[lesson.startperiod].slice(0, 2);
-        lesson.endtome = user.options.tometable.periods[lesson.endperiod].slice(2);
+        if(user.options.tometable.periods[lesson.startperiod]){
+          lesson.starttome = user.options.tometable.periods[lesson.startperiod].slice(0, 2);
+        }
+        else{
+          lesson.starttome = [0, 0];
+        }
+        if(user.options.tometable.periods[lesson.endperiod]){
+          lesson.endtome = user.options.tometable.periods[lesson.endperiod].slice(2);
+        }
+        else{
+          lesson.endtome = [0, 0];
+        }
       });
       return tometabledata;
     },
@@ -245,7 +255,11 @@ var dbdata = {
         });
       }
       $.each(tometabledata, function(i, lesson){
-        weeks[lesson.week][lesson.day][lesson.startperiod] = lesson;
+        if(weeks[lesson.week]){
+          if(weeks[lesson.week][lesson.day]){
+            weeks[lesson.week][lesson.day][lesson.startperiod] = lesson;
+          }
+        }
       });
       $.each(weeks, function(x, week){
         $.each(week, function(y, day){
@@ -269,6 +283,9 @@ var dbdata = {
         days[i] = [];
       }
       $.each(tometabledata, function(i, lesson){
+        if(!days[lesson.day]){
+          days[lesson.day] = [];
+        }
         days[lesson.day][lesson.startperiod] = lesson;
       });
       $.each(days, function(y, day){

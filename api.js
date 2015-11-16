@@ -91,6 +91,42 @@ module.exports = function(db){
         updates.password = password;
         updates.salt = salt;
       }
+      if(req.body.options){
+        if(req.body.options.tometable){
+          if(req.body.options.tometable.mode){
+            updates["options.tometable.mode"] = req.body.options.tometable.mode;
+          }
+          if(req.body.options.tometable.schooldays){
+            updates["options.tometable.schooldays"] = [];
+            req.body.options.tometable.schooldays.forEach(function(day){
+              updates["options.tometable.schooldays"].push(parseInt(day));
+            });
+          }
+          if(req.body.options.tometable.periods){
+            updates["options.tometable.periods"] = [];
+            req.body.options.tometable.periods.forEach(function(period){
+              updates["options.tometable.periods"].push([
+                parseInt(period[0]),
+                parseInt(period[1]),
+                parseInt(period[2]),
+                parseInt(period[3])
+              ]);
+            });
+          }
+          if(req.body.options.tometable.multiday){
+            updates["options.tometable.multiday"] = {
+              offset: parseInt(req.body.options.tometable.multiday.offset),
+              numdays: parseInt(req.body.options.tometable.multiday.numdays)
+            };
+          }
+          if(req.body.options.tometable.multiweek){
+            updates["options.tometable.multiweek"] = {
+              offset: parseInt(req.body.options.tometable.multiweek.offset),
+              numweeks: parseInt(req.body.options.tometable.multiweek.numweeks)
+            };
+          }
+        }
+      }
       db.users.update({
         _id: db.ObjectId(req.auth.userid)
       }, {
