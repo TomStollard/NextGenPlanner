@@ -2,6 +2,8 @@ module.exports = function(db){
   var express = require("express");
   var router = express.Router();
   var basicAuth = require("basic-auth");
+  var crypto = require("crypto");
+  var uuid = require("node-uuid");
 
 
   function unauthorised(res){
@@ -68,13 +70,73 @@ module.exports = function(db){
   router.route("/user")
     .get(function(req, res){
       db.users.findOne({
-      _id: db.ObjectId(req.auth.userid)
-    }, function(err, user){
-      delete user.password;
-      delete user.salt;
-      res.json(user);
+        _id: db.ObjectId(req.auth.userid)
+      }, function(err, user){
+        delete user.password;
+        delete user.salt;
+        res.json(user);
+      })
     })
-  });
+    .put(function(req, res){
+      var updates = {};
+      if(req.body.name){
+        updates.name = req.body.name
+      }
+      if(req.body.email){
+        updates.email = req.body.email
+      }
+      if(req.body.password){
+        var salt = crypto.randomBytes(32).toString("hex");
+        var password = crypto.pbkdf2Sync(req.body.password, salt, 4096, 64).toString("hex");
+        updates.password = password;
+        updates.salt = salt;
+      }
+      if(req.body.options){
+        if(req.body.options.tometable){
+          if(req.body.options.tometable.mode){
+            updates["options.tometable.mode"] = req.body.options.tometable.mode;
+          }
+          if(req.body.options.tometable.schooldays){
+            updates["options.tometable.schooldays"] = [];
+            req.body.options.tometable.schooldays.forEach(function(day){
+              updates["options.tometable.schooldays"].push(parseInt(day));
+            });
+          }
+          if(req.body.options.tometable.periods){
+            updates["options.tometable.periods"] = [];
+            req.body.options.tometable.periods.forEach(function(period){
+              updates["options.tometable.periods"].push([
+                parseInt(period[0]),
+                parseInt(period[1]),
+                parseInt(period[2]),
+                parseInt(period[3])
+              ]);
+            });
+          }
+          if(req.body.options.tometable.multiday){
+            updates["options.tometable.multiday"] = {
+              offset: parseInt(req.body.options.tometable.multiday.offset),
+              numdays: parseInt(req.body.options.tometable.multiday.numdays)
+            };
+          }
+          if(req.body.options.tometable.multiweek){
+            updates["options.tometable.multiweek"] = {
+              offset: parseInt(req.body.options.tometable.multiweek.offset),
+              numweeks: parseInt(req.body.options.tometable.multiweek.numweeks)
+            };
+          }
+        }
+      }
+      db.users.update({
+        _id: db.ObjectId(req.auth.userid)
+      }, {
+        $set: updates
+      }, function(err, user){
+        delete user.password;
+        delete user.salt;
+        res.json(user);
+      })
+    });
 
   router.route("/sessions")
     .get(function(req, res){
@@ -93,8 +155,18 @@ module.exports = function(db){
         }
         else {
           res.sendStatus(500);
-          console.log(err);
         }
+      });
+    })
+    .post(function(req, res){
+      db.sessions.insert({
+        userid: req.auth.userid,
+        expiry: parseInt(req.body.expiry),
+        type: "api",
+        description: req.body.description,
+        _id: uuid.v4()
+      }, function(err, session){
+        res.json(session);
       });
     });
 

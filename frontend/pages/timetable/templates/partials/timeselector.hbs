@@ -1,0 +1,3 @@
+{{#for from to}}
+  <option value="{{this}}" {{#ifeq this ../value}}selected="true"{{/ifeq}}>{{doubleDigit this}}</option>
+{{/for}}

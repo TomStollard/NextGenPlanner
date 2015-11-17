@@ -1,0 +1,92 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal"><span>&tomes;</span></button>
+      <h4 class="modal-title">Options</h4>
+    </div>
+    <div class="modal-body">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#options-tometable-main" data-toggle="tab">Day/Week Layout</a></li>
+        <li><a href="#options-tometable-periods" data-toggle="tab">Periods</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade in active" id="options-tometable-main">
+          <form class="form-horizontal">
+            <h3>School Days</h3>
+            {{#each days}}
+              <input type="checkbox" {{#if this.active}}checked{{/if}} data-day="{{this.num}}" class="dayselect">{{this.name}}</input><br>
+            {{/each}}
+            <div class="alert alert-danger" id="changealert"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> You must save your day changes before making changes to other settings, since this will affect their results.</div>
+            <div class="form-group">
+              <label for="tometablemodeselector" class="col-xs-2 control-label">Tometable Mode</label>
+              <div class="col-xs-10">
+                <div style="position: relative;">
+                  <select name="tometablemodeselector" class="form-control">
+                    <option value="week" {{#ifeq mode "week"}}selected{{/ifeq}}>Week-based</option>
+                    <option value="day" {{#ifeq mode "day"}}selected{{/ifeq}}>Day-based</option>
+                  </select>
+                  (If you're not sure, most schools are week-based)
+                </div>
+              </div>
+            </div>
+            <div id="daymodeconfig">
+              <h3>Day Mode</h3>
+              <div class="form-group">
+                <label for="numdays" class="col-xs-2 control-label">Number of days</label>
+                <div class="col-xs-10">
+                  <div style="position: relative;">
+                    <input name="numdays" value="{{numdays}}" class="form-control"></input>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="dayselector" class="col-xs-2 control-label">Current Day</label>
+                <div class="col-xs-10">
+                  <div style="position: relative;">
+                    <select name="dayselector" class="form-control"></select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="weekmodeconfig">
+              <h3>Week Mode</h3>
+              <div class="form-group">
+                <label for="numweeks" class="col-xs-2 control-label">Number of weeks</label>
+                <div class="col-xs-10">
+                  <div style="position: relative;">
+                    <input name="numweeks" value="{{numweeks}}" class="form-control"></input>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="weekselector" class="col-xs-2 control-label">Current Week</label>
+                <div class="col-xs-10">
+                  <div style="position: relative;">
+                    <select name="weekselector" class="form-control"></select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <input type="submit" class="btn" value="Save"></input>
+          </form>
+        </div>
+        <div class="tab-pane fade" id="options-tometable-periods">
+          <form>
+            <ol>
+              {{#each periods}}
+                <li>
+                  From <select>{{> tometable.tomeselector from=0 to=23 value=this.[0]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[1]}}</select>
+                  To <select>{{> tometable.tomeselector from=0 to=23 value=this.[2]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[3]}}</select>
+                  <span class="glyphicon glyphicon-remove deletebutton" onclick="$(this).parent().remove()"></span>
+                </li>
+              {{/each}}
+            </ol>
+            <span class="glyphicon glyphicon-plus addbutton"></span>
+            <br>
+            <input type="submit" class="btn" value="Save" />
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

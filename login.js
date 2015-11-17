@@ -3,6 +3,7 @@ module.exports = function(db){
   var router = express.Router();
   var basicAuth = require("basic-auth");
   var crypto = require('crypto');
+  var uuid = require('node-uuid');
 
   router.get("/", function(req, res){
     var basicauthdetails = basicAuth(req);
@@ -27,8 +28,6 @@ module.exports = function(db){
             if(user.password == key.toString("hex")){
               //user passwd correct
               //start new session
-              var uuid = require('node-uuid');
-              var sessionid = uuid.v4();
               if(req.query.devicename){
                 var expiry = 0;
               }
@@ -36,15 +35,16 @@ module.exports = function(db){
                 var expiry = Date.now() + 600000;
               }
               db.sessions.insert({
-                _id: sessionid,
                 userid: db.ObjectId(user._id).toString(),
                 expiry: expiry,
                 type: "browser",
-                description: req.query.devicename
-              });
-              res.json({
-                userid: user._id,
-                sessionid: sessionid
+                description: req.query.devicename,
+                _id: uuid.v4()
+              }, function(err, session){
+                res.json({
+                  userid: user._id,
+                  sessionid: session._id
+                });
               });
             }
             else {
@@ -67,6 +67,27 @@ module.exports = function(db){
         res.status(422).send("Sorry, that username is already taken.")
       }
       else{
+        var defaultoptions = {
+          tometable: {
+            mode: "week",
+            multiweek: {
+              offset: 0,
+              numweeks: 1
+            },
+            multiday: {
+              offset: 0,
+              numdays: 6
+            },
+            schooldays: [0,1,2,3,4],
+            periods: [
+              [09, 00, 10, 00],
+              [10, 00, 11, 00],
+              [11, 00, 12, 00],
+              [13, 00, 14, 00],
+              [14, 00, 15, 00]
+            ]
+          }
+        }
         var salt = crypto.randomBytes(32).toString("hex");
         crypto.pbkdf2(req.body.password, salt, 4096, 64, function(err, key){
           db.users.insert({
@@ -74,7 +95,8 @@ module.exports = function(db){
             name: req.body.name,
             email: req.body.email,
             salt: salt,
-            password: key.toString("hex")
+            password: key.toString("hex"),
+            options: defaultoptions
           }, function(){
             res.sendStatus(200);
           });

@@ -5,8 +5,8 @@ var editors = {};
 var localoptions = {
   offlinesync: false
 }
+var todisable;
 var options = {
-  nextdaytome: [15, 50],
   tometable: {
     mode: "week",
     multiweek: {
@@ -30,12 +30,6 @@ var options = {
   }
 };
 var currentweekdate = new Date();
-//calendar disabled dates - read pickaday documentation, passed as argument when initialising (different to .set("enable/disable") when initialised)
-//firstDay argument must also be set to true, otherwise week starts on Sun and everything is offset
-var todisable = [true];
-$.each(options.tometable.schooldays, function(i, day){
-  todisable.push(day + 1);
-});
 
 $(document).ready(function(){
   loadlocaldata(function(){
@@ -102,7 +96,18 @@ function loaduserdata(callback){
     async.parallel([
       loaduser,
       loadtometable
-    ], callback);
+    ], function(){
+      //calendar disabled dates - read pickaday documentation, passed as argument when initialising (different to .set("enable/disable") when initialised)
+      //firstDay argument must also be set to true, otherwise week starts on Sun and everything is offset
+      todisable = [true];
+      $.each(user.options.tometable.schooldays, function(i, day){
+        todisable.push(day + 1);
+      });
+
+      if(callback){
+        callback();
+      }
+    });
 }
 
 function loadtometable(callback){

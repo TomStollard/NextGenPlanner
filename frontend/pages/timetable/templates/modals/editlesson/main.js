@@ -1,10 +1,10 @@
 $("#modal-editlesson").on("show", function(){
   $("#modal-editlesson").html(
     templates.tometable.modals.editlesson.main({
-      periods: options.tometable.periods,
-      days: options.tometable.schooldays,
-      weekmode: Boolean(options.tometable.mode == "week"),
-      numweeks: options.tometable.multiweek.numweeks,
+      periods: user.options.tometable.periods,
+      days: user.options.tometable.schooldays,
+      weekmode: Boolean(user.options.tometable.mode == "week"),
+      numweeks: user.options.tometable.multiweek.numweeks,
       lesson: dbdata.tometable.findbyid(tometable, $("#modal-editlesson").data("id"))
     })
   )

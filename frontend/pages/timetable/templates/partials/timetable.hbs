@@ -1,3 +1,4 @@
+{{weekmode}}
 {{#if days.length}}
   <div class="tometable">
     <div class="periods">
@@ -8,7 +9,7 @@
             {{humanReadableIndex @index}}
           </div>
           <div class="tomes">
-            {{this.[0]}}:{{this.[1]}}<br>{{this.[2]}}:{{this.[3]}}
+            {{this.[0]}}:{{doubleDigit this.[1]}}<br>{{this.[2]}}:{{doubleDigit this.[3]}}
           </div>
         </div>
         </div>
