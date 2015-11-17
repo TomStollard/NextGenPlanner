@@ -120,7 +120,7 @@ $("#modal-options-tometable").on("show", function(){
         }
       }, function(){
         loaduserdata(function(){
-          bootbox.alert("Your changes have been saved. You can now adjust the week/day tometable layout below.");
+          bootbox.alert("Your changes have been saved.");
           $("#options-tometable-main select, #options-tometable-main input").not("[type='submit']").not("[type='checkbox']").removeAttr("disabled");
           $("#options-tometable-main #changealert").slideUp();
         });
