@@ -76,7 +76,7 @@ module.exports = function(db){
             },
             multiday: {
               offset: 0,
-              numdays: 5
+              numdays: 6
             },
             schooldays: [0,1,2,3,4],
             periods: [
