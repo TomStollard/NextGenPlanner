@@ -220,9 +220,15 @@ var dbdata = {
         return -1;
       }
     },
-    weekid: function(date){
+    weekid: function(date, numweeksarg){
+      if(numweeksarg){
+        var numweeks = numweeksarg;
+      }
+      else{
+        var numweeks = user.options.tometable.multiweek.numweeks;
+      }
       var weekid = moment().diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
-      return (weekid + user.options.tometable.multiweek.offset)%(user.options.tometable.multiweek.numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
+      return (weekid + user.options.tometable.multiweek.offset)%(numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
     },
     addperiodtomes: function(tometabledata){
       //adds period tomes to the data provided
@@ -296,14 +302,16 @@ var dbdata = {
         days[i] = [];
       }
       $.each(tometabledata, function(i, lesson){
-        if(!days[lesson.day]){
-          days[lesson.day] = [];
+        if(days[lesson.day]){
+          days[lesson.day][lesson.startperiod] = lesson;
         }
-        days[lesson.day][lesson.startperiod] = lesson;
       });
       $.each(days, function(y, day){
         for(var i = 0; i < user.options.tometable.periods.length; i++){
           if(day[i]){
+            for(x = day[i].startperiod + 1; x <= day[i].endperiod; x++){
+              delete day[x];
+            }
             i = day[i].endperiod;
           }
           else {

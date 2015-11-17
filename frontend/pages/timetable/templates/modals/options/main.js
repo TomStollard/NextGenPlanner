@@ -43,17 +43,18 @@ $("#modal-options-tometable").on("show", function(){
   $("#options-tometable-main form input[name='numdays']").change(function(){
     var date = new Date();
     var numdays = $("#options-tometable-main form input[name='numdays']").val();
+    var dayname = " Today"
     if(options.tometable.schooldays.length){
       while(user.options.tometable.schooldays.indexOf(moment(date).isoWeekday() - 1) == -1){
         date = moment(date).add(1, "day").toDate();
-        $("#options-tometable-main #daymodeconfig label[for='dayselector']").html("Day on " + moment(date).format("dddd"));
+        dayname = " on " + moment(date).format("dddd");
       }
     }
+    $("#options-tometable-main #daymodeconfig label[for='dayselector']").html("Day " + dayname);
     var tometabledayid = dbdata.tometable.dayid(date, numdays);
-    console.log(tometabledayid);
     var dayoffsets = [];
     for(var i = 0; i < numdays; i++){
-      dayoffsets[i] = i - tometabledayid;
+      dayoffsets[i] = user.options.tometable.multiday.offset + i - tometabledayid;
     }
     $("#options-tometable-main #daymodeconfig select").html(
       templates.tometable.modals.options.dayselector({
@@ -64,10 +65,11 @@ $("#modal-options-tometable").on("show", function(){
   })
   .change();
   $("#options-tometable-main form input[name='numweeks']").change(function(){
-    var tometableweekid = dbdata.tometable.weekid(new Date());
+    var numweeks = parseInt($("#options-tometable-main form input[name='numweeks']").val());
+    var tometableweekid = dbdata.tometable.weekid(new Date(), numweeks);
     var weekoffsets = [];
-    for(var i = 0; i < user.options.tometable.multiweek.numweeks; i++){
-      weekoffsets[i] = i - tometableweekid;
+    for(var i = 0; i < numweeks; i++){
+      weekoffsets[i] = user.options.tometable.multiweek.offset + i - tometableweekid;
     }
     $("#options-tometable-main #weekmodeconfig select").html(
       templates.tometable.modals.options.weekselector({
@@ -97,6 +99,7 @@ $("#modal-options-tometable").on("show", function(){
           bootbox.alert("Your changes have been saved. You can now adjust the week/day tometable layout below.");
           $("#options-tometable-main select, #options-tometable-main input").not("[type='submit']").not("[type='checkbox']").removeAttr("disabled");
           $("#options-tometable-main #changealert").slideUp();
+          $("#options-tometable-main form input[name='numdays']").change();
         });
       });
     }
@@ -104,7 +107,15 @@ $("#modal-options-tometable").on("show", function(){
       dbdata.user.update({
         options: {
           tometable: {
-            periods: periods
+            mode: $("#options-tometable-main form select[name='tometablemodeselector']").val(),
+            multiweek: {
+              numweeks: $("#options-tometable-main form input[name='numweeks']").val(),
+              offset: $("#options-tometable-main form select[name='weekselector']").val()
+            },
+            multiday: {
+              numdays: $("#options-tometable-main form input[name='numdays']").val(),
+              offset: $("#options-tometable-main form select[name='dayselector']").val()
+            }
           }
         }
       }, function(){
