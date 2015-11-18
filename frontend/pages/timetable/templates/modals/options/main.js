@@ -1,4 +1,5 @@
 $("#modal-options-tometable").on("show", function(){
+  $("#modal-options-tometable").data("changes", false);
   var daynames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   var days = [];
   $.each(daynames, function(i, name){
@@ -100,6 +101,7 @@ $("#modal-options-tometable").on("show", function(){
           $("#options-tometable-main select, #options-tometable-main input").not("[type='submit']").not("[type='checkbox']").removeAttr("disabled");
           $("#options-tometable-main #changealert").slideUp();
           $("#options-tometable-main form input[name='numdays']").change();
+          $("#modal-options-tometable").data("changes", true);
         });
       });
     }
@@ -123,6 +125,7 @@ $("#modal-options-tometable").on("show", function(){
           bootbox.alert("Your changes have been saved.");
           $("#options-tometable-main select, #options-tometable-main input").not("[type='submit']").not("[type='checkbox']").removeAttr("disabled");
           $("#options-tometable-main #changealert").slideUp();
+          $("#modal-options-tometable").data("changes", true);
         });
       });
     }
@@ -130,6 +133,21 @@ $("#modal-options-tometable").on("show", function(){
 
   $("#options-tometable-periods .addbutton").click(function(){
     $("#options-tometable-periods form ol li:last-child").clone().appendTo("#options-tometable-periods form ol");
+  });
+  $("#options-tometable-periods ol").on("focus", "li select", function(){
+    $(this).data("oldval", $(this).val());
+  });
+  $("#options-tometable-periods ol").on("change", "li select:eq(2)", function(){
+    if(($(this).parent().find("select:eq(2)").data("oldval") == $(this).parent().next().find("select:eq(0)").val()) && ($(this).parent().find("select:eq(3)").val() == $(this).parent().next().find("select:eq(1)").val())){
+      $(this).parent().next().find("select:eq(0)").val($(this).val());
+    }
+    $(this).data("oldval", $(this).val());
+  });
+  $("#options-tometable-periods ol").on("change", "li select:eq(3)", function(){
+    if($(this).parent().find("select:eq(2)").val() == $(this).parent().next().find("select:eq(0)").val() && $(this).parent().find("select:eq(3)").data("oldval") == $(this).parent().next().find("select:eq(1)").val()){
+      $(this).parent().next().find("select:eq(1)").val($(this).val());
+    }
+    $(this).data("oldval", $(this).val());
   });
   $("#options-tometable-periods form").submit(function(e){
     e.preventDefault();
@@ -149,8 +167,15 @@ $("#modal-options-tometable").on("show", function(){
     }, function(){
       loaduserdata(function(){
         bootbox.alert("Your changes have been saved.");
+        $("#modal-options-tometable").data("changes", true);
       });
     });
   });
   $("#modal-options-tometable").modal("show");
+});
+
+$("#modal-options-tometable").on("hidden.bs.modal", function(){
+  if($("#modal-options-tometable").data("changes")){
+    switchpage("tometable");
+  }
 });

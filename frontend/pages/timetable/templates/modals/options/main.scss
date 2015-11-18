@@ -1,5 +1,12 @@
 #modal-options-tometable{
+  .nav-tabs{
+    margin-bottom: 10px;
+  }
+
   #options-tometable-periods{
+    li{
+      padding-bottom: 10px;
+    }
     li:first-child{
       .deletebutton{
         display: none;
@@ -7,6 +14,13 @@
     }
     .addbutton{
       padding-left: 10em;
+    }
+
+    select{
+      width: 3em;
+      display: inline-block;
+      padding-left: 0px;
+      padding-right: 0px;
     }
   }
   #daymodeconfig, #weekmodeconfig, #changealert{

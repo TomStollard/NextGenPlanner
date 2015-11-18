@@ -75,8 +75,8 @@
             <ol>
               {{#each periods}}
                 <li>
-                  From <select>{{> tometable.tomeselector from=0 to=23 value=this.[0]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[1]}}</select>
-                  To <select>{{> tometable.tomeselector from=0 to=23 value=this.[2]}}</select>:<select>{{> tometable.tomeselector from=0 to=59 value=this.[3]}}</select>
+                  <select class="form-control">{{> tometable.tomeselector from=0 to=23 value=this.[0]}}</select>:<select class="form-control">{{> tometable.tomeselector from=0 to=59 value=this.[1]}}</select>
+                  to <select class="form-control">{{> tometable.tomeselector from=0 to=23 value=this.[2]}}</select>:<select class="form-control">{{> tometable.tomeselector from=0 to=59 value=this.[3]}}</select>
                   <span class="glyphicon glyphicon-remove deletebutton" onclick="$(this).parent().remove()"></span>
                 </li>
               {{/each}}
