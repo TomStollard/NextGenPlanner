@@ -20,6 +20,14 @@ body{
     background-color: rgb(100, 100, 100);
     color: white;
     margin-bottom: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+  }
+
+  #page-main, #page-tometable{
+    padding-top: 60px;
   }
 
   .header-mobile h1{
