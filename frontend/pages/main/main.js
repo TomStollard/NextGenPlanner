@@ -1,9 +1,6 @@
 $("#page-main").on("load", function(){
-  loadtometable(function(){
-    loadmainpage(function(){
-      updatehomeworkbindings();
-      $("#page-main").trigger("loaded");
-    });
+  loadmainpage(function(){
+    $("#page-main").trigger("loaded");
   });
 });
 
