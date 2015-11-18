@@ -168,7 +168,7 @@ var dbdata = {
       //returns a list of lessons on a specific date, first option is tometable data, second is a JS date object
       if(user.options.tometable.schooldays.indexOf((moment(date).isoWeekday() - 1)) != -1){
         if(user.options.tometable.mode == "week"){
-          var tometableweekid = dbdata.tometable.weekid()
+          var tometableweekid = dbdata.tometable.weekid(date);
           var tometabledayid = moment(date).isoWeekday() - 1; //get day id from date
           var lessons = [];
           $.each(tometabledata, function(i, lesson){
