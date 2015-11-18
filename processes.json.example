@@ -6,8 +6,7 @@
       "watch": true,
       "env": {
         "DBURL": "NextGenPlanner"
-      },
-      "post_update": ["npm install"]
+      }
     }
   ]
 }
