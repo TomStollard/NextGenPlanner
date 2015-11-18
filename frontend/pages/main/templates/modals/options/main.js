@@ -1,4 +1,5 @@
 $("#modal-options-main").on("show", function(){
+  $("#modal-options-main").data("changes", false);
   dbdata.sessions.getall(function(allsessions){
     var sessions = dbdata.sessions.filterbytype(allsessions, "browser");
     $.each(sessions, function(i, session){
@@ -35,7 +36,10 @@ $("#modal-options-main").on("show", function(){
         name: $("#options-main-main form input[name='name']").val(),
         email: $("#options-main-main form input[name='email']").val()
       }, function(){
-        alert("done");
+        loaduserdata(function(){
+          bootbox.alert("Changes saved.");
+          $("#modal-options-main").data("changes", true);
+        });
       });
     });
     $("#options-main-password form").submit(function(e){
@@ -66,4 +70,10 @@ $("#modal-options-main").on("show", function(){
     $("#modal-options-main .nav").tab();
     $("#modal-options-main").modal("show");
   });
+});
+
+$("#modal-options-main").on("hidden.bs.modal", function(){
+  if($("#modal-options-main").data("changes")){
+    switchpage("main");
+  }
 });
