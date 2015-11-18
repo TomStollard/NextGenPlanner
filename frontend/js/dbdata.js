@@ -227,7 +227,7 @@ var dbdata = {
       else{
         var numweeks = user.options.tometable.multiweek.numweeks;
       }
-      var weekid = moment().diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
+      var weekid = moment(date).diff(moment(345600000), "weeks"); //get number of weeks between date given and 1st monday in 1970
       return (weekid + user.options.tometable.multiweek.offset)%(numweeks); //add on offset (to allow user week selection), do mod num of weeks to get current week ID
     },
     addperiodtomes: function(tometabledata){
