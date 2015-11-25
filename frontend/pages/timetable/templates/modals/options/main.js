@@ -45,7 +45,7 @@ $("#modal-options-tometable").on("show", function(){
     var date = new Date();
     var numdays = $("#options-tometable-main form input[name='numdays']").val();
     var dayname = " Today"
-    if(options.tometable.schooldays.length){
+    if(user.options.tometable.schooldays.length){
       while(user.options.tometable.schooldays.indexOf(moment(date).isoWeekday() - 1) == -1){
         date = moment(date).add(1, "day").toDate();
         dayname = " on " + moment(date).format("dddd");
