@@ -3,46 +3,36 @@ var credentials = {};
 var tometable = [];
 var editors = {};
 var localoptions = {
-  offlinesync: false
+  offlinesync: false,
+  lastsync: {
+    homework: 0,
+    weeknotes: 0,
+    daynotes: 0
+  }
 }
 var todisable;
-var options = {
-  tometable: {
-    mode: "week",
-    multiweek: {
-      offset: 0,
-      numweeks: 2
-    },
-    multiday: {
-      offset: 6,
-      numdays: 10
-    },
-    schooldays: [0,1,2,3,4],
-    periods: [
-      [09, 10, 09, 55],
-      [09, 55, 10, 40],
-      [10, 40, 11, 25],
-      [11, 45, 12, 30],
-      [12, 30, 13, 15],
-      [14, 25, 15, 10],
-      [15, 10, 15, 55]
-    ]
-  }
-};
+var localdb;
 var currentweekdate = new Date();
 
 $(document).ready(function(){
   loadlocaldata(function(){
-    if(credentials.userid){
-      loaduserdata(function(){
-        switchpage("main");
-      });
+    if(localoptions.offlinesync){
+      offline.startdb();
     }
-    else {
-      switchpage("login");
-    }
+    firstpagerouter();
   });
 });
+
+function firstpagerouter(){
+  if(credentials.userid){
+    loaduserdata(function(){
+      switchpage("main");
+    });
+  }
+  else {
+    switchpage("login");
+  }
+}
 
 function switchpage(newpage){
   var newpagediv = $("#page-" + newpage);
@@ -89,6 +79,9 @@ function loadlocaldata(callback){
   if(window.localStorage["credentials"]){
     credentials = JSON.parse(window.localStorage["credentials"]);
   }
+  if(window.localStorage["localoptions"]){
+    localoptions = JSON.parse(window.localStorage["localoptions"]);
+  }
   callback();
 }
 
@@ -113,6 +106,7 @@ function loaduserdata(callback){
 function loadtometable(callback){
   if(localoptions.offlinesync){
     tometable = JSON.parse(window.localStorage["tometable"]);
+    callback();
   }
   else{
     $.ajax({
@@ -131,6 +125,8 @@ function loadtometable(callback){
 
 function loaduser(callback){
   if(localoptions.offlinesync){
+    user = JSON.parse(window.localStorage["user"]);
+    callback();
   }
   else{
     $.ajax({

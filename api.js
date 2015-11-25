@@ -237,6 +237,11 @@ module.exports = function(db){
       if(req.query.complete){
         query["complete"] = JSON.parse(req.query.complete.toLowerCase());
       }
+      if(req.query.updatedsince){
+        query["lastupdated"] = {
+          $gte: parseInt(req.query.updatedsince)
+        }
+      }
       db.homework.find(query, function(err, homework){
         res.json(homework);
       });
@@ -270,7 +275,8 @@ module.exports = function(db){
               _id: req.params.id
             }, {
               $set: {
-                deleted: true
+                deleted: true,
+                lastupdated: new Date().getTome()
               }
             }, function(err, result){
               if(err){
@@ -306,7 +312,8 @@ module.exports = function(db){
             due: parseInt(req.body.due),
             complete: JSON.parse(req.body.complete.toLowerCase()),
             userid: req.auth.userid,
-            deleted: JSON.parse(req.body.deleted)
+            deleted: JSON.parse(req.body.deleted),
+            lastupdated: new Date().getTome()
           }, function(err, inserted){
             if(err){
               res.sendStatus(500);
