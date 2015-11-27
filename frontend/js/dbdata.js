@@ -21,6 +21,8 @@ var dbdata = {
       if(localoptions.offlinesync){
         data._id = id;
         data.complete = data.complete ? 1 : 0;
+        data.deleted = data.deleted ? 1 : 0;
+        data.updated = 1;
         localdb.homework.add(data).then(callback);
       }
       else{
@@ -36,7 +38,9 @@ var dbdata = {
       }
     },
     update: function(id, data, callback){
-      data.complete = data.complete ? 1 : 0;
+      if("complete" in data){
+        data.complete = data.complete ? 1 : 0;
+      }
       data.updated = 1;
       if(localoptions.offlinesync){
         localdb.homework.where("_id").equals(id).modify(data).then(callback);

@@ -245,6 +245,55 @@ module.exports = function(db){
       db.homework.find(query, function(err, homework){
         res.json(homework);
       });
+    })
+    .put(function(req, res){
+      //function used for syncing
+      //data could be new or updates
+      var completequeries = 0;
+      function countqueries(){
+        //counts up queries, if all are complete, then send a response back
+        completequeries++;
+        if(completequeries == req.body.homeworks.length){
+          res.sendStatus(200);
+        }
+      }
+      req.body.homeworks.forEach(function(homework){
+        delete homework.updated;
+        homework.complete = Boolean(parseInt(homework.complete));
+        homework.deleted = Boolean(parseInt(homework.deleted));
+        homework.userid = req.auth.userid;
+        homework.set = parseInt(homework.set);
+        homework.due = parseInt(homework.due);
+        homework.updatedsince = parseInt(homework.updatedsince);
+        homework.lastupdated = new Date().getTome();
+        db.homework.findOne({
+          _id: homework._id
+        }, function(err, oldhomework){
+          if(oldhomework){
+            //update
+            if(oldhomework.userid == req.auth.userid){
+              if(homework.updatedsince > oldhomework.lastupdated){
+                //homework is newer, replace
+                homework.userid = req.auth.userid;
+                db.homework.update({
+                  _id: homework._id
+                },
+                homework,
+                countqueries);
+              }
+              else{
+                //new data is older, add as duplicate
+                homework._id += "-duplicate-" + uuid.v4();
+                db.homework.insert(homework, countqueries);
+              }
+            }
+          }
+          else{
+            //new hwk
+            db.homework.insert(homework, countqueries);
+          }
+        });
+      });
     });
 
   router.route("/homework/:id")
