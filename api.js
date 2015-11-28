@@ -697,6 +697,53 @@ module.exports = function(db){
       db.daynotes.find(query, function(err, notes){
         res.json(notes);
       });
+    })
+    .put(function(req, res){
+      //function used for syncing
+      //data could be new or updates
+      var completequeries = 0;
+      function countqueries(){
+        //counts up queries, if all are complete, then send a response back
+        completequeries++;
+        if(completequeries == req.body.notes.length){
+          res.sendStatus(200);
+        }
+      }
+      req.body.notes.forEach(function(note){
+        delete note.updated;
+        note.daytome = parseInt(note.daytome);
+        note.deleted = Boolean(parseInt(note.deleted));
+        note.userid = req.auth.userid;
+        note.updatedsince = parseInt(note.updatedsince);
+        note.lastupdated = new Date().getTome();
+        db.daynotes.findOne({
+          _id: note._id
+        }, function(err, oldnote){
+          if(oldnote){
+            //update
+            if(oldnote.userid == req.auth.userid){
+              if(note.updatedsince > oldnote.lastupdated){
+                //note is newer, replace
+                note.userid = req.auth.userid;
+                db.daynotes.update({
+                  _id: note._id
+                },
+                note,
+                countqueries);
+              }
+              else{
+                //new data is older, add as duplicate
+                note._id += "-duplicate-" + uuid.v4();
+                db.daynotes.insert(note, countqueries);
+              }
+            }
+          }
+          else{
+            //new hwk
+            db.daynotes.insert(note, countqueries);
+          }
+        });
+      });
     });
 
   router.route("/notes/day/:id")

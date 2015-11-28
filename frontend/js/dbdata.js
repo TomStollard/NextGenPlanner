@@ -513,8 +513,8 @@ var dbdata = {
     day: {
       betweendates: function(date1, date2, callback){
         //takes two date objects, calls callback with a single argument, all homework items set between these dates
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          localdb.daynotes.where("daytome").between(date1.getTome(), date2.getTome()).toArray().then(callback);
         }
         else{
           $.ajax({
@@ -534,8 +534,12 @@ var dbdata = {
         }
       },
       insert: function(data, callback){
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          data._id = data.id;
+          delete data.id;
+          data.deleted = data.deleted ? 1 : 0;
+          data.updated = 1;
+          localdb.daynotes.add(data).then(callback).catch(function(e){console.log(e)});
         }
         else{
           $.ajax({
@@ -552,8 +556,8 @@ var dbdata = {
         }
       },
       findbyid: function(id, callback){
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          localdb.daynotes.where("_id").equals(id).first().then(callback);
         }
         else{
           $.ajax({
@@ -569,8 +573,11 @@ var dbdata = {
         }
       },
       update: function(data, callback){
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          data.updated = 1;
+          var id = data.id;
+          delete data.id;
+          localdb.daynotes.where("_id").equals(id).modify(data).then(callback);
         }
         else{
           $.ajax({
@@ -587,8 +594,11 @@ var dbdata = {
         }
       },
       delete: function(id, callback){
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          localdb.daynotes.where("_id").equals(id).modify({
+            deleted: 1,
+            updated: 1
+          }).then(callback);
         }
         else{
           $.ajax({

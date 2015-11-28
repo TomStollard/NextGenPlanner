@@ -87,6 +87,64 @@ var offline = {
       upload(function(){
         download(callback);
       });
+    },
+    daynotes: function(callback){
+      function upload(callback){
+        localdb.daynotes.where("updated").equals(1).toArray().then(function(updatednotes){
+          if(updatednotes.length){
+            $.each(updatednotes, function(i, note){
+              note.updatedsince = localoptions.lastsync.daynotes;
+            });
+            $.ajax({
+              type: "PUT",
+              url: "/api/notes/day",
+              data: {
+                notes: updatednotes
+              },
+              username: credentials.userid,
+              password: credentials.sessionid,
+              statusCode: defaultstatushandler,
+              success: function(){
+                localdb.daynotes.where("updated").equals(1).modify({
+                  "updated": 0
+                }).then(callback);
+              }
+            });
+          }
+          else{
+            callback();
+          }
+        });
+      }
+      function download(callback){
+        $.ajax({
+          type: "GET",
+          url: "/api/notes/day",
+          data: {
+            includedeleted: true,
+            updatedsince: localoptions.lastsync.homework
+          },
+          username: credentials.userid,
+          password: credentials.sessionid,
+          statusCode: defaultstatushandler,
+          success: function(notes, rescode, req){
+            callback();
+            $.each(notes, function(i, note){
+              note.updated = 0;
+              note.deleted = note.deleted ? 1 : 0;
+              localdb.daynotes.put(note);
+            });
+            localoptions.lastsync.daynotes = new Date(req.getResponseHeader("Date")).getTome();
+            offline.writelocaloptions();
+          }
+        });
+      }
+      upload(function(){
+        download(callback);
+      });
+    },
+    weeknotes: function(){
+
     }
   },
   startdb: function(){
