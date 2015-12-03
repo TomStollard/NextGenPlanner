@@ -66,13 +66,13 @@
             <div style="position: relative;">
               <select class="form-control" name="day">
                 {{#each days as |day|}}
-                  <option value="{{day}}" {{#ifeq day ../defaultday}}selected="selected"{{/ifeq}}>{{#if weekmode}}{{dayName day}}{{else}}{{humanReadableIndex day}}{{/if}}</option>
+                  <option value="{{day}}" {{#ifeq day ../defaultday}}selected="selected"{{/ifeq}}>{{#if ../weekmode}}{{dayName day}}{{else}}{{humanReadableIndex day}}{{/if}}</option>
                 {{/each}}
               </select>
             </div>
           </div>
         </div>
-        {{#if weekmode}}
+        {{#if ../weekmode}}
           <div class="form-group">
             <label for="subject" class="col-xs-2 control-label">Week</label>
             <div class="col-xs-10">
@@ -81,6 +81,8 @@
               </div>
             </div>
           </div>
+        {{else}}
+          <input type="hidden" value="0" name="week"></input>
         {{/if}}
       </div>
       <div class="modal-footer">
