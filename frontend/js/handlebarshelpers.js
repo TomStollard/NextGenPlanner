@@ -53,11 +53,11 @@ Handlebars.registerHelper("ifnoteq", function(a, b, options){
 });
 
 Handlebars.registerHelper('for', function(from, to, block) {
-    var accum = '';
+    var output = "";
     for(var i = from; i <= to; i++){
-      accum += block.fn(i);
+      output += block.fn(i);
     }
-    return accum;
+    return output;
 });
 
 Handlebars.registerHelper('doubleDigit', function(value) {

@@ -420,8 +420,8 @@ var dbdata = {
   notes: {
     week: {
       findbyweektome: function(weektome, callback){
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          localdb.weeknotes.where("weektome").equals(weektome).and(function(note){return !Boolean(note.deleted);}).toArray().then(callback);
         }
         else{
           $.ajax({
@@ -440,8 +440,8 @@ var dbdata = {
         }
       },
       findbyid: function(id, callback){
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          localdb.weeknotes.where("_id").equals(id).first().then(callback);
         }
         else{
           $.ajax({
@@ -457,8 +457,12 @@ var dbdata = {
         }
       },
       insert: function(data, callback){
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          data._id = data.id;
+          delete data.id;
+          data.deleted = data.deleted ? 1 : 0;
+          data.updated = 1;
+          localdb.weeknotes.add(data).then(callback);
         }
         else{
           $.ajax({
@@ -475,8 +479,11 @@ var dbdata = {
         }
       },
       update: function(data, callback){
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          data.updated = 1;
+          var id = data.id;
+          delete data.id;
+          localdb.weeknotes.where("_id").equals(id).modify(data).then(callback);
         }
         else{
           $.ajax({
@@ -493,8 +500,11 @@ var dbdata = {
         }
       },
       delete: function(id, callback){
-        if(localoptions.offlinesync && false){
-
+        if(localoptions.offlinesync){
+          localdb.weeknotes.where("_id").equals(id).modify({
+            deleted: 1,
+            updated: 1
+          }).then(callback);
         }
         else{
           $.ajax({
@@ -539,7 +549,7 @@ var dbdata = {
           delete data.id;
           data.deleted = data.deleted ? 1 : 0;
           data.updated = 1;
-          localdb.daynotes.add(data).then(callback).catch(function(e){console.log(e)});
+          localdb.daynotes.add(data).then(callback);
         }
         else{
           $.ajax({

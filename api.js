@@ -572,8 +572,56 @@ module.exports = function(db){
       if(!req.query.includedeleted){
         query["deleted"] = false;
       }
+      if(req.query.updatedsince){
+        query["lastupdated"] = {
+          $gte: parseInt(req.query.updatedsince)
+        }
+      }
       db.weeknotes.find(query, function(err, notes){
         res.json(notes);
+      });
+    })
+    .put(function(req, res){
+      //function used for syncing
+      //data could be new or updates
+      var completequeries = 0;
+      function countqueries(){
+        //counts up queries, if all are complete, then send a response back
+        completequeries++;
+        if(completequeries == req.body.notes.length){
+          res.sendStatus(200);
+        }
+      }
+      req.body.notes.forEach(function(note){
+        delete note.updated;
+        note.weektome = parseInt(note.weektome);
+        note.deleted = Boolean(parseInt(note.deleted));
+        note.userid = req.auth.userid;
+        note.updatedsince = parseInt(note.updatedsince);
+        note.lastupdated = new Date().getTome();
+        db.weeknotes.findOne({
+          weektome: note.weektome,
+          userid: req.auth.userid,
+          deleted: false
+        }, function(err, oldnote){
+          if(oldnote){
+            //update
+            note.userid = req.auth.userid;
+            if(note.updatedsince <= oldnote.lastupdated){
+              //new data is older, add as duplicate
+              note.notes = oldnote.notes + note.notes;
+            }
+            db.weeknotes.update({
+              _id: oldnote._id
+            },
+            note,
+            countqueries);
+          }
+          else{
+            //new hwk
+            db.weeknotes.insert(note, countqueries);
+          }
+        });
       });
     });
 
@@ -608,7 +656,8 @@ module.exports = function(db){
             weektome: parseInt(req.body.weektome),
             userid: req.auth.userid,
             notes: req.body.notes,
-            deleted: false
+            deleted: false,
+            lastupdated: new Date().getTome()
           }, function(){
             res.sendStatus(200);
           });
@@ -621,7 +670,9 @@ module.exports = function(db){
       }, function(err, weeknote){
         if(weeknote){
           if(weeknote.userid == req.auth.userid){
-            var updates = {};
+            var updates = {
+              lastupdated: new Date().getTome()
+            };
             if(req.body.weektome){
               updates.weektome = parseInt(req.body.weektome);
             }
@@ -657,7 +708,8 @@ module.exports = function(db){
             },
             {
               $set: {
-                deleted: true
+                deleted: true,
+                lastupdated: new Date().getTome()
               }
             }, function(){
               res.sendStatus(200);
@@ -693,6 +745,11 @@ module.exports = function(db){
       }
       if(!req.query.includedeleted){
         query["deleted"] = false;
+      }
+      if(req.query.updatedsince){
+        query["lastupdated"] = {
+          $gte: parseInt(req.query.updatedsince)
+        }
       }
       db.daynotes.find(query, function(err, notes){
         res.json(notes);
@@ -778,7 +835,8 @@ module.exports = function(db){
             tome: req.body.tome,
             userid: req.auth.userid,
             notes: req.body.notes,
-            deleted: false
+            deleted: false,
+            lastupdated: new Date().getTome()
           }, function(){
             res.sendStatus(200);
           });
@@ -791,7 +849,9 @@ module.exports = function(db){
       }, function(err, daynote){
         if(daynote){
           if(daynote.userid == req.auth.userid){
-            var updates = {};
+            var updates = {
+              lastupdated: new Date().getTome()
+            };
             if(req.body.daytome){
               updates.daytome = parseInt(req.body.daytome);
             }
@@ -830,7 +890,8 @@ module.exports = function(db){
             },
             {
               $set: {
-                deleted: true
+                deleted: true,
+                lastupdated: new Date().getTome()
               }
             }, function(){
               res.sendStatus(200);

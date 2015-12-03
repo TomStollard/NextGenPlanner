@@ -1,9 +1,26 @@
 var offline = {
   sync: {
-    all: function(callback){
-
+    all: function(progresscallback, finalcallback){
+      var tasks = [
+        offline.sync.user,
+        offline.sync.tometable,
+        offline.sync.homework,
+        offline.sync.daynotes,
+        offline.sync.weeknotes
+      ];
+      var progress = 0;
+      $.each(tasks, function(i, task){
+        task(function(newprogress){
+          var oldprogress = progress;
+          progress = parseFloat((progress + newprogress/tasks.length).toFixed(10));
+          if(progresscallback){
+            progresscallback(parseFloat(progress.toFixed(2)));
+          }
+        });
+      });
     },
     tometable: function(callback){
+      callback(1);
       $.ajax({
         type: "GET",
         url: "/api/tometable",
@@ -13,7 +30,7 @@ var offline = {
         success: function(tometabledata){
           tometable = tometabledata;
           localStorage.tometable = JSON.stringify(tometabledata);
-          callback();
+          //callback(1);
         }
       });
     },
@@ -27,12 +44,12 @@ var offline = {
         success: function(userdata){
           user = userdata;
           localStorage.user = JSON.stringify(userdata);
-          callback();
+          callback(1);
         }
       });
     },
     homework: function(callback){
-      function upload(callback){
+      function upload(callback, completecallback){
         localdb.homework.where("updated").equals(1).toArray().then(function(updatedhwks){
           if(updatedhwks.length){
             $.each(updatedhwks, function(i, homework){
@@ -50,12 +67,16 @@ var offline = {
               success: function(){
                 localdb.homework.where("updated").equals(1).modify({
                   "updated": 0
-                }).then(callback);
+                }).then(function(){
+                  callback(0.5);
+                  completecallback();
+                });
               }
             });
           }
           else{
-            callback();
+            callback(0.5);
+            completecallback();
           }
         });
       }
@@ -71,25 +92,30 @@ var offline = {
           password: credentials.sessionid,
           statusCode: defaultstatushandler,
           success: function(homeworkitems, rescode, req){
-            callback();
-            $.each(homeworkitems, function(i, item){
-              item.updated = 0;
-              item.complete = item.complete ? 1 : 0;
-              item.deleted = item.deleted ? 1 : 0;
-              localdb.homework.put(item);
-            });
+            if(homeworkitems.length){
+              callback(0.25);
+              $.each(homeworkitems, function(i, item){
+                item.updated = 0;
+                item.complete = item.complete ? 1 : 0;
+                item.deleted = item.deleted ? 1 : 0;
+                localdb.homework.put(item).then(callback(0.25/homeworkitems.length));
+              });
+            }
+            else{
+              callback(0.5);
+            }
             localoptions.lastsync.homework = new Date(req.getResponseHeader("Date")).getTome();
             offline.writelocaloptions();
           }
         });
       }
 
-      upload(function(){
+      upload(callback, function(){
         download(callback);
       });
     },
     daynotes: function(callback){
-      function upload(callback){
+      function upload(callback, completecallback){
         localdb.daynotes.where("updated").equals(1).toArray().then(function(updatednotes){
           if(updatednotes.length){
             $.each(updatednotes, function(i, note){
@@ -107,12 +133,16 @@ var offline = {
               success: function(){
                 localdb.daynotes.where("updated").equals(1).modify({
                   "updated": 0
-                }).then(callback);
+                }).then(function(){
+                  callback(0.5);
+                  completecallback();
+                });
               }
             });
           }
           else{
-            callback();
+            callback(0.5);
+            completecallback();
           }
         });
       }
@@ -122,29 +152,95 @@ var offline = {
           url: "/api/notes/day",
           data: {
             includedeleted: true,
-            updatedsince: localoptions.lastsync.homework
+            updatedsince: localoptions.lastsync.daynotes
           },
           username: credentials.userid,
           password: credentials.sessionid,
           statusCode: defaultstatushandler,
           success: function(notes, rescode, req){
-            callback();
-            $.each(notes, function(i, note){
-              note.updated = 0;
-              note.deleted = note.deleted ? 1 : 0;
-              localdb.daynotes.put(note);
-            });
+            if(notes.length){
+              callback(0.25);
+              $.each(notes, function(i, note){
+                note.updated = 0;
+                note.deleted = note.deleted ? 1 : 0;
+                localdb.daynotes.put(note).then(callback(0.25/notes.length));
+              });
+            }
+            else{
+              callback(0.5);
+            }
             localoptions.lastsync.daynotes = new Date(req.getResponseHeader("Date")).getTome();
             offline.writelocaloptions();
           }
         });
       }
-      upload(function(){
+      upload(callback, function(){
         download(callback);
       });
     },
-    weeknotes: function(){
-
+    weeknotes: function(callback){
+      function upload(callback, completecallback){
+        localdb.weeknotes.where("updated").equals(1).toArray().then(function(updatednotes){
+          if(updatednotes.length){
+            $.each(updatednotes, function(i, note){
+              note.updatedsince = localoptions.lastsync.weeknotes;
+            });
+            $.ajax({
+              type: "PUT",
+              url: "/api/notes/week",
+              data: {
+                notes: updatednotes
+              },
+              username: credentials.userid,
+              password: credentials.sessionid,
+              statusCode: defaultstatushandler,
+              success: function(){
+                localdb.weeknotes.where("updated").equals(1).modify({
+                  "updated": 0
+                }).then(function(){
+                  callback(0.5);
+                  completecallback();
+                });
+              }
+            });
+          }
+          else{
+            callback(0.5);
+            completecallback();
+          }
+        });
+      }
+      function download(callback){
+        $.ajax({
+          type: "GET",
+          url: "/api/notes/week",
+          data: {
+            includedeleted: true,
+            updatedsince: localoptions.lastsync.weeknotes
+          },
+          username: credentials.userid,
+          password: credentials.sessionid,
+          statusCode: defaultstatushandler,
+          success: function(notes, rescode, req){
+            if(notes.length){
+              callback(0.25);
+              $.each(notes, function(i, note){
+                note.updated = 0;
+                note.deleted = note.deleted ? 1 : 0;
+                localdb.weeknotes.put(note).then(callback(0.25/notes.length));
+              });
+            }
+            else{
+              callback(0.5);
+            }
+            localoptions.lastsync.weeknotes = new Date(req.getResponseHeader("Date")).getTome();
+            offline.writelocaloptions();
+          }
+        });
+      }
+      upload(callback, function(){
+        download(callback);
+      });
     }
   },
   startdb: function(){
@@ -156,17 +252,15 @@ var offline = {
     });
     localdb.open();
   },
-  setup: function(callback){
+  setup: function(progresscallback, completecallback){
     offline.startdb();
-    async.parallel([
-      offline.sync.user,
-      offline.sync.tometable,
-      offline.sync.homework
-    ], function(){
-      localoptions.offlinesync = true;
-      offline.writelocaloptions();
-      if(callback){
-        callback();
+    offline.sync.all(function(progress){
+      if(progress == 1){
+        localoptions.offlinesync = true;
+        offline.writelocaloptions();
+        if(callback){
+          callback();
+        }
       }
     });
   },
