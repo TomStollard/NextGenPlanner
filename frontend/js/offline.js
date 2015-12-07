@@ -13,6 +13,7 @@ var offline = {
         task(function(newprogress){
           var oldprogress = progress;
           progress = parseFloat((progress + newprogress/tasks.length).toFixed(10));
+          //console.log(i, newprogress, newprogress/tasks.length, oldprogress, newprogress)
           if(progresscallback){
             progresscallback(parseFloat(progress.toFixed(2)));
           }
@@ -244,7 +245,7 @@ var offline = {
     }
   },
   startdb: function(){
-    localdb = new Dexie("NextGenPlanner");
+    localdb = new Dexie("NextGenPlanner-" + credentials.userid);
     localdb.version(1).stores({
       homework: "_id, subject, set, due, complete, deleted, lastupdated, updated",
       daynotes: "_id, daytome, deleted, lastupdated, updated",
@@ -258,11 +259,21 @@ var offline = {
       if(progress == 1){
         localoptions.offlinesync = true;
         offline.writelocaloptions();
-        if(callback){
-          callback();
+        if(completecallback){
+          completecallback();
         }
       }
+      else{
+        progresscallback(progress);
+      }
     });
+  },
+  disable: function(callback, deletedata){
+    localoptions.offlinesync = false;
+    delete localoptions.lastsync;
+    offline.writelocaloptions();
+    var deleteDbReq = indexedDB.deleteDatabase("NextGenPlanner-" + credentials.userid);
+    deleteDbReq.onsuccess = callback;
   },
   readlocaloptions: function(){
     localoptions = JSON.parse(localStorage.localoptions);

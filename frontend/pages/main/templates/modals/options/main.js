@@ -16,7 +16,9 @@ $("#modal-options-main").on("show", function(){
       templates.main.modals.options.main({
         user: user,
         sessions: sessions,
-        apikeys: apikeys
+        apikeys: apikeys,
+        syncenabled: localoptions.offlinesync,
+        remembered: Boolean(localStorage.credentials)
       })
     );
     $("form#generateapikey input[name='expiry']").pickadate();
@@ -65,6 +67,19 @@ $("#modal-options-main").on("show", function(){
       var item = $(this).parent().parent();
       dbdata.sessions.delete($(item).data("id"), function(){
         $(item).hide();
+      });
+    });
+    $("#modal-options-main #enablesync").click(function(){
+      $("#modal-options-main #enablesync").off("click");
+      offline.setup(function(progress){
+        $("#modal-options-main #enablesync").html((progress * 100) + "% set up");
+      }, function(){
+        $("#options-main-sync").html("Syncing has been set up.");
+      });
+    });
+    $("#modal-options-main #disablesync").click(function(){
+      offline.disable(function(){
+        $("#options-main-sync").html("Syncing has been disabled.");
       });
     });
     $("#modal-options-main .nav").tab();
