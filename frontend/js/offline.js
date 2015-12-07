@@ -280,5 +280,22 @@ var offline = {
   },
   writelocaloptions: function(){
     localStorage.localoptions = JSON.stringify(localoptions);
+  },
+  connectivitytest: function(successcallback, errorcallback){
+    $.get("/api/connectivitytest").done(successcallback).fail(errorcallback);
+  },
+  setupserviceworker: function(){
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("/sw.js").then(function(registration){
+        if(typeof registration.update === "function"){
+          registration.update();
+        }
+        registration.onupdatefound = function(){
+          if(navigator.serviceWorker.controller){
+            bootbox.alert("There are updates available - please refresh to start using these.");
+          }
+        }
+      });
+    }
   }
 }

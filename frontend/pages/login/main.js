@@ -35,6 +35,7 @@ $("#loginform").submit(function(event){
     success: function(res, status, req){
       if(devicename){
         window.localStorage["credentials"] = JSON.stringify(res);
+        offline.setupserviceworker();
       }
       credentials = res;
       loaduserdata(function(){
@@ -42,6 +43,9 @@ $("#loginform").submit(function(event){
       });
     },
     statusCode: {
+      0: function(){
+        bootbox.alert("You appear to be offline. Please check your connection and try logging in again later.");
+      },
       401: function(){
         $("#loginform-credserror").slideDown();
       }

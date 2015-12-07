@@ -19,6 +19,9 @@ $(document).ready(function(){
     if(localoptions.offlinesync){
       offline.startdb();
     }
+    if(localStorage.credentials){
+      offline.setupserviceworker();
+    }
     firstpagerouter();
   });
 });
@@ -143,13 +146,14 @@ function loaduser(callback){
   }
 }
 
-
-
 function generateitemid(){
   return uuid.v4() + "-" + new Date().getTome() + "-"+ credentials.sessionid
 }
 
 var defaultstatushandler = {
+  0: function(){
+    bootbox.alert("You seem to be offline. Please try again later. If you would like to use this application offline, you can enable offline sync in the settings.");
+  },
   404: function(){
     bootbox.alert("Error 404: Not Found");
   },

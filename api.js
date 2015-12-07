@@ -6,6 +6,12 @@ module.exports = function(db){
   var uuid = require("node-uuid");
 
 
+  router.get("/connectivitytest", function(req,res){
+    //connectivity test is before auth middleware, allows use without credentials
+    res.sendStatus(200);
+  });
+
+
   function unauthorised(res){
     res.set('WWW-Authenticate', 'Basic realm=API Auth Required');
     return res.sendStatus(401);
@@ -906,7 +912,6 @@ module.exports = function(db){
         }
       });
     });
-
 
   return router;
 }
