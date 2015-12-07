@@ -22,7 +22,7 @@
     "body-parser": "^1.13.3",
     "bower": "^1.5.3",
     "express": "^4.13.3",
-    "gulp": "^3.9.0",
+    "gulp": "gulpjs/gulp#4.0",
     "gulp-autoprefixer": "^3.0.2",
     "gulp-concat": "^2.6.0",
     "gulp-declare": "^0.3.0",
@@ -40,12 +40,15 @@
     "handlebars": "^4.0.3",
     "merge-stream": "^1.0.0",
     "mongojs": "^1.3.0",
-    "node-uuid": "^1.4.3"
+    "node-uuid": "^1.4.3",
+    "sw-precache": "^2.2.0"
   },
   "apps": [
-  {
-    "name": "NextGenPlanner",
-    "post_update": ["npm install"]
-  }
-]
+    {
+      "name": "NextGenPlanner",
+      "post_update": [
+        "npm install"
+      ]
+    }
+  ]
 }
