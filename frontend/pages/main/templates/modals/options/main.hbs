@@ -73,6 +73,18 @@
             {{else}}
               <button class="btn btn-primary" id="enablesync">Enable Sync</button>
             {{/if}}
+            <p>
+            <form class="form-horizontal" id="syncoptions">
+              <div class="form-group">
+                <label for="syncinterval" class="col-xs-2 control-label">Sync Interval</label>
+                <div class="col-xs-10">
+                  <div style="position: relative;">
+                    <input type="text" name="syncinterval" class="form-control" value="{{syncinterval}}"></input>
+                  </div>
+                </div>
+              </div>
+              <input type="submit" class="btn" value="Save"></input>
+            </form>
           {{else}}
             You need to be permanently logged in to enable offline sync - tick the "Remember Me" box and enter a device name when logging in.
           {{/if}}

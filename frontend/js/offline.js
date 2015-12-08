@@ -1,37 +1,46 @@
 var offline = {
   sync: {
     all: function(progresscallback, finalcallback){
-      var tasks = [
-        offline.sync.user,
-        offline.sync.tometable,
-        offline.sync.homework,
-        offline.sync.daynotes,
-        offline.sync.weeknotes
-      ];
-      var progress = 0;
-      $.each(tasks, function(i, task){
-        task(function(newprogress){
-          var oldprogress = progress;
-          progress = parseFloat((progress + newprogress/tasks.length).toFixed(10));
-          //console.log(i, newprogress, newprogress/tasks.length, oldprogress, newprogress)
-          if(progresscallback){
-            progresscallback(parseFloat(progress.toFixed(2)));
-          }
+      offline.connectivitytest(function(){
+        var tasks = [
+          offline.sync.user,
+          offline.sync.tometable,
+          offline.sync.homework,
+          offline.sync.daynotes,
+          offline.sync.weeknotes
+        ];
+        var progress = 0;
+        $.each(tasks, function(i, task){
+          task(function(newprogress){
+            var oldprogress = progress;
+            progress = parseFloat((progress + newprogress/tasks.length).toFixed(10));
+            if(progresscallback){
+              progresscallback(parseFloat(progress.toFixed(2)));
+            }
+            if(progress == 1){
+              if(finalcallback){
+                finalcallback(true);
+              }
+            }
+          });
         });
+      }, function(){
+        if(finalcallback){
+          finalcallback(false);
+        }
       });
     },
     tometable: function(callback){
-      callback(1);
       $.ajax({
         type: "GET",
         url: "/api/tometable",
         username: credentials.userid,
         password: credentials.sessionid,
-        statusCode: defaultstatushandler,
+        statusCode: offline.statushandler,
         success: function(tometabledata){
           tometable = tometabledata;
           localStorage.tometable = JSON.stringify(tometabledata);
-          //callback(1);
+          callback(1);
         }
       });
     },
@@ -41,7 +50,7 @@ var offline = {
         url: "/api/user",
         username: credentials.userid,
         password: credentials.sessionid,
-        statusCode: defaultstatushandler,
+        statusCode: offline.statushandler,
         success: function(userdata){
           user = userdata;
           localStorage.user = JSON.stringify(userdata);
@@ -64,7 +73,7 @@ var offline = {
               },
               username: credentials.userid,
               password: credentials.sessionid,
-              statusCode: defaultstatushandler,
+              statusCode: offline.statushandler,
               success: function(){
                 localdb.homework.where("updated").equals(1).modify({
                   "updated": 0
@@ -91,7 +100,7 @@ var offline = {
           },
           username: credentials.userid,
           password: credentials.sessionid,
-          statusCode: defaultstatushandler,
+          statusCode: offline.statushandler,
           success: function(homeworkitems, rescode, req){
             if(homeworkitems.length){
               callback(0.25);
@@ -130,7 +139,7 @@ var offline = {
               },
               username: credentials.userid,
               password: credentials.sessionid,
-              statusCode: defaultstatushandler,
+              statusCode: offline.statushandler,
               success: function(){
                 localdb.daynotes.where("updated").equals(1).modify({
                   "updated": 0
@@ -157,7 +166,7 @@ var offline = {
           },
           username: credentials.userid,
           password: credentials.sessionid,
-          statusCode: defaultstatushandler,
+          statusCode: offline.statushandler,
           success: function(notes, rescode, req){
             if(notes.length){
               callback(0.25);
@@ -194,7 +203,7 @@ var offline = {
               },
               username: credentials.userid,
               password: credentials.sessionid,
-              statusCode: defaultstatushandler,
+              statusCode: offline.statushandler,
               success: function(){
                 localdb.weeknotes.where("updated").equals(1).modify({
                   "updated": 0
@@ -221,7 +230,7 @@ var offline = {
           },
           username: credentials.userid,
           password: credentials.sessionid,
-          statusCode: defaultstatushandler,
+          statusCode: offline.statushandler,
           success: function(notes, rescode, req){
             if(notes.length){
               callback(0.25);
@@ -297,5 +306,20 @@ var offline = {
         }
       });
     }
+  },
+  tomedsync: function(){
+    if(offline.tomer){
+      window.clearInterval(offline.tomer);
+    }
+    offline.tomer = window.setInterval(offline.sync.all, localoptions.syncinterval * 60000);
+    offline.sync.all();
+  },
+  init: function(){
+    offline.tomedsync();
+    offline.startdb();
+  },
+  statushandler: {
+    401: defaultstatushandler["401"],
+    404: defaultstatushandler["404"]
   }
 }

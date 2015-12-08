@@ -8,7 +8,8 @@ var localoptions = {
     homework: 0,
     weeknotes: 0,
     daynotes: 0
-  }
+  },
+  syncinterval: 1
 }
 var todisable;
 var localdb;
@@ -17,7 +18,7 @@ var currentweekdate = new Date();
 $(document).ready(function(){
   loadlocaldata(function(){
     if(localoptions.offlinesync){
-      offline.startdb();
+      offline.init();
     }
     if(localStorage.credentials){
       offline.setupserviceworker();

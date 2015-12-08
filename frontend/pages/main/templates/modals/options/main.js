@@ -19,7 +19,8 @@ $("#modal-options-main").on("show", function(){
           sessions: sessions,
           apikeys: apikeys,
           syncenabled: localoptions.offlinesync,
-          remembered: Boolean(localStorage.credentials)
+          remembered: Boolean(localStorage.credentials),
+          syncinterval: localoptions.syncinterval
         })
       );
       $("form#generateapikey input[name='expiry']").pickadate();
@@ -62,6 +63,16 @@ $("#modal-options-main").on("show", function(){
         }
         else{
           bootbox.alert("You must enter a password.");
+        }
+      });
+      $("#options-main-sync form").submit(function(e){
+        e.preventDefault();
+        var syncinterval = parseFloat($("#options-main-sync form input[name='syncinterval']").val());
+        if(syncinterval){
+          localoptions.syncinterval = syncinterval;
+          offline.writelocaloptions();
+          offline.tomedsync();
+          bootbox.alert("New interval has been set.");
         }
       });
       $("#modal-options-main .deletebutton").click(function(){
