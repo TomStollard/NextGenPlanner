@@ -524,7 +524,7 @@ var dbdata = {
       betweendates: function(date1, date2, callback){
         //takes two date objects, calls callback with a single argument, all homework items set between these dates
         if(localoptions.offlinesync){
-          localdb.daynotes.where("daytome").between(date1.getTome(), date2.getTome()).toArray().then(callback);
+          localdb.daynotes.where("daytome").between(date1.getTome(), date2.getTome()).and(function(note){return !Boolean(note.deleted);}).toArray().then(callback);
         }
         else{
           $.ajax({
