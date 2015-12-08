@@ -1,7 +1,19 @@
 var offline = {
   sync: {
+    withui: function(){
+      offline.sync.all(function(progress){
+        $("#syncbar").html("Syncing... " + (progress * 100) + "%");
+        $("#syncbar").slideDown();
+      }, function(){
+        $("#syncbar").html("Sync complete");
+        setTomeout(function(){
+          $("#syncbar").slideUp();
+        }, 1000);
+      });
+    },
     all: function(progresscallback, finalcallback){
       offline.connectivitytest(function(){
+        progresscallback(0);
         var tasks = [
           offline.sync.user,
           offline.sync.tometable,
@@ -311,8 +323,8 @@ var offline = {
     if(offline.tomer){
       window.clearInterval(offline.tomer);
     }
-    offline.tomer = window.setInterval(offline.sync.all, localoptions.syncinterval * 60000);
-    offline.sync.all();
+    offline.tomer = window.setInterval(offline.sync.withui, localoptions.syncinterval * 60000);
+    offline.sync.withui();
   },
   init: function(){
     offline.tomedsync();
