@@ -4,11 +4,13 @@ var offline = {
       offline.sync.all(function(progress){
         $("#syncbar").html("Syncing... " + (progress * 100) + "%");
         $("#syncbar").slideDown();
+        $(".button-main-sync").addClass("spin");
       }, function(){
         $("#syncbar").html("Sync complete");
         setTomeout(function(){
           $("#syncbar").slideUp();
         }, 1000);
+        $(".button-main-sync").removeClass("spin");
       });
     },
     all: function(progresscallback, finalcallback){
