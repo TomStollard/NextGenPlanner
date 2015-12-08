@@ -29,17 +29,15 @@
     padding-left: 10px;
     flex-grow: 1;
   }
-  img{
-    display: block;
-    height: 1.3em;
-    width: 1.3em;
-    padding-top: 0.1em;
-    transition: -webkit-transform 400ms;
+  .arrow{
+    display: inline-block;
+    font-size: 1.5em;
+    transition: transform 400ms;
   }
 }
 
-#page-login #login .pane.active .panel-title img{
-  -webkit-transform: rotate(-180deg);
+#page-login #login .pane.active .panel-title .arrow{
+  transform: rotate(-180deg);
 }
 
 #page-login #login .pane .panel-content{

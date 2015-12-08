@@ -217,21 +217,15 @@ gulp.task("pages#watch", function(){
     .pipe(gulp.dest("./frontend_build/css"))
   });
 
-  gulp.task("other:imgs", function(){
-    return gulp.src("./frontend/imgs/*")
-    .pipe(gulp.dest("./frontend_build/imgs"))
-  });
-
   gulp.task("other:bsfonts", function(){
     return gulp.src("bower_components/bootstrap/dist/fonts/*")
     .pipe(gulp.dest("./frontend_build/fonts"))
   });
 
-gulp.task("other", gulp.parallel("other:mainjs", "other:maincss", "other:imgs", "other:bsfonts"));
+gulp.task("other", gulp.parallel("other:mainjs", "other:maincss", "other:bsfonts"));
 gulp.task("other#watch", function(){
   gulp.watch("./frontend/js/**", gulp.series("other:mainjs", "serviceworker"));
   gulp.watch("./frontend/css/**", gulp.series("other:maincss", "serviceworker"));
-  gulp.watch("./frontend/imgs/**", gulp.series("other:imgs", "serviceworker"));
 });
 
 gulp.task("serviceworker", function(callback) {
