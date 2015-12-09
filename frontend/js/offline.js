@@ -11,6 +11,8 @@ var offline = {
           $("#syncbar").slideUp();
         }, 1000);
         $(".button-main-sync").removeClass("spin");
+        loadmainpage();
+        loadtometablepage();
       });
     },
     all: function(progresscallback, finalcallback){
@@ -278,25 +280,30 @@ var offline = {
   },
   setup: function(progresscallback, completecallback){
     offline.startdb();
-    offline.sync.all(function(progress){
-      if(progress == 1){
-        localoptions.offlinesync = true;
-        offline.writelocaloptions();
-        if(completecallback){
-          completecallback();
+    offline.disable(function(){
+      offline.startdb();
+      offline.sync.all(function(progress){
+        if(progress == 1){
+          localoptions.offlinesync = true;
+          offline.writelocaloptions();
+          offline.tomedsync();
+          if(completecallback){
+            completecallback();
+          }
         }
-      }
-      else{
-        progresscallback(progress);
-      }
+        else{
+          progresscallback(progress);
+        }
+      });
     });
   },
   disable: function(callback, deletedata){
     localoptions.offlinesync = false;
-    delete localoptions.lastsync;
+    $.each(localoptions.lastsync, function(item){
+      localoptions.lastsync[item] = 0;
+    });
     offline.writelocaloptions();
-    var deleteDbReq = indexedDB.deleteDatabase("NextGenPlanner-" + credentials.userid);
-    deleteDbReq.onsuccess = callback;
+    localdb.delete().then(callback);
   },
   readlocaloptions: function(){
     localoptions = JSON.parse(localStorage.localoptions);

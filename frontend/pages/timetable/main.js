@@ -25,7 +25,9 @@ function loadtometablepage(callback){
     $("#modal-editlesson").data("id", $(this).parent().data("id"));
     $("#modal-editlesson").trigger("show");
   });
-  callback();
+  if(callback){
+    callback();
+  }
 }
 
 $("#page-tometable").on("load", function(){
