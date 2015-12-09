@@ -58,6 +58,6 @@ $("#modal-editlesson").on("show", function(){
     })
     .modal("show");
   }, function(){
-    booxbox.alert("Sorry, you need to be online to modify your tometable.");
+    bootbox.alert("Sorry, you need to be online to modify your tometable.");
   });
 });

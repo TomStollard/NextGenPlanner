@@ -165,6 +165,6 @@ $("#modal-addlesson").on("show", function(){
       );
     });
   }, function(){
-    booxbox.alert("Sorry, you need to be online to modify your tometable.");
+    bootbox.alert("Sorry, you need to be online to modify your tometable.");
   });
 });
