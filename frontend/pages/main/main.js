@@ -26,6 +26,7 @@ $(".menu>a").click(function(){
 
 function weekreload(){
   $.when($("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeOut()).done(function(){
+    offline.sync.withui();
     async.parallel([
       loadweekdetails,
       loadweeknotes
@@ -223,6 +224,7 @@ function updatehomeworkbindings(){
         $("#mainpage-panel-todo .panel-body").slideUp(callback);
       }
     ], function(data){
+      offline.sync.withui();
       loadtododetails(function(){
         updatehomeworkbindings();
         $("#mainpage-panel-todo .panel-body").slideDown();

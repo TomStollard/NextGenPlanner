@@ -98,6 +98,7 @@ $("#modal-addhomework").on("show", function(){
       }, function(){
         $("#modal-addhomework").modal("hide");
         $.when($("#mainpage-panels .panel").fadeOut()).then(function(){
+          offline.sync.withui();
           async.parallel([
             function(callback){
               loadweekdetails(callback);

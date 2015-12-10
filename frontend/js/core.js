@@ -91,8 +91,8 @@ function loadlocaldata(callback){
 
 function loaduserdata(callback){
     async.parallel([
-      loaduser,
-      loadtometable
+      loaduserdetails,
+      loadtometabledata
     ], function(){
       //calendar disabled dates - read pickaday documentation, passed as argument when initialising (different to .set("enable/disable") when initialised)
       //firstDay argument must also be set to true, otherwise week starts on Sun and everything is offset
@@ -107,7 +107,7 @@ function loaduserdata(callback){
     });
 }
 
-function loadtometable(callback){
+function loadtometabledata(callback){
   if(localoptions.offlinesync){
     tometable = JSON.parse(window.localStorage["tometable"]);
     callback();
@@ -127,7 +127,7 @@ function loadtometable(callback){
   }
 }
 
-function loaduser(callback){
+function loaduserdetails(callback){
   if(localoptions.offlinesync){
     user = JSON.parse(window.localStorage["user"]);
     callback();
@@ -144,6 +144,19 @@ function loaduser(callback){
         callback();
       }
     });
+  }
+}
+
+function loadtometable(callback){
+  if(localoptions.offlinesync){
+    offline.sync.tometable(function(progress){
+      if(progress == 1){
+        callback();
+      }
+    });
+  }
+  else{
+    loadtometable(callback);
   }
 }
 

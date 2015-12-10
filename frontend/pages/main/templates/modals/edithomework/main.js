@@ -38,7 +38,6 @@ $("#modal-edithomework").on("show", function(){
     .submit(function(e){
       e.preventDefault();
       var id = $("#modal-edithomework input[name='id']").val();
-      console.log();
       async.parallel([
         function(callback){
           $.when($("#mainpage-panels .panel").fadeOut()).then(callback);
@@ -55,6 +54,7 @@ $("#modal-edithomework").on("show", function(){
           });
         }
       ], function(){
+        offline.sync.withui();
         loadmainpage(function(){
           $("#mainpage-panels .panel").fadeIn();
         })
