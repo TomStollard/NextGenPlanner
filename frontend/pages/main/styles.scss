@@ -1,4 +1,22 @@
 #page-main{
+  .button-main-sync.glyphicon{
+    animation: spin 2000ms infinite linear;
+    animation-play-state: paused;
+    display: none;
+    &.spin{
+      animation-play-state: running;
+    }
+  }
+
+  @keyframes spin{
+    from {
+      transform:rotate(0deg);
+    },
+    to {
+      transform:rotate(359deg);
+    }
+  }
+
   @media (min-width: 900px) {
     #addhomeworkbutton, #jumptodate, #weeknav{
       width: 400px;

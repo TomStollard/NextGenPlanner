@@ -16,12 +16,17 @@ $(".button-main-settings").click(function(){
   $("#modal-options-main").trigger("show")
 });
 
+$(".button-main-sync").click(function(){
+  offline.sync.withui();
+});
+
 $(".menu>a").click(function(){
   $(this).parent().slideUp();
 });
 
 function weekreload(){
   $.when($("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeOut()).done(function(){
+    offline.sync.withui();
     async.parallel([
       loadweekdetails,
       loadweeknotes
@@ -181,6 +186,7 @@ function updatetitle(callback){
 
 function loadmainpage(callback){
   async.parallel([
+    showsyncbutton,
     updatetitle,
     loadweeknotes,
     loadweekdetails,
@@ -218,6 +224,7 @@ function updatehomeworkbindings(){
         $("#mainpage-panel-todo .panel-body").slideUp(callback);
       }
     ], function(data){
+      offline.sync.withui();
       loadtododetails(function(){
         updatehomeworkbindings();
         $("#mainpage-panel-todo .panel-body").slideDown();
@@ -240,4 +247,11 @@ function updatedaynotebindings(){
     $("#modal-editdaynote").data("id", id);
     $("#modal-editdaynote").trigger("show");
   });
+}
+
+function showsyncbutton(callback){
+  if(localoptions.offlinesync){
+    $(".button-main-sync").css("display", "inline-block");
+  }
+  callback();
 }

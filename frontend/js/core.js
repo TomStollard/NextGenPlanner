@@ -3,46 +3,40 @@ var credentials = {};
 var tometable = [];
 var editors = {};
 var localoptions = {
-  offlinesync: false
+  offlinesync: false,
+  lastsync: {
+    homework: 0,
+    weeknotes: 0,
+    daynotes: 0
+  },
+  syncinterval: 1
 }
 var todisable;
-var options = {
-  tometable: {
-    mode: "week",
-    multiweek: {
-      offset: 0,
-      numweeks: 2
-    },
-    multiday: {
-      offset: 6,
-      numdays: 10
-    },
-    schooldays: [0,1,2,3,4],
-    periods: [
-      [09, 10, 09, 55],
-      [09, 55, 10, 40],
-      [10, 40, 11, 25],
-      [11, 45, 12, 30],
-      [12, 30, 13, 15],
-      [14, 25, 15, 10],
-      [15, 10, 15, 55]
-    ]
-  }
-};
+var localdb;
 var currentweekdate = new Date();
 
 $(document).ready(function(){
   loadlocaldata(function(){
-    if(credentials.userid){
-      loaduserdata(function(){
-        switchpage("main");
-      });
+    if(localoptions.offlinesync){
+      offline.init();
     }
-    else {
-      switchpage("login");
+    if(localStorage.credentials){
+      offline.setupserviceworker();
     }
+    firstpagerouter();
   });
 });
+
+function firstpagerouter(){
+  if(credentials.userid){
+    loaduserdata(function(){
+      switchpage("main");
+    });
+  }
+  else {
+    switchpage("login");
+  }
+}
 
 function switchpage(newpage){
   var newpagediv = $("#page-" + newpage);
@@ -89,13 +83,16 @@ function loadlocaldata(callback){
   if(window.localStorage["credentials"]){
     credentials = JSON.parse(window.localStorage["credentials"]);
   }
+  if(window.localStorage["localoptions"]){
+    localoptions = JSON.parse(window.localStorage["localoptions"]);
+  }
   callback();
 }
 
 function loaduserdata(callback){
     async.parallel([
-      loaduser,
-      loadtometable
+      loaduserdetails,
+      loadtometabledata
     ], function(){
       //calendar disabled dates - read pickaday documentation, passed as argument when initialising (different to .set("enable/disable") when initialised)
       //firstDay argument must also be set to true, otherwise week starts on Sun and everything is offset
@@ -110,9 +107,10 @@ function loaduserdata(callback){
     });
 }
 
-function loadtometable(callback){
+function loadtometabledata(callback){
   if(localoptions.offlinesync){
     tometable = JSON.parse(window.localStorage["tometable"]);
+    callback();
   }
   else{
     $.ajax({
@@ -129,8 +127,10 @@ function loadtometable(callback){
   }
 }
 
-function loaduser(callback){
+function loaduserdetails(callback){
   if(localoptions.offlinesync){
+    user = JSON.parse(window.localStorage["user"]);
+    callback();
   }
   else{
     $.ajax({
@@ -147,13 +147,27 @@ function loaduser(callback){
   }
 }
 
-
+function loadtometable(callback){
+  if(localoptions.offlinesync){
+    offline.sync.tometable(function(progress){
+      if(progress == 1){
+        callback();
+      }
+    });
+  }
+  else{
+    loadtometable(callback);
+  }
+}
 
 function generateitemid(){
   return uuid.v4() + "-" + new Date().getTome() + "-"+ credentials.sessionid
 }
 
 var defaultstatushandler = {
+  0: function(){
+    bootbox.alert("You seem to be offline. Please try again later. If you would like to use this application offline, you can enable offline sync in the settings.");
+  },
   404: function(){
     bootbox.alert("Error 404: Not Found");
   },

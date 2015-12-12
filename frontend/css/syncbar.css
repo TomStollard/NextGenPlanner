@@ -1,0 +1,11 @@
+#syncbar{
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  background-color: black;
+  color: white;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  display: none;
+}

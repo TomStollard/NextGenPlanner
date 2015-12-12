@@ -6,6 +6,12 @@ module.exports = function(db){
   var uuid = require("node-uuid");
 
 
+  router.get("/connectivitytest", function(req,res){
+    //connectivity test is before auth middleware, allows use without credentials
+    res.sendStatus(200);
+  });
+
+
   function unauthorised(res){
     res.set('WWW-Authenticate', 'Basic realm=API Auth Required');
     return res.sendStatus(401);
@@ -237,8 +243,62 @@ module.exports = function(db){
       if(req.query.complete){
         query["complete"] = JSON.parse(req.query.complete.toLowerCase());
       }
+      if(req.query.updatedsince){
+        query["lastupdated"] = {
+          $gte: parseInt(req.query.updatedsince)
+        }
+      }
       db.homework.find(query, function(err, homework){
         res.json(homework);
+      });
+    })
+    .put(function(req, res){
+      //function used for syncing
+      //data could be new or updates
+      var completequeries = 0;
+      function countqueries(){
+        //counts up queries, if all are complete, then send a response back
+        completequeries++;
+        if(completequeries == req.body.homeworks.length){
+          res.sendStatus(200);
+        }
+      }
+      req.body.homeworks.forEach(function(homework){
+        delete homework.updated;
+        homework.complete = Boolean(parseInt(homework.complete));
+        homework.deleted = Boolean(parseInt(homework.deleted));
+        homework.userid = req.auth.userid;
+        homework.set = parseInt(homework.set);
+        homework.due = parseInt(homework.due);
+        homework.updatedsince = parseInt(homework.updatedsince);
+        homework.lastupdated = new Date().getTome();
+        db.homework.findOne({
+          _id: homework._id
+        }, function(err, oldhomework){
+          if(oldhomework){
+            //update
+            if(oldhomework.userid == req.auth.userid){
+              if(homework.updatedsince > oldhomework.lastupdated){
+                //homework is newer, replace
+                homework.userid = req.auth.userid;
+                db.homework.update({
+                  _id: homework._id
+                },
+                homework,
+                countqueries);
+              }
+              else{
+                //new data is older, add as duplicate
+                homework._id += "-duplicate-" + uuid.v4();
+                db.homework.insert(homework, countqueries);
+              }
+            }
+          }
+          else{
+            //new hwk
+            db.homework.insert(homework, countqueries);
+          }
+        });
       });
     });
 
@@ -270,7 +330,8 @@ module.exports = function(db){
               _id: req.params.id
             }, {
               $set: {
-                deleted: true
+                deleted: true,
+                lastupdated: new Date().getTome()
               }
             }, function(err, result){
               if(err){
@@ -306,7 +367,8 @@ module.exports = function(db){
             due: parseInt(req.body.due),
             complete: JSON.parse(req.body.complete.toLowerCase()),
             userid: req.auth.userid,
-            deleted: JSON.parse(req.body.deleted)
+            deleted: JSON.parse(req.body.deleted),
+            lastupdated: new Date().getTome()
           }, function(err, inserted){
             if(err){
               res.sendStatus(500);
@@ -516,8 +578,56 @@ module.exports = function(db){
       if(!req.query.includedeleted){
         query["deleted"] = false;
       }
+      if(req.query.updatedsince){
+        query["lastupdated"] = {
+          $gte: parseInt(req.query.updatedsince)
+        }
+      }
       db.weeknotes.find(query, function(err, notes){
         res.json(notes);
+      });
+    })
+    .put(function(req, res){
+      //function used for syncing
+      //data could be new or updates
+      var completequeries = 0;
+      function countqueries(){
+        //counts up queries, if all are complete, then send a response back
+        completequeries++;
+        if(completequeries == req.body.notes.length){
+          res.sendStatus(200);
+        }
+      }
+      req.body.notes.forEach(function(note){
+        delete note.updated;
+        note.weektome = parseInt(note.weektome);
+        note.deleted = Boolean(parseInt(note.deleted));
+        note.userid = req.auth.userid;
+        note.updatedsince = parseInt(note.updatedsince);
+        note.lastupdated = new Date().getTome();
+        db.weeknotes.findOne({
+          weektome: note.weektome,
+          userid: req.auth.userid,
+          deleted: false
+        }, function(err, oldnote){
+          if(oldnote){
+            //update
+            note.userid = req.auth.userid;
+            if(note.updatedsince <= oldnote.lastupdated){
+              //new data is older, add as duplicate
+              note.notes = oldnote.notes + note.notes;
+            }
+            db.weeknotes.update({
+              _id: oldnote._id
+            },
+            note,
+            countqueries);
+          }
+          else{
+            //new hwk
+            db.weeknotes.insert(note, countqueries);
+          }
+        });
       });
     });
 
@@ -552,7 +662,8 @@ module.exports = function(db){
             weektome: parseInt(req.body.weektome),
             userid: req.auth.userid,
             notes: req.body.notes,
-            deleted: false
+            deleted: false,
+            lastupdated: new Date().getTome()
           }, function(){
             res.sendStatus(200);
           });
@@ -565,7 +676,9 @@ module.exports = function(db){
       }, function(err, weeknote){
         if(weeknote){
           if(weeknote.userid == req.auth.userid){
-            var updates = {};
+            var updates = {
+              lastupdated: new Date().getTome()
+            };
             if(req.body.weektome){
               updates.weektome = parseInt(req.body.weektome);
             }
@@ -601,7 +714,8 @@ module.exports = function(db){
             },
             {
               $set: {
-                deleted: true
+                deleted: true,
+                lastupdated: new Date().getTome()
               }
             }, function(){
               res.sendStatus(200);
@@ -638,8 +752,60 @@ module.exports = function(db){
       if(!req.query.includedeleted){
         query["deleted"] = false;
       }
+      if(req.query.updatedsince){
+        query["lastupdated"] = {
+          $gte: parseInt(req.query.updatedsince)
+        }
+      }
       db.daynotes.find(query, function(err, notes){
         res.json(notes);
+      });
+    })
+    .put(function(req, res){
+      //function used for syncing
+      //data could be new or updates
+      var completequeries = 0;
+      function countqueries(){
+        //counts up queries, if all are complete, then send a response back
+        completequeries++;
+        if(completequeries == req.body.notes.length){
+          res.sendStatus(200);
+        }
+      }
+      req.body.notes.forEach(function(note){
+        delete note.updated;
+        note.daytome = parseInt(note.daytome);
+        note.deleted = Boolean(parseInt(note.deleted));
+        note.userid = req.auth.userid;
+        note.updatedsince = parseInt(note.updatedsince);
+        note.lastupdated = new Date().getTome();
+        db.daynotes.findOne({
+          _id: note._id
+        }, function(err, oldnote){
+          if(oldnote){
+            //update
+            if(oldnote.userid == req.auth.userid){
+              if(note.updatedsince > oldnote.lastupdated){
+                //note is newer, replace
+                note.userid = req.auth.userid;
+                db.daynotes.update({
+                  _id: note._id
+                },
+                note,
+                countqueries);
+              }
+              else{
+                //new data is older, add as duplicate
+                note._id += "-duplicate-" + uuid.v4();
+                db.daynotes.insert(note, countqueries);
+              }
+            }
+          }
+          else{
+            //new hwk
+            db.daynotes.insert(note, countqueries);
+          }
+        });
       });
     });
 
@@ -675,7 +841,8 @@ module.exports = function(db){
             tome: req.body.tome,
             userid: req.auth.userid,
             notes: req.body.notes,
-            deleted: false
+            deleted: false,
+            lastupdated: new Date().getTome()
           }, function(){
             res.sendStatus(200);
           });
@@ -688,7 +855,9 @@ module.exports = function(db){
       }, function(err, daynote){
         if(daynote){
           if(daynote.userid == req.auth.userid){
-            var updates = {};
+            var updates = {
+              lastupdated: new Date().getTome()
+            };
             if(req.body.daytome){
               updates.daytome = parseInt(req.body.daytome);
             }
@@ -727,7 +896,8 @@ module.exports = function(db){
             },
             {
               $set: {
-                deleted: true
+                deleted: true,
+                lastupdated: new Date().getTome()
               }
             }, function(){
               res.sendStatus(200);
@@ -742,7 +912,6 @@ module.exports = function(db){
         }
       });
     });
-
 
   return router;
 }
