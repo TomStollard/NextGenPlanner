@@ -26,6 +26,7 @@ var offline = {
           offline.sync.weeknotes
         ];
         var progress = 0;
+        var callbackcalled = false;
         $.each(tasks, function(i, task){
           task(function(newprogress){
             var oldprogress = progress;
@@ -33,7 +34,8 @@ var offline = {
             if(progresscallback){
               progresscallback(parseFloat(progress.toFixed(2)));
             }
-            if(progress == 1){
+            if(parseFloat(progress.toFixed(2)) == "1.00" && !callbackcalled){
+              callbackcalled = true;
               if(finalcallback){
                 finalcallback(true);
               }
@@ -283,16 +285,13 @@ var offline = {
     offline.disable(function(){
       offline.startdb();
       offline.sync.all(function(progress){
-        if(progress == 1){
-          localoptions.offlinesync = true;
-          offline.writelocaloptions();
-          offline.tomedsync();
-          if(completecallback){
-            completecallback();
-          }
-        }
-        else{
-          progresscallback(progress);
+        progresscallback(progress);
+      }, function(){
+        localoptions.offlinesync = true;
+        offline.writelocaloptions();
+        offline.tomedsync();
+        if(completecallback){
+          completecallback();
         }
       });
     });
