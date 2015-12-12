@@ -1,19 +1,21 @@
 var offline = {
   sync: {
     withui: function(){
-      offline.sync.all(function(progress){
-        $("#syncbar").html("Syncing... " + (progress * 100) + "%");
-        $("#syncbar").slideDown();
-        $(".button-main-sync").addClass("spin");
-      }, function(){
-        $("#syncbar").html("Sync complete");
-        setTomeout(function(){
-          $("#syncbar").slideUp();
-        }, 1000);
-        $(".button-main-sync").removeClass("spin");
-        loadmainpage();
-        loadtometablepage();
-      });
+      if(localoptions.offlinesync){
+        offline.sync.all(function(progress){
+          $("#syncbar").html("Syncing... " + (progress * 100) + "%");
+          $("#syncbar").slideDown();
+          $(".button-main-sync").addClass("spin");
+        }, function(){
+          $("#syncbar").html("Sync complete");
+          setTomeout(function(){
+            $("#syncbar").slideUp();
+          }, 1000);
+          $(".button-main-sync").removeClass("spin");
+          loadmainpage();
+          loadtometablepage();
+        });
+      }
     },
     all: function(progresscallback, finalcallback){
       offline.connectivitytest(function(){
