@@ -57,7 +57,7 @@
             <div style="position: relative;">
               <select class="form-control" name="day">
                 {{#each days as |day|}}
-                  <option value="{{day}}" {{#ifeq day ../lesson.day}}selected="selected"{{/ifeq}}>{{dayName day}}</option>
+                  <option value="{{day}}" {{#ifeq day ../lesson.day}}selected="selected"{{/ifeq}}>{{#if weekmode}}{{dayName day}}{{else}}{{humanReadableIndex day}}{{/if}}</option>
                 {{/each}}
               </select>
             </div>
@@ -72,7 +72,10 @@
               </div>
             </div>
           </div>
+         {{else}}
+          <input type="hidden" value="1" name="week"></input>
         {{/if}}
+        
       </div>
       <div class="modal-footer">
         <input type="button" class="btn btn-danger text-left" value="Delete" name="delete"></input>
