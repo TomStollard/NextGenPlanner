@@ -3,12 +3,11 @@ NextGen Planner is an online school planner built by the next generation, for th
 - Support for complex tometables, both week and day based, with options for setting school days
 - Homework adding system uses tometable data, allowing data to be entered quickly and easily
 - API that exposes all functionality
-- Almost completely client-side, allowing for good performance and use offline*
+- Almost completely client-side, allowing for good performance and use offline
 - Support for adding notes for days or weeks  
-\* Not yet implemented
 
 ##Live Demo
-A live version of this project can be found at <http://app.nextgenplanner.co.uk/>, and you can use this to store all of your homework and notes with no limitations. Alternative, if you'd like to store data on your own server, continue reading to find out how you can set this up.
+A live version of this project can be found at <https://ngp.tomstollard.me.uk/>, and you can use this to store all of your homework and notes with no limitations. Alternative, if you'd like to store data on your own server, continue reading to find out how you can set this up.
 
 ##Installation
 1. First, you'll need to have Node.JS installed, along with NPM. You'll also need to have a MongoDB server available.
