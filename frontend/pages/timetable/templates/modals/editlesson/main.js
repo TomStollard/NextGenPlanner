@@ -1,9 +1,18 @@
 $("#modal-editlesson").on("show", function(){
   offline.connectivitytest(function(){
+    var days = [];
+    if(user.options.tometable.mode == "week"){
+      days = user.options.tometable.schooldays
+    }
+    else if(user.options.tometable.mode == "day"){
+      for(var i = 0; i < user.options.tometable.multiday.numdays; i++){
+        days.push(i);
+      }
+    }
     $("#modal-editlesson").html(
       templates.tometable.modals.editlesson.main({
         periods: user.options.tometable.periods,
-        days: user.options.tometable.schooldays,
+        days: days,
         weekmode: Boolean(user.options.tometable.mode == "week"),
         numweeks: user.options.tometable.multiweek.numweeks,
         lesson: dbdata.tometable.findbyid(tometable, $("#modal-editlesson").data("id"))
