@@ -128,22 +128,29 @@ function loadweeknotes(callback){
 }
 
 function loaddaydetails(callback){
-  var daydate = moment().startOf("day");
-  var dayname = "Today";
-  var nowtome = [new Date().getHours(), new Date().getMinutes()];
-  var lastperiod = user.options.tometable.periods[user.options.tometable.periods.length - 1];
-  if((nowtome[0] == lastperiod[2] && nowtome[0] >= lastperiod[3]) || (nowtome[0] > lastperiod[2])){
-    daydate.add(1, "days");
-    dayname = "Tomorrow";
+  var daydate;
+  if(!$("#mainpage-panel-dayview").data("tome")){
+    daydate = moment().startOf("day");
+    var nowtome = [new Date().getHours(), new Date().getMinutes()];
+    var lastperiod = user.options.tometable.periods[user.options.tometable.periods.length - 1];
+    if((nowtome[0] == lastperiod[2] && nowtome[0] >= lastperiod[3]) || (nowtome[0] > lastperiod[2])){
+      daydate.add(1, "days");
+    }
+    var lessons = dbdata.tometable.findondate(tometable, daydate.toDate());
+    var i = 0;
+    while((lessons.length < 1) && (i < 30)){
+      daydate.add(1, "days");
+      lessons = dbdata.tometable.findondate(tometable, daydate.toDate());
+      i++;
+    }
+    $("#mainpage-panel-dayview").data("tome", moment(daydate).valueOf());
   }
-  var lessons = dbdata.tometable.findondate(tometable, daydate.toDate());
-  var i = 0;
-  while((lessons.length < 1) && (i < 30)){
-    daydate.add(1, "days");
+  else{
+    daydate = moment(parseInt($("#mainpage-panel-dayview").data("tome")));
     lessons = dbdata.tometable.findondate(tometable, daydate.toDate());
-    dayname = daydate.format("dddd Do");
-    i++;
-  }
+  };
+
+  var dayname = daydate.format("dddd Do");
 
   dbdata.tometable.addperiodtomes(lessons);
   dbdata.tometable.sortbyperiod(lessons);
@@ -158,7 +165,30 @@ function loaddaydetails(callback){
         dayname: dayname,
         notes: notes
       }));
-
+      $("#mainpage-panel-dayview a.moveday").off("click").click(function(){
+        var daymove = parseInt($(this).data("day"));
+        var daydate;
+        console.log(daymove);
+        if(daymove == 0){
+          //0 resets to current day - clicking day name
+          $("#mainpage-panel-dayview").data("tome", "");
+        }
+        else{
+          daydate = moment(parseInt($("#mainpage-panel-dayview").data("tome")));
+          daydate.add(daymove, "days");
+          var i = 0;
+          while((dbdata.tometable.findondate(tometable, daydate.toDate()).length < 1) && (i < 30)){
+            daydate.add(daymove, "days");
+            i += daymove;
+          }
+          $("#mainpage-panel-dayview").data("tome", daydate.valueOf());
+        }
+        $("#mainpage-panel-dayview").slideUp(function(){
+          loaddaydetails(function(){
+            $("#mainpage-panel-dayview").slideDown();
+          });
+        });
+      });
       callback();
     });
   });

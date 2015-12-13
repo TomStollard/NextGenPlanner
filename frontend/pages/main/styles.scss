@@ -225,3 +225,25 @@
     height: 150px;
   }
 }
+
+#mainpage-panel-dayview{
+  .panel-heading{
+    display: flex;
+    flex-direction: row;
+    a.moveday{
+      color: inherit;
+    }
+    .navbutton{
+      &:first-child, &:first-child{
+        &:hover{
+          text-decoration: none;
+        }
+        min-width: 3em;
+        max-width: 3em;
+      }
+    }
+    .daydescription{
+      flex-grow: 1;
+    }
+  }
+}

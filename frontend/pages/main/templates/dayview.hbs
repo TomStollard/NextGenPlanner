@@ -1,4 +1,8 @@
-<div class="panel-heading"><h3 class="panel-title">{{dayname}}</h3></div>
+<div class="panel-heading">
+  <div class="navbutton"><a href="javascript: void(0);" class="moveday" data-day="-1">&lt;&lt;&lt;</a></div>
+  <div class="daydescription"><a href="javascript: void(0);" class="moveday" data-day="0">{{dayname}}</a></div>
+  <div class="navbutton"><a href="javascript: void(0);" class="moveday" data-day="1">&gt;&gt;&gt;</a></div>
+</div>
 <div class="panel-body">
   {{#if notes}}
     <h3>Notes/events</h3>
