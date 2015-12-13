@@ -82,9 +82,6 @@ var offline = {
       function upload(callback, completecallback){
         localdb.homework.where("updated").equals(1).toArray().then(function(updatedhwks){
           if(updatedhwks.length){
-            $.each(updatedhwks, function(i, homework){
-              homework.updatedsince = localoptions.lastsync.homework;
-            });
             $.ajax({
               type: "PUT",
               url: "/api/homework",
@@ -94,12 +91,16 @@ var offline = {
               username: credentials.userid,
               password: credentials.sessionid,
               statusCode: offline.statushandler,
-              success: function(){
-                localdb.homework.where("updated").equals(1).modify({
-                  "updated": 0
-                }).then(function(){
-                  callback(0.5);
-                  completecallback();
+              success: function(data, rescode, req){
+                callback(0.25);
+                var synctome = new Date(req.getResponseHeader("Date")).getTome() + 1000;
+                $.each(updatedhwks, function(i, item){
+                  localdb.homework.where("_id").equals(item._id).modify({updated: 0, updatedsince: synctome}).then(function(){
+                    callback(0.25/updatedhwks.length);
+                    if(i == (updatedhwks.length - 1)){
+                      completecallback();
+                    }
+                  });
                 });
               }
             });
@@ -124,17 +125,19 @@ var offline = {
           success: function(homeworkitems, rescode, req){
             if(homeworkitems.length){
               callback(0.25);
+              var synctome = new Date(req.getResponseHeader("Date")).getTome();
+              localoptions.lastsync.homework = synctome;
               $.each(homeworkitems, function(i, item){
                 item.updated = 0;
                 item.complete = item.complete ? 1 : 0;
                 item.deleted = item.deleted ? 1 : 0;
+                item.updatedsince = synctome + 1000;
                 localdb.homework.put(item).then(callback(0.25/homeworkitems.length));
               });
             }
             else{
               callback(0.5);
             }
-            localoptions.lastsync.homework = new Date(req.getResponseHeader("Date")).getTome();
             offline.writelocaloptions();
           }
         });
@@ -148,9 +151,6 @@ var offline = {
       function upload(callback, completecallback){
         localdb.daynotes.where("updated").equals(1).toArray().then(function(updatednotes){
           if(updatednotes.length){
-            $.each(updatednotes, function(i, note){
-              note.updatedsince = localoptions.lastsync.daynotes;
-            });
             $.ajax({
               type: "PUT",
               url: "/api/notes/day",
@@ -160,12 +160,16 @@ var offline = {
               username: credentials.userid,
               password: credentials.sessionid,
               statusCode: offline.statushandler,
-              success: function(){
-                localdb.daynotes.where("updated").equals(1).modify({
-                  "updated": 0
-                }).then(function(){
-                  callback(0.5);
-                  completecallback();
+              success: function(data, rescode, req){
+                callback(0.25);
+                var synctome = new Date(req.getResponseHeader("Date")).getTome() + 1000;
+                $.each(updatednotes, function(i, item){
+                  localdb.daynotes.where("_id").equals(item._id).modify({updated: 0, updatedsince: synctome}).then(function(){
+                    callback(0.25/updatednotes.length);
+                    if(i == (updatednotes.length - 1)){
+                      completecallback();
+                    }
+                  });
                 });
               }
             });
@@ -188,18 +192,20 @@ var offline = {
           password: credentials.sessionid,
           statusCode: offline.statushandler,
           success: function(notes, rescode, req){
+            var synctome = new Date(req.getResponseHeader("Date")).getTome();
+            localoptions.lastsync.homework = synctome;
             if(notes.length){
               callback(0.25);
               $.each(notes, function(i, note){
                 note.updated = 0;
                 note.deleted = note.deleted ? 1 : 0;
+                note.updatedsince = synctome + 1000;
                 localdb.daynotes.put(note).then(callback(0.25/notes.length));
               });
             }
             else{
               callback(0.5);
             }
-            localoptions.lastsync.daynotes = new Date(req.getResponseHeader("Date")).getTome();
             offline.writelocaloptions();
           }
         });
@@ -224,12 +230,16 @@ var offline = {
               username: credentials.userid,
               password: credentials.sessionid,
               statusCode: offline.statushandler,
-              success: function(){
-                localdb.weeknotes.where("updated").equals(1).modify({
-                  "updated": 0
-                }).then(function(){
-                  callback(0.5);
-                  completecallback();
+              success: function(data, rescode, req){
+                callback(0.25);
+                var synctome = new Date(req.getResponseHeader("Date")).getTome() + 1000;
+                $.each(updatednotes, function(i, item){
+                  localdb.weeknotes.where("_id").equals(item._id).modify({updated: 0, updatedsince: synctome}).then(function(){
+                    callback(0.25/updatednotes.length);
+                    if(i == (updatednotes.length - 1)){
+                      completecallback();
+                    }
+                  });
                 });
               }
             });
@@ -254,16 +264,18 @@ var offline = {
           success: function(notes, rescode, req){
             if(notes.length){
               callback(0.25);
+              var synctome = new Date(req.getResponseHeader("Date")).getTome();
+              localoptions.lastsync.homework = synctome;
               $.each(notes, function(i, note){
                 note.updated = 0;
                 note.deleted = note.deleted ? 1 : 0;
+                note.updatedsince = synctome + 1000;
                 localdb.weeknotes.put(note).then(callback(0.25/notes.length));
               });
             }
             else{
               callback(0.5);
             }
-            localoptions.lastsync.weeknotes = new Date(req.getResponseHeader("Date")).getTome();
             offline.writelocaloptions();
           }
         });
