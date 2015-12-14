@@ -27,7 +27,7 @@ $("#modal-editlesson").on("show", function(){
           $("#modal-editlesson form input[name='id']").val(),
           function(){
             $("#modal-editlesson").modal("hide");
-            loadtometable(function(){
+            reloadtometable(function(){
               $("#tometablecontainer").fadeOut(function(){
                 loadtometablepage(function(){
                   $("#tometablecontainer").fadeIn();
@@ -54,7 +54,7 @@ $("#modal-editlesson").on("show", function(){
           },
           function(){
             $("#modal-editlesson").modal("hide");
-            loadtometable(function(){
+            reloadtometable(function(){
               $("#tometablecontainer").fadeOut(function(){
                 loadtometablepage(function(){
                   $("#tometablecontainer").fadeIn();

@@ -90,9 +90,10 @@ function loadlocaldata(callback){
 }
 
 function loaduserdata(callback){
+    //loads all user-specific data (options & tometable) from localStorage or server
     async.parallel([
-      loaduserdetails,
-      loadtometabledata
+      loaduser,
+      loadtometable
     ], function(){
       //calendar disabled dates - read pickaday documentation, passed as argument when initialising (different to .set("enable/disable") when initialised)
       //firstDay argument must also be set to true, otherwise week starts on Sun and everything is offset
@@ -107,7 +108,8 @@ function loaduserdata(callback){
     });
 }
 
-function loadtometabledata(callback){
+function loadtometable(callback){
+  //loads tometable, either from server if online or from localStorage if offline
   if(localoptions.offlinesync){
     tometable = JSON.parse(window.localStorage["tometable"]);
     callback();
@@ -127,7 +129,8 @@ function loadtometabledata(callback){
   }
 }
 
-function loaduserdetails(callback){
+function loaduser(callback){
+  //loads user details, either from server if online or from localStorage if offline
   if(localoptions.offlinesync){
     user = JSON.parse(window.localStorage["user"]);
     callback();
@@ -147,7 +150,8 @@ function loaduserdetails(callback){
   }
 }
 
-function loadtometable(callback){
+function reloadtometable(callback){
+  //forces reload of the tometable
   if(localoptions.offlinesync){
     offline.sync.tometable(function(progress){
       if(progress == 1){
@@ -156,7 +160,21 @@ function loadtometable(callback){
     });
   }
   else{
-    loadtometabledata(callback);
+    loadtometable(callback);
+  }
+}
+
+function reloaduser(callback){
+  //forces reload of the user data
+  if(localoptions.offlinesync){
+    offline.sync.user(function(progress){
+      if(progress == 1){
+        callback();
+      }
+    });
+  }
+  else{
+    loaduser(callback);
   }
 }
 

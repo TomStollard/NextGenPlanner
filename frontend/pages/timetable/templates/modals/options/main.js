@@ -97,7 +97,7 @@ $("#modal-options-tometable").on("show", function(){
             }
           }
         }, function(){
-          loaduserdata(function(){
+          reloaduser(function(){
             bootbox.alert("Your changes have been saved. You can now adjust the week/day tometable layout below.");
             $("#options-tometable-main select, #options-tometable-main input").not("[type='submit']").not("[type='checkbox']").removeAttr("disabled");
             $("#options-tometable-main #changealert").slideUp();
@@ -122,7 +122,7 @@ $("#modal-options-tometable").on("show", function(){
             }
           }
         }, function(){
-          loaduserdata(function(){
+          reloaduser(function(){
             bootbox.alert("Your changes have been saved.");
             $("#options-tometable-main select, #options-tometable-main input").not("[type='submit']").not("[type='checkbox']").removeAttr("disabled");
             $("#options-tometable-main #changealert").slideUp();
@@ -166,7 +166,7 @@ $("#modal-options-tometable").on("show", function(){
           }
         }
       }, function(){
-        loaduserdata(function(){
+        reloaduser(function(){
           bootbox.alert("Your changes have been saved.");
           $("#modal-options-tometable").data("changes", true);
         });

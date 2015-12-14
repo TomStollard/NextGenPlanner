@@ -154,7 +154,7 @@ $("#modal-addlesson").on("show", function(){
         },
         function(tometabledata){
           $("#modal-addlesson").modal("hide");
-          loadtometable(function(){
+          reloadtometable(function(){
             $("#tometablecontainer").fadeOut(function(){
               loadtometablepage(function(){
                 $("#tometablecontainer").fadeIn();

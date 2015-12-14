@@ -40,7 +40,7 @@ $("#modal-options-main").on("show", function(){
           name: $("#options-main-main form input[name='name']").val(),
           email: $("#options-main-main form input[name='email']").val()
         }, function(){
-          loaduserdata(function(){
+          reloaduser(function(){
             bootbox.alert("Changes saved.");
             $("#modal-options-main").data("changes", true);
           });
