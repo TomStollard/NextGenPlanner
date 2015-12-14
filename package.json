@@ -10,7 +10,7 @@
     "dev": "nodemon index.js",
     "build": "gulp",
     "bower": "bower",
-    "postinstall": "bower install && gulp"
+    "postinstall": "bower install && node ./node_modules/gulp/bin/gulp.js"
   },
   "repository": {
     "type": "git",
