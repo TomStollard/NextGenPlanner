@@ -150,7 +150,22 @@ function loaddaydetails(callback){
     lessons = dbdata.tometable.findondate(tometable, daydate.toDate());
   };
 
-  var dayname = daydate.format("dddd Do");
+  var daydiff = daydate.startOf("day").diff(moment().startOf("day"), "days");
+  var dayname = "";
+  switch(daydiff){
+    case 0:
+      dayname = "Today";
+      break;
+    case 1:
+      dayname = "Tomorrow";
+      break;
+    case -1:
+      dayname = "Yesterday";
+      break;
+    default:
+      dayname = daydate.format("dddd Do");
+      break;
+  }
 
   dbdata.tometable.addperiodtomes(lessons);
   dbdata.tometable.sortbyperiod(lessons);
@@ -167,14 +182,12 @@ function loaddaydetails(callback){
       }));
       $("#mainpage-panel-dayview a.moveday").off("click").click(function(){
         var daymove = parseInt($(this).data("day"));
-        var daydate;
-        console.log(daymove);
         if(daymove == 0){
           //0 resets to current day - clicking day name
           $("#mainpage-panel-dayview").data("tome", "");
         }
         else{
-          daydate = moment(parseInt($("#mainpage-panel-dayview").data("tome")));
+          var daydate = moment(parseInt($("#mainpage-panel-dayview").data("tome")));
           daydate.add(daymove, "days");
           var i = 0;
           while((dbdata.tometable.findondate(tometable, daydate.toDate()).length < 1) && (i < 30)){
