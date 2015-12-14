@@ -156,7 +156,7 @@ function loadtometable(callback){
     });
   }
   else{
-    loadtometable(callback);
+    loadtometabledata(callback);
   }
 }
 
