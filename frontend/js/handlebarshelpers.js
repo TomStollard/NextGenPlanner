@@ -8,7 +8,19 @@ Handlebars.registerHelper("formatDate", function(datetome, format){
 });
 
 Handlebars.registerHelper("dateToNow", function(datetome){
-  return moment(new Date(datetome)).fromNow();
+  var daydiff = moment(datetome).startOf("day").diff(moment().startOf("day"), "days");
+  //if date is yesterday, today, or tomorrow, use moment function, otherwise return number of days
+  if(daydiff >= -1 && daydiff <= 1){
+    return moment(new Date(datetome)).fromNow();
+  }
+  else{
+    if(daydiff < 0){
+      return (-daydiff) + " days ago";
+    }
+    else{
+      return "in " + daydiff + " days";
+    }
+  }
 });
 
 Handlebars.registerHelper("json", function(data){
