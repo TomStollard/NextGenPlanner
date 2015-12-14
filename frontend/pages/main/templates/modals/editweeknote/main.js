@@ -26,6 +26,7 @@ $("#modal-editweeknote").on("show", function(){
         notes: editors.editweeknote.getHTML()
       }, function(){
         weekreload();
+        offline.sync.withui();
         $("#modal-editweeknote").modal("hide");
       });
     });
@@ -33,6 +34,7 @@ $("#modal-editweeknote").on("show", function(){
     $("#modal-editweeknote form input[name='delete']").click(function(){
       dbdata.notes.week.delete($("#modal-editweeknote form input[name='id']").val(), function(){
         weekreload();
+        offline.sync.withui();
         $("#modal-editweeknote").modal("hide");
       });
     });

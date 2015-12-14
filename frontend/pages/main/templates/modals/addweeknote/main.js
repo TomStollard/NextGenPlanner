@@ -27,6 +27,7 @@ $("#modal-addweeknote").on("show", function(){
       notes: editors.addweeknote.getHTML()
     }, function(){
       weekreload();
+      offline.sync.withui();
       $("#modal-addweeknote").modal("hide");
     });
   });

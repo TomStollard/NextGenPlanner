@@ -28,6 +28,7 @@ $("#modal-adddaynote").on("show", function(){
       tome: $("#modal-adddaynote form input[name='tome']").val()
     }, function(){
       weekreload();
+      offline.sync.withui();
       $("#mainpage-panel-dayview").slideUp(function(){
         loaddaydetails(function(){
           updatedaynotebindings();

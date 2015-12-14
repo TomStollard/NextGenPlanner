@@ -29,6 +29,7 @@ $("#modal-editdaynote").on("show", function(){
         tome: $("#modal-editdaynote form input[name='tome']").val()
       }, function(){
         weekreload();
+        offline.sync.withui();
         $("#mainpage-panel-dayview").slideUp(function(){
           loaddaydetails(function(){
             updatedaynotebindings();
@@ -43,6 +44,7 @@ $("#modal-editdaynote").on("show", function(){
     $("#modal-editdaynote form input[name='delete']").click(function(){
       dbdata.notes.day.delete($("#modal-editdaynote form input[name='id']").val(), function(){
         weekreload();
+        offline.sync.withui();
         $("#mainpage-panel-dayview").slideUp(function(){
           loaddaydetails(function(){
             updatedaynotebindings();

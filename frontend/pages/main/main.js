@@ -26,7 +26,6 @@ $(".menu>a").click(function(){
 
 function weekreload(){
   $.when($("#mainpage-panel-weeknotes, #mainpage-panel-weekhomework").fadeOut()).done(function(){
-    offline.sync.withui();
     async.parallel([
       loadweekdetails,
       loadweeknotes
