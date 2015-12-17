@@ -10,8 +10,8 @@ var offline = {
           $("#syncbar").html("Sync complete");
           setTomeout(function(){
             $("#syncbar").slideUp();
+            $(".button-main-sync").removeClass("spin");
           }, 1000);
-          $(".button-main-sync").removeClass("spin");
           loadmainpage();
           loadtometablepage();
         });
