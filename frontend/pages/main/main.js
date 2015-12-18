@@ -197,6 +197,8 @@ function loaddaydetails(callback){
         }
         $("#mainpage-panel-dayview").slideUp(function(){
           loaddaydetails(function(){
+            updatedaynotebindings();
+            updatehomeworkbindings();
             $("#mainpage-panel-dayview").slideDown();
           });
         });
